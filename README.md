@@ -1,1 +1,1 @@
-# jrs-algorithm
+# jrs-knowledge
