@@ -7,8 +7,8 @@ public class Main implements Runnable{
 	public void run() {
 		LDAOption option = new LDAOption();
 		
-		option.dir = "../lda-model";
-		option.dfile = "lda.dat";
+		option.dir = "../processing";
+		option.dfile = "tokens.dat";
 		option.est = true;
 		option.inf = false;
 		option.modelName = "model-final";
