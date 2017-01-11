@@ -14,8 +14,8 @@ import cn.edu.pku.util.FileOutput;
 
 public class Main {
 
-	public static ArrayList<HashMap<String, Double>> docs
-			= new ArrayList<HashMap<String, Double>>();
+	public static HashMap<Long, HashMap<String, Double>> docs
+			= new HashMap<Long, HashMap<String, Double>>();
 	public static HashMap<String, Double> dict
 			= new HashMap<String, Double>();
 	public static HashMap<String, Integer> dictCounter
@@ -27,67 +27,30 @@ public class Main {
 		clear();
 	}
 	
-	//计算一项指标
-	public static void calculate(String inputPath) {
+	//加载一项指标
+	public static void load(String inputPath, String inputSeperator) {
 		FileInput fi = new FileInput(inputPath);
 		String line = new String ();
-//		int counter = 0;
 		try {
 			while ((line = fi.reader.readLine()) != null) {
-				String [] tokens = line.trim().split(" +");
-//				System.out.println(++ counter);
-				HashMap<String, Double> docDict = new HashMap<String, Double>();
-				for (int i = 0; i < tokens.length; i = i + 2) {
-					docDict.put(tokens[i], Double.parseDouble(tokens[i + 1]));
+				String [] tokens = line.trim().split(inputSeperator);
+				if (tokens.length <= 1) {
+					continue;
 				}
-				docs.add((HashMap<String, Double>) docDict.clone());				
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		fi.closeInput();
-	}
-	
-	//计算多项指标合并后的值
-	public static void calculate(String inputPath1, String inputPath2) {
-		FileInput fi = new FileInput(inputPath1);
-		String line = new String ();
-//		int counter = 0;
-		try {
-			while ((line = fi.reader.readLine()) != null) {
-				String [] tokens = line.trim().split(" +");
-//				System.out.println(++ counter);
-				HashMap<String, Double> docDict = new HashMap<String, Double>();
-				for (int i = 0; i < tokens.length; i = i + 2) {
-					docDict.put(tokens[i], Double.parseDouble(tokens[i + 1]));
-				}
-				docs.add((HashMap<String, Double>) docDict.clone());				
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		fi.closeInput();
-		
-		fi = new FileInput(inputPath2);
-		line = new String ();
-		int docsIndex = 0;
-		try {
-			while ((line = fi.reader.readLine()) != null) {
-				String [] tokens = line.trim().split(" +");
 				
-				HashMap<String, Double> docDict = 
-						(HashMap<String, Double>) docs.get(docsIndex).clone();
+				Long id = Long.parseLong(tokens[0]);
+				tokens = line.trim()
+						.substring(line.trim().indexOf(inputSeperator)
+								+ inputSeperator.length())
+						.trim().split(inputSeperator);
+				
+				HashMap<String, Double> docDict = new HashMap<String, Double>();
 				for (int i = 0; i < tokens.length; i = i + 2) {
-					if (docDict.containsKey(tokens[i])) {
-						Double t = docDict.get(tokens[i]);
-						docDict.remove(tokens[i]);
-						docDict.put(tokens[i], t * Double.parseDouble(tokens[i + 1]));
+					if (tokens[i].length() != 0) {
+						docDict.put(tokens[i], Double.parseDouble(tokens[i + 1]));
 					}
 				}
-				docs.set(docsIndex, ((HashMap<String, Double>) docDict.clone()));
-				docsIndex ++;
+				docs.put(id, (HashMap<String, Double>) docDict.clone());				
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -96,49 +59,90 @@ public class Main {
 		fi.closeInput();
 	}
 	
-	//将结果输出到文件
-	public static void saveToFile(String outputPath) {
+	//增加一项指标
+	public static void add(String inputPath, String inputSeperator) {
+		HashMap<Long, HashMap<String, Double>> newDocs
+			= new HashMap<Long, HashMap<String, Double>>();
+		
+		FileInput fi = new FileInput(inputPath);
+		String line = new String ();
+		try {
+			while ((line = fi.reader.readLine()) != null) {
+				String [] tokens = line.trim().split(inputSeperator);
+				if (tokens.length <= 1) {
+					continue;
+				}
+				
+				Long id = Long.parseLong(tokens[0]);
+				tokens = line.trim()
+						.substring(line.trim().indexOf(inputSeperator)
+								+ inputSeperator.length())
+						.trim().split(inputSeperator);
+				
+				if (docs.containsKey(id)) {
+					HashMap<String, Double> docDict = docs.get(id);
+					HashMap<String, Double> newDocDict = new HashMap<String, Double> ();
+					for (int i = 0; i < tokens.length; i = i + 2) {
+						if (tokens[i].length() != 0 && docDict.containsKey(tokens[i])) {
+							newDocDict.put(tokens[i],
+									docDict.get(tokens[i])
+									* Double.parseDouble(tokens[i + 1]));
+						}
+					}
+					newDocs.put(id, newDocDict);
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		docs = (HashMap<Long, HashMap<String, Double>>) newDocs.clone();
+		newDocs.clear();
+		fi.closeInput();
+	}
+	
+	public static void saveToFile(String outputPath, String outputSeperator) {
 		FileOutput fo = new FileOutput(outputPath);
 		
 		try {
-			for (int i = 0; i < docs.size(); i ++) {				
-				Map.Entry [] set = getSortedHashMapByValue((Map<String, Double>)docs.get(i).clone());
-				for(int j = 0; j < set.length; j ++) {
-					if (j > ResultLimit) {
-						break;
-					}
-					String key = set[j].getKey().toString();
-					double value = Double.parseDouble(set[j].getValue().toString());
-					if (value >= Threshold) {
-						fo.t3.write(key
-								+ " " + value + " ");
+			for (Long id : docs.keySet()) {
+				HashMap<String, Double> doc = docs.get(id);
+				fo.t3.write(id + outputSeperator);
+				for (String token : doc.keySet()) {
+					double span = doc.get(token);
+					if (span >= Threshold) {
+						fo.t3.write(token + outputSeperator
+								+ doc.get(token) + outputSeperator);
 					}
 				}
-				fo.t3.newLine();;
+				fo.t3.newLine();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		fo.closeOutput();
 	}
 	
-	//将结果输出到html
-	public static void saveToHtml(String outputPath) {
+	public static void saveToHtml(String outputPath, String outputSeperator) {
 		FileOutput fo = new FileOutput(outputPath);
 		
+		int counter = 0;
 		try {
-			for (int i = 0; i < docs.size(); i ++) {				
-				Map.Entry [] set = getSortedHashMapByValue((Map<String, Double>)docs.get(i).clone());
-				for(int j = 0; j < set.length; j ++) {
-					if (j > ResultLimit) {
-						break;
-					}
-					String key = set[j].getKey().toString();
-					double value = Double.parseDouble(set[j].getValue().toString());
-					if (value >= Threshold) {
+			for (Long id : docs.keySet()) {
+				if (counter ++ > 5) {
+					break;
+				}
+				
+				Map.Entry [] set = getSortedHashMapByValue((Map<String, Double>)docs.get(id).clone());
+				for(int j = 0; j < set.length; j ++)
+				{
+					double tfidf = Double.parseDouble(set[j].getValue().toString());
+					if (tfidf >= Threshold) {
 						fo.t3.write("<p>"
-							+ key + " " + value
+							+ set[j].getKey().toString()
+							+ outputSeperator + tfidf
 							+ "</p>");
 					}
 				}
@@ -179,8 +183,8 @@ public class Main {
 	
 	//以指标平均值统计
 	public static void statistic() {
-		for (int i = 0; i < docs.size(); i ++) {
-			Map.Entry [] set = getSortedHashMapByValue((Map<String, Double>)docs.get(i).clone());
+		for (long id : docs.keySet()) {
+			Map.Entry [] set = getSortedHashMapByValue((Map<String, Double>)docs.get(id).clone());
 			for(int j = 0; j < set.length; j ++) {
 				if (j > ResultLimit) {
 					break;
@@ -243,14 +247,42 @@ public class Main {
 	
 	public static void main(String [] args) {
 		init();
-		calculate(FilterConf.ProcessingPath + "tokens.pos.tfidf",
-				FilterConf.ProcessingPath + "tokens.pos.span");
-//		calculate(FilterConf.ProcessingPath + "tokens.pos.tfidf");
-		saveToFile(FilterConf.ProcessingPath + "tokens.pos.span.tfidf");
-		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.span.tfidf."
-				+ Threshold + ".html");
+
+//		load(FilterConf.ProcessingPath + "tokens.pos.con", " ");
+//		add(FilterConf.ProcessingPath + "tokens.pos.span", " ");
+//		saveToFile(FilterConf.ProcessingPath + "tokens.pos.con.span", " ");
+//		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.con.span."
+//				+ Threshold + ".html", " ");	
+//		statistic();
+//		saveStatistic(FilterConf.ProcessingPath + "tokens.pos.con.span.statistic."
+//				+ Threshold + ".html");
+		
+//		load(FilterConf.ProcessingPath + "tokens.pos.con", " ");
+//		add(FilterConf.ProcessingPath + "tokens.pos.tfidf", " ");
+//		saveToFile(FilterConf.ProcessingPath + "tokens.pos.con.tfidf", " ");
+//		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.con.tfidf."
+//				+ Threshold + ".html", " ");	
+//		statistic();
+//		saveStatistic(FilterConf.ProcessingPath + "tokens.pos.con.tfidf.statistic."
+//				+ Threshold + ".html");
+		
+//		load(FilterConf.ProcessingPath + "tokens.pos.span", " ");
+//		add(FilterConf.ProcessingPath + "tokens.pos.tfidf", " ");
+//		saveToFile(FilterConf.ProcessingPath + "tokens.pos.span.tfidf", " ");
+//		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.span.tfidf."
+//				+ Threshold + ".html", " ");	
+//		statistic();
+//		saveStatistic(FilterConf.ProcessingPath + "tokens.pos.span.tfidf.statistic."
+//				+ Threshold + ".html");
+		
+		load(FilterConf.ProcessingPath + "tokens.pos.span", " ");
+		add(FilterConf.ProcessingPath + "tokens.pos.con", " ");
+		add(FilterConf.ProcessingPath + "tokens.pos.tfidf", " ");
+		saveToFile(FilterConf.ProcessingPath + "tokens.pos.span.con.tfidf", " ");
+		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.span.con.tfidf."
+				+ Threshold + ".html", " ");	
 		statistic();
-		saveStatistic(FilterConf.ProcessingPath + "tokens.pos.span.tfidf.statistic."
+		saveStatistic(FilterConf.ProcessingPath + "tokens.pos.span.con.tfidf.statistic."
 				+ Threshold + ".html");
 	}
 	

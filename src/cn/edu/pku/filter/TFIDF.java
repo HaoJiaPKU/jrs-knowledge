@@ -15,27 +15,29 @@ import cn.edu.pku.util.FileOutput;
 public class TFIDF {
 
 	public static HashMap<String, Double> dict = new HashMap<String, Double>();
-	public static ArrayList<HashMap<String, Double>> docs
-			= new ArrayList<HashMap<String, Double>>();
-	public static final double Threshold = 0.03;
+	public static HashMap<Long, HashMap<String, Double>> docs
+			= new HashMap<Long, HashMap<String, Double>>();
+	public static final double Threshold = 0.0;
 	
 	public static void init() {
 		clear();
 	}
 	
-	public static void calculate(String inputPath) {
+	public static void calculate(String inputPath, String inputSeparator, int index) {
 		FileInput fi = new FileInput(inputPath);
 		String line = new String ();
 		try {
 			while ((line = fi.reader.readLine()) != null) {
-				String [] tokens = line.trim().split(" +");
-				if (tokens.length <= 2) {
+				String [] tokens = line.trim().split(inputSeparator);
+				if (tokens.length <= index) {
 					continue;
 				}
 				
+				Long id = Long.parseLong(tokens[0]);
+				
 				HashMap<String, Double> doc = new HashMap<String, Double>();
 				//计算tf值，统计单一文档中单词出现次数
-				for (int i = 2; i < tokens.length; i ++) {
+				for (int i = index; i < tokens.length; i ++) {
 					if (!doc.containsKey(tokens[i])) {
 						doc.put(tokens[i], 1.0);
 					} else {
@@ -49,7 +51,7 @@ public class TFIDF {
 				for (String token : doc.keySet()) {
 					docTF.put(token, doc.get(token) / (double) tokens.length);
 				}
-				docs.add((HashMap<String, Double>) docTF.clone());
+				docs.put(id, (HashMap<String, Double>) docTF.clone());
 				
 				//统计出现单词的文档
 				for (String token : doc.keySet()) {					
@@ -79,27 +81,32 @@ public class TFIDF {
 		dictIDF.clear();
 		
 		//计算tf-idf值
-		ArrayList<HashMap<String, Double>> docsTFIDF = new ArrayList<HashMap<String, Double>>();
-		for (int i = 0; i < docs.size(); i ++) {
+		HashMap<Long, HashMap<String, Double>> docsTFIDF
+			= new HashMap<Long, HashMap<String, Double>>();
+		for (Long id : docs.keySet()) {
 			HashMap<String, Double> docTFIDF = new HashMap<String, Double>();
-			for (String token : docs.get(i).keySet()) {
-				docTFIDF.put(token, docs.get(i).get(token) * dict.get(token));
+			HashMap<String, Double> doc = docs.get(id);
+			for (String token : doc.keySet()) {
+				docTFIDF.put(token, doc.get(token) * dict.get(token));
 			}
-			docsTFIDF.add(docTFIDF);
+			docsTFIDF.put(id, docTFIDF);
 		}
-		docs = (ArrayList<HashMap<String, Double>>) docsTFIDF.clone();
+		docs = (HashMap<Long, HashMap<String, Double>>) docsTFIDF.clone();
 		docsTFIDF.clear();
 	}
 	
-	public static void saveToFile(String outputPath) {
+	public static void saveToFile(String outputPath, String outputSeperator) {
 		FileOutput fo = new FileOutput(outputPath);
 		
 		try {
-			for (int i = 0; i < docs.size(); i ++) {
-				for (String token : docs.get(i).keySet()) {
-					double tfidf = docs.get(i).get(token);
-					if (tfidf >= Threshold) {
-						fo.t3.write(token + " " + docs.get(i).get(token) + " ");
+			for (Long id : docs.keySet()) {
+				HashMap<String, Double> doc = docs.get(id);
+				fo.t3.write(id + outputSeperator);
+				for (String token : doc.keySet()) {
+					double span = doc.get(token);
+					if (span >= Threshold) {
+						fo.t3.write(token + outputSeperator
+								+ doc.get(token) + outputSeperator);
 					}
 				}
 				fo.t3.newLine();
@@ -108,26 +115,28 @@ public class TFIDF {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		fo.closeOutput();
 	}
 	
-	public static void saveToHtml(String outputPath) {
+	public static void saveToHtml(String outputPath, String outputSeperator) {
 		FileOutput fo = new FileOutput(outputPath);
 		
+		int counter = 0;
 		try {
-			for (int i = 0; i < docs.size(); i ++) {
-				if (i > 5) {
+			for (Long id : docs.keySet()) {
+				if (counter ++ > 5) {
 					break;
 				}
 				
-				Map.Entry [] set = getSortedHashMapByValue((Map<String, Double>)docs.get(i).clone());
+				Map.Entry [] set = getSortedHashMapByValue((Map<String, Double>)docs.get(id).clone());
 				for(int j = 0; j < set.length; j ++)
 				{
 					double tfidf = Double.parseDouble(set[j].getValue().toString());
 					if (tfidf >= Threshold) {
 						fo.t3.write("<p>"
 							+ set[j].getKey().toString()
-							+ " " + tfidf
+							+ outputSeperator + tfidf
 							+ "</p>");
 					}
 				}
@@ -167,12 +176,12 @@ public class TFIDF {
 	
 	public static void main(String [] args) {
 		init();
-//		calculate(FilterConf.ProcessingPath + "tokens");
-//		saveToFile(FilterConf.ProcessingPath + "tokens.tfidf");
-		calculate(FilterConf.ProcessingPath + "tokens.pos");
-		saveToFile(FilterConf.ProcessingPath + "tokens.pos.tfidf");
+		calculate(FilterConf.ProcessingPath + "tokens", " ", 3);
+		saveToFile(FilterConf.ProcessingPath + "tokens.tfidf", " ");
+		calculate(FilterConf.ProcessingPath + "tokens.pos", " ", 1);
+		saveToFile(FilterConf.ProcessingPath + "tokens.pos.tfidf", " ");
 		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.tfidf."
-				+ Threshold + ".html");
+				+ Threshold + ".html", " ");
 	}
 	
 }

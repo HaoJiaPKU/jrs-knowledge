@@ -10,30 +10,28 @@ import cn.edu.pku.util.FileOutput;
 
 public class Span {
 
-	public static ArrayList<HashMap<String, Double>> docs
-			= new ArrayList<HashMap<String, Double>>();
+	public static HashMap<Long, HashMap<String, Double>> docs
+			= new HashMap<Long, HashMap<String, Double>>();
 	public static final double Threshold = 0.0;
 	
 	public static void init() {
 		clear();
 	}
 	
-	public static void calculate(String inputPath) {
+	public static void calculate(String inputPath, String inputSeparator, int index) {
 		FileInput fi = new FileInput(inputPath);
 		String line = new String ();
-//		int counter = 0;
 		try {
 			while ((line = fi.reader.readLine()) != null) {
-				String [] tokens = line.trim().split(" +");
-				if (tokens.length <= 2) {
+				String [] tokens = line.trim().split(inputSeparator);
+				if (tokens.length <= index) {
 					continue;
 				}
-//				if (++ counter > 1) {
-//					break;
-//				}
+				
+				Long id = Long.parseLong(tokens[0]);
 				
 				HashMap<String, String> docDict = new HashMap<String, String>();
-				for (int i = 2; i < tokens.length; i ++) {
+				for (int i = index; i < tokens.length; i ++) {
 					if (!docDict.containsKey(tokens[i])) {
 						docDict.put(tokens[i], String.valueOf(i));
 					} else {
@@ -50,15 +48,13 @@ public class Span {
 								- 1.0 
 								/ (double) (tokens.length + 1.0));
 					} else {
-//						System.out.println(Integer.parseInt(t[t.length - 1])
-//								- Integer.parseInt(t[0]));
 						doc.put(token, 1.0
 								- ((double) (Integer.parseInt(t[t.length - 1])
 								- Integer.parseInt(t[0])) + 1.0)
 								/ (double) (tokens.length + 1.0));
 					}
 				}
-				docs.add((HashMap<String, Double>) doc.clone());				
+				docs.put(id, (HashMap<String, Double>) doc.clone());				
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -67,15 +63,18 @@ public class Span {
 		fi.closeInput();
 	}
 	
-	public static void saveToFile(String outputPath) {
+	public static void saveToFile(String outputPath, String outputSeperator) {
 		FileOutput fo = new FileOutput(outputPath);
 		
 		try {
-			for (int i = 0; i < docs.size(); i ++) {
-				for (String token : docs.get(i).keySet()) {
-					double span = docs.get(i).get(token);
+			for (Long id : docs.keySet()) {
+				HashMap<String, Double> doc = docs.get(id);
+				fo.t3.write(id + outputSeperator);
+				for (String token : doc.keySet()) {
+					double span = doc.get(token);
 					if (span >= Threshold) {
-						fo.t3.write(token + " " + docs.get(i).get(token) + " ");
+						fo.t3.write(token + outputSeperator
+								+ doc.get(token) + outputSeperator);
 					}
 				}
 				fo.t3.newLine();
@@ -84,6 +83,7 @@ public class Span {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		fo.closeOutput();
 	}
 	
@@ -93,10 +93,10 @@ public class Span {
 	
 	public static void main(String [] args) {
 		init();
-//		calculate(FilterConf.ProcessingPath + "tokens");
-//		saveToFile(FilterConf.ProcessingPath + "tokens.span");
-		calculate(FilterConf.ProcessingPath + "tokens.pos");
-		saveToFile(FilterConf.ProcessingPath + "tokens.pos.span");
+		calculate(FilterConf.ProcessingPath + "tokens", " ", 3);
+		saveToFile(FilterConf.ProcessingPath + "tokens.span", " ");
+		calculate(FilterConf.ProcessingPath + "tokens.pos", " ", 1);
+		saveToFile(FilterConf.ProcessingPath + "tokens.pos.span", " ");
 	}
 	
 }
