@@ -7,11 +7,12 @@ public class LDA implements Runnable{
 	public void run() {
 		LDAOption option = new LDAOption();
 		
-		option.dir = "model";
-		option.dfile = "lda.dat";
+		option.dir = "../model";
+		option.dfile = "tokens.pos.dat";
+		option.modelName = "model-final";
 		option.est = true;
 		option.inf = false;
-		option.modelName = "model-final";
+		option.K = 20;
 		option.niters = 10000;
 		Estimator estimator = new Estimator();
 		estimator.init(option);

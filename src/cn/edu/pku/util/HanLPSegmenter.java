@@ -209,7 +209,7 @@ public class HanLPSegmenter
 		}
 		
 		FileInput fi = new FileInput(inputPath);
-		FileOutput foTFIDF = new FileOutput(outputPathTFIDF);
+		FileOutput foToken = new FileOutput(outputPathTFIDF);
 		FileOutput foPos = new FileOutput(outputPathPos);
 		FileOutput foLoc = new FileOutput(outputPathLoc);
 		loadStopword();
@@ -227,7 +227,7 @@ public class HanLPSegmenter
 					continue;
 				}
 				
-				foTFIDF.t3.write(fields[0] + outputSeperator);
+				foToken.t3.write(fields[0] + outputSeperator);
 				foPos.t3.write(fields[0] + outputSeperator);
 				foLoc.t3.write(fields[0] + outputSeperator);
 				
@@ -240,7 +240,7 @@ public class HanLPSegmenter
 				}
 				for (int i = 1; i < flag.length; i ++) {
 					if (!flag[i]) {
-						foTFIDF.t3.write(fields[i] + outputSeperator);
+						foToken.t3.write(fields[i] + outputSeperator);
 					}
 				}
 				
@@ -323,7 +323,7 @@ public class HanLPSegmenter
 				}
 				
 				for (int i = 0; i < token.size(); i ++) {
-					foTFIDF.t3.write(token.get(i) + outputSeperator);
+					foToken.t3.write(token.get(i) + outputSeperator);
 					if (flag[i]) {
 						foPos.t3.write(token.get(i) + outputSeperator);
 						foLoc.t3.write(token.get(i) 
@@ -331,7 +331,7 @@ public class HanLPSegmenter
 					}
 				}
 				
-				foTFIDF.t3.newLine();
+				foToken.t3.newLine();
 				foPos.t3.newLine();
 				foLoc.t3.newLine();
 				
@@ -339,12 +339,13 @@ public class HanLPSegmenter
 					System.out.println(counter + " results");
 				}
 			}
+			System.out.println(counter + " results");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		foTFIDF.closeOutput();
+		foToken.closeOutput();
 		foPos.closeOutput();
 		foLoc.closeOutput();
 		fi.closeInput();
@@ -354,10 +355,11 @@ public class HanLPSegmenter
     {
     	int[] indices = {3};
 		segmentation(
-				"../processing/text", "	",
-				"../processing/tokens",
-				"../processing/tokens.pos",
-				"../processing/tokens.pos.loc", " ",
-				indices);
+					"../processing/text", "	",
+					"../processing/tokens",
+					"../processing/tokens.pos",
+					"../processing/tokens.pos.loc", " ",
+					indices
+					);
     }
 }
