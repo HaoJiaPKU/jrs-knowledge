@@ -138,16 +138,18 @@ public class Pattern {
 		return entries;
 	}
 	
-	public static void calculate(String [] tokens, double [] thres) {
+	public static void calculate(
+			String outputDir,
+			String [] tokens, double [] thres, int candidateNum) {
 		init();
 		for (int i = 0; i < tokens.length; i ++) {
-			loadDictPos(FilterConf.ProcessingPath + "tokens.pos", " ");
-			loadDictOcc(FilterConf.ProcessingPath + "tokens.occ", " ",
+			loadDictPos(outputDir + "/" + "tokens.pos", " ");
+			loadDictOcc(outputDir + "/" + "tokens.occ", " ",
 					tokens[i], thres[i]);
-			getCandidate(200);
+			getCandidate(candidateNum);
 			clear();
 		}
-		saveToFile(FilterConf.ProcessingPath + "tokens.pos.through.occ", " ");
+		saveToFile(outputDir + "/" + "tokens.pos.through.occ", " ");
 	}
 
 	public static void main(String [] args) {
@@ -167,7 +169,7 @@ public class Pattern {
 							8.5,
 							8.5
 							};
-		calculate(tokens, thres);
+		calculate(FilterConf.ProcessingPath, tokens, thres, 500);
 	}
 	
 }

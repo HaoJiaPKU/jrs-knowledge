@@ -12,11 +12,11 @@ import cn.edu.pku.conf.FilterConf;
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
 
-public class TFIDF {
+public class Tfidf {
 
 	public static HashMap<String, Double> dict = new HashMap<String, Double>();
-	public static HashMap<Long, HashMap<String, Double>> docs
-			= new HashMap<Long, HashMap<String, Double>>();
+	public static HashMap<String, HashMap<String, Double>> docs
+			= new HashMap<String, HashMap<String, Double>>();
 	public static final double Threshold = 0.0;
 	
 	public static void init() {
@@ -33,7 +33,7 @@ public class TFIDF {
 					continue;
 				}
 				
-				Long id = Long.parseLong(tokens[0]);
+				String id = tokens[0].trim();
 				
 				HashMap<String, Double> doc = new HashMap<String, Double>();
 				//计算tf值，统计单一文档中单词出现次数
@@ -81,9 +81,9 @@ public class TFIDF {
 		dictIDF.clear();
 		
 		//计算tf-idf值
-		HashMap<Long, HashMap<String, Double>> docsTFIDF
-			= new HashMap<Long, HashMap<String, Double>>();
-		for (Long id : docs.keySet()) {
+		HashMap<String, HashMap<String, Double>> docsTFIDF
+			= new HashMap<String, HashMap<String, Double>>();
+		for (String id : docs.keySet()) {
 			HashMap<String, Double> docTFIDF = new HashMap<String, Double>();
 			HashMap<String, Double> doc = docs.get(id);
 			for (String token : doc.keySet()) {
@@ -91,7 +91,76 @@ public class TFIDF {
 			}
 			docsTFIDF.put(id, docTFIDF);
 		}
-		docs = (HashMap<Long, HashMap<String, Double>>) docsTFIDF.clone();
+		docs = (HashMap<String, HashMap<String, Double>>) docsTFIDF.clone();
+		docsTFIDF.clear();
+	}
+	
+	public static void calculate(String inputPath, int index) {
+		FileInput fi = new FileInput(inputPath);
+		String line = new String ();
+		try {
+			while ((line = fi.reader.readLine()) != null) {
+				String [] tokens = line.trim().split(" +");
+				
+				String id = tokens[0].trim();
+				
+				HashMap<String, Double> doc = new HashMap<String, Double>();
+				//计算tf值，统计单一文档中单词出现次数
+				for (int i = index; i < tokens.length; i ++) {
+					if (!doc.containsKey(tokens[i])) {
+						doc.put(tokens[i], 1.0);
+					} else {
+						double t = doc.get(tokens[i]);
+						doc.remove(tokens[i]);
+						doc.put(tokens[i], t + 1.0);
+					}
+				}
+				//计算tf值，计算单词出现次数/文档长度
+				HashMap<String, Double> docTF = new HashMap<String, Double>();
+				for (String token : doc.keySet()) {
+					docTF.put(token, doc.get(token) / (double) tokens.length);
+				}
+				docs.put(id, (HashMap<String, Double>) docTF.clone());
+				
+				//统计出现单词的文档
+				for (String token : doc.keySet()) {					
+					if (!dict.containsKey(token)) {
+						dict.put(token, 1.0);
+					} else {
+						double t = dict.get(token);
+						dict.remove(token);
+						dict.put(token, t + 1.0);
+					}
+				}				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fi.closeInput();
+		
+		double docSize = docs.size();
+		//计算idf值
+		HashMap<String, Double> dictIDF = new HashMap<String, Double>();
+		for (String token : dict.keySet()) {
+			dictIDF.put(token, Math.log(docSize / (1.0 + dict.get(token))));
+		}
+		dict.clear();
+		dict = (HashMap<String, Double>) dictIDF.clone();
+		dictIDF.clear();
+		
+		//计算tf-idf值
+		HashMap<String, HashMap<String, Double>> docsTFIDF
+			= new HashMap<String, HashMap<String, Double>>();
+		for (String id : docs.keySet()) {
+			HashMap<String, Double> docTFIDF = new HashMap<String, Double>();
+			HashMap<String, Double> doc = docs.get(id);
+			for (String token : doc.keySet()) {
+				docTFIDF.put(token, doc.get(token) * dict.get(token));
+			}
+			docsTFIDF.put(id, docTFIDF);
+		}
+		docs = (HashMap<String, HashMap<String, Double>>) docsTFIDF.clone();
 		docsTFIDF.clear();
 	}
 	
@@ -99,15 +168,19 @@ public class TFIDF {
 		FileOutput fo = new FileOutput(outputPath);
 		
 		try {
-			for (Long id : docs.keySet()) {
-				HashMap<String, Double> doc = docs.get(id);
+			for (String id : docs.keySet()) {
 				fo.t3.write(id + outputSeperator);
-				for (String token : doc.keySet()) {
-					double span = doc.get(token);
-					if (span >= Threshold) {
-						fo.t3.write(token + outputSeperator
-								+ doc.get(token) + outputSeperator);
-					}
+				Map.Entry [] set = getSortedHashMapByValue((Map<String, Double>)docs.get(id).clone());
+				for(int j = 0; j < set.length; j ++)
+				{
+					double tfidf = Double.parseDouble(set[j].getValue().toString());
+//					if (tfidf >= Threshold) {
+						fo.t3.write(
+							set[j].getKey().toString()
+							+ outputSeperator
+							+ tfidf
+							+ outputSeperator);
+//					}
 				}
 				fo.t3.newLine();
 			}
@@ -124,10 +197,10 @@ public class TFIDF {
 		
 		int counter = 0;
 		try {
-			for (Long id : docs.keySet()) {
-				if (counter ++ > 5) {
-					break;
-				}
+			for (String id : docs.keySet()) {
+//				if (counter ++ > 5) {
+//					break;
+//				}
 				
 				Map.Entry [] set = getSortedHashMapByValue((Map<String, Double>)docs.get(id).clone());
 				for(int j = 0; j < set.length; j ++)
