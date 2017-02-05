@@ -47,7 +47,7 @@ public class Pattern {
 				for (int i = 1; i < tokens.length; i ++) {
 					int tempCounter = 1;
 					if (dictPos.containsKey(tokens[i])) {
-						tempCounter = dictPos.get(tokens[i]);
+						tempCounter = dictPos.get(tokens[i]) + 1;
 						dictPos.remove(tokens[i]);
 					}
 					dictPos.put(tokens[i], tempCounter);
@@ -78,7 +78,7 @@ public class Pattern {
 				tokens[5] = tokens[5].substring(
 						tokens[5].indexOf("=") + 1);
 				double score = Double.parseDouble(tokens[5]);
-				if (score > threshold) {
+				if (score >= threshold) {
 					dictOcc.put(value, score);
 				}
 			}
@@ -140,7 +140,9 @@ public class Pattern {
 	
 	public static void calculate(
 			String outputDir,
-			String [] tokens, double [] thres, int candidateNum) {
+			String [] tokens,
+			double [] thres,
+			int candidateNum) {
 		init();
 		for (int i = 0; i < tokens.length; i ++) {
 			loadDictPos(outputDir + "/" + "tokens.pos", " ");
