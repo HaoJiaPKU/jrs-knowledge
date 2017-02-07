@@ -85,8 +85,30 @@ public class Generator {
 					temp = dictOcc.get(key);
 					dictOcc.remove(key);
 				}
-				temp.put(subKey, score);
+				if (temp.containsKey(subKey)) {
+					double subScore = temp.get(subKey);
+					subScore = Math.sqrt(subScore * score);
+					temp.remove(subKey);
+					temp.put(subKey, subScore);
+				} else {
+					temp.put(subKey, score);
+				}
 				dictOcc.put(key, temp);
+				
+				temp = new HashMap<String, Double> ();
+				if (dictOcc.containsKey(subKey)) {
+					temp = dictOcc.get(subKey);
+					dictOcc.remove(subKey);
+				}
+				if (temp.containsKey(key)) {
+					double subScore = temp.get(key);
+					subScore = Math.sqrt(subScore * score);
+					temp.remove(key);
+					temp.put(key, subScore);
+				} else {
+					temp.put(key, score);
+				}
+				dictOcc.put(subKey, temp);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -163,7 +185,7 @@ public class Generator {
 				if (count < dictRes.size() * countThres) {
 					continue;
 				}
-				score /= count;
+				score = Math.pow(score, 1.0 / count);
 				distance.put(key, score);
 			}
 			
@@ -264,8 +286,9 @@ public class Generator {
 		String [] seeds = {
 //							"struts",
 							"java",
+//							"spring",
 //							"c",
-//							"spring"
+//							"python"
 							};
 		double threshold = 0.0;
 		String outputDir = "../processingDir2/计算机软件";
@@ -278,7 +301,7 @@ public class Generator {
 					threshold);
 		getCandidate(seeds, candidateNum, countThres);
 		clear();
-		saveToFile(outputDir + "/" + "tokens.pos.through.occ.sim", " ");
+		saveToFile(outputDir + "/" + "tokens.through.occ.sim", " ");
 	}
 	
 }

@@ -196,7 +196,8 @@ public class HanLPSegmenter
 	 * @param outputPath 输出文件路径
 	 * @param indices 需要分词的域的索引
 	 * */
-	public static void segmentation(String inputPath,
+	public static void segmentation(
+			String inputPath,
 			String inputSeperator,
 			String outputPathTFIDF,
 			String outputPathPos,

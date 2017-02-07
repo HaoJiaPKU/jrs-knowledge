@@ -14,7 +14,7 @@ import cn.edu.pku.conf.FilterConf;
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
 
-public class Pattern {
+public class PatternOcc {
 
 	public static Set<String> dictRes
 			= new TreeSet<String>();
