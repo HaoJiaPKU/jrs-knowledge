@@ -244,6 +244,45 @@ public class Combination {
 		fo.closeOutput();
 	}
 	
+	public static void mergeFile(
+			String processingDir,
+			String [] industries,
+			String [] industryDirs,
+			String inputFileName,
+			String outputPath
+			) {
+		FileOutput fo = new FileOutput(outputPath);
+		for (int i = 0; i < industryDirs.length; i ++) {
+			FileInput fi = new FileInput(processingDir
+					+ "/" + industryDirs[i] + "/" + inputFileName);
+			try {
+				fo.t3.write(industries[i]);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String line = new String();
+			String content = new String ();
+			try {
+				while ((line = fi.reader.readLine()) != null) {
+					content += " " + line.trim();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				fo.t3.write(content);
+				fo.t3.newLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			fi.closeInput();
+		}
+		fo.closeOutput();
+	}
+	
 	public static void main(String [] args) {
 		init();
 

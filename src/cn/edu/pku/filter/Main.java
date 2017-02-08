@@ -17,7 +17,7 @@ import cn.edu.pku.util.TimeUtil;
 public class Main {
 	
 	public static void main(String [] args) {
-		String processingDir = "../processingDir2";
+		String processingDir = "../processingDir";
 		FileDirs.makeDirs(processingDir);
 		String[] industryDirs = {
 					"计算机软件",
@@ -99,114 +99,92 @@ public class Main {
 					};
 		
 		for (int i = 0; i < industries.length; i ++) {
-			System.out.println(industries[i] + " 提取数据");
-			AbstractObj.FeildsToText(processingDir
-				 	+ "/" + industryDirs[i] + "/" + "text",
-					"	",
-					sources,
-					date,
-					new String [] {industries[i]},
-					fields,
-					13000
-					);
-			
-			RegularExp.extractFromRegularExp(
-					processingDir
-				 	+ "/" + industryDirs[i] + "/" + "text", "	",
-				 	processingDir
-				 	+ "/" + industryDirs[i] + "/" + "text.reg", "	",
-					indices);
-			System.out.println("正则匹配结束");
-			
-			HanLPSegmenter.segmentation(
-					processingDir
-				 	+ "/" + industryDirs[i] + "/" + "text.reg", "	",
-					processingDir
-				 	+ "/" + industryDirs[i] + "/" + "tokens",
-					processingDir
-				 	+ "/" + industryDirs[i] + "/" + "tokens.pos",
-					processingDir
-				 	+ "/" + industryDirs[i] + "/" + "tokens.pos.loc", " ",
-					indices
-					);
-			System.out.println("分词结束");
-			
-			HanLPOccurrence.extractFormTokens(
-					processingDir
-				 	+ "/" + industryDirs[i] + "/" + "tokens",
-					processingDir
-				 	+ "/" + industryDirs[i] + "/" + "tokens.occ"
-					);
-			HanLPOccurrence.extractFormTokens(
-					processingDir
-					+ "/" + industryDirs[i] + "/" + "tokens.pos",
-					processingDir
-					+ "/" + industryDirs[i] + "/" + "tokens.pos.occ"
-					);
-			System.out.println("共现关系提取结束");
-			
-			PatternOcc.init();
-			for (int j = 0; j < tokens.length; j ++) {
-				PatternOcc.loadDictPos(processingDir
-					+ "/" + industryDirs[i] + "/" + "tokens.pos", " ");
-				PatternOcc.loadDictOcc(processingDir
-					+ "/" + industryDirs[i] + "/" + "tokens.occ", " ",
-					tokens[j], thres[j]);
-				PatternOcc.getCandidate(200);
-				PatternOcc.clear();
-			}
-			PatternOcc.saveToFile(processingDir
-					+ "/" + industryDirs[i] + "/" + "tokens.through.occ", " ");
-			
-			PatternOcc.init();
-			for (int j = 0; j < tokens.length; j ++) {
-				PatternOcc.loadDictPos(processingDir
-					+ "/" + industryDirs[i] + "/" + "tokens.pos", " ");
-				PatternOcc.loadDictOcc(processingDir
-					+ "/" + industryDirs[i] + "/" + "tokens.pos.occ", " ",
-					tokens[j], thres[j]);
-				PatternOcc.getCandidate(200);
-				PatternOcc.clear();
-			}
-			PatternOcc.saveToFile(processingDir
-					+ "/" + industryDirs[i] + "/" + "tokens.pos.through.occ", " ");
-			System.out.println("计算结束");
+//			System.out.println(industries[i] + " 提取数据");
+//			AbstractObj.FeildsToText(processingDir
+//				 	+ "/" + industryDirs[i] + "/" + "text",
+//					"	",
+//					sources,
+//					date,
+//					new String [] {industries[i]},
+//					fields,
+//					13000
+//					);
+//			
+//			RegularExp.extractFromRegularExp(
+//					processingDir
+//				 	+ "/" + industryDirs[i] + "/" + "text", "	",
+//				 	processingDir
+//				 	+ "/" + industryDirs[i] + "/" + "text.reg", "	",
+//					indices);
+//			System.out.println("正则匹配结束");
+//			
+//			HanLPSegmenter.segmentation(
+//					processingDir
+//				 	+ "/" + industryDirs[i] + "/" + "text.reg", "	",
+//					processingDir
+//				 	+ "/" + industryDirs[i] + "/" + "tokens",
+//					processingDir
+//				 	+ "/" + industryDirs[i] + "/" + "tokens.pos",
+//					processingDir
+//				 	+ "/" + industryDirs[i] + "/" + "tokens.pos.loc", " ",
+//					indices
+//					);
+//			System.out.println("分词结束");
+//			
+//			HanLPOccurrence.extractFormTokens(
+//					processingDir
+//				 	+ "/" + industryDirs[i] + "/" + "tokens",
+//					processingDir
+//				 	+ "/" + industryDirs[i] + "/" + "tokens.occ"
+//					);
+//			HanLPOccurrence.extractFormTokens(
+//					processingDir
+//					+ "/" + industryDirs[i] + "/" + "tokens.pos",
+//					processingDir
+//					+ "/" + industryDirs[i] + "/" + "tokens.pos.occ"
+//					);
+//			System.out.println("共现关系提取结束");
+//			
+//			PatternOcc.init();
+//			for (int j = 0; j < tokens.length; j ++) {
+//				PatternOcc.loadDictPos(processingDir
+//					+ "/" + industryDirs[i] + "/" + "tokens.pos", " ");
+//				PatternOcc.loadDictOcc(processingDir
+//					+ "/" + industryDirs[i] + "/" + "tokens.occ", " ",
+//					tokens[j], thres[j]);
+//				PatternOcc.getCandidate(200);
+//				PatternOcc.clear();
+//			}
+//			PatternOcc.saveToFile(processingDir
+//					+ "/" + industryDirs[i] + "/" + "tokens.through.occ", " ");
+//			
+//			PatternOcc.init();
+//			for (int j = 0; j < tokens.length; j ++) {
+//				PatternOcc.loadDictPos(processingDir
+//					+ "/" + industryDirs[i] + "/" + "tokens.pos", " ");
+//				PatternOcc.loadDictOcc(processingDir
+//					+ "/" + industryDirs[i] + "/" + "tokens.pos.occ", " ",
+//					tokens[j], thres[j]);
+//				PatternOcc.getCandidate(200);
+//				PatternOcc.clear();
+//			}
+//			PatternOcc.saveToFile(processingDir
+//					+ "/" + industryDirs[i] + "/" + "tokens.pos.through.occ", " ");
+//			System.out.println("计算结束");
 		}
 		
-		FileOutput fo = new FileOutput(processingDir + "/" + "merge.dat");
-		for (int i = 0; i < industries.length; i ++) {
-			FileInput fi = new FileInput(processingDir
-					+ "/" + industryDirs[i] + "/" + "tokens.through.occ");
-			try {
-				fo.t3.write(industries[i]);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			String line = new String();
-			String content = new String ();
-			try {
-				while ((line = fi.reader.readLine()) != null) {
-					content += " " + line.trim();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				fo.t3.write(content);
-				fo.t3.newLine();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			fi.closeInput();
-		}
-		fo.closeOutput();
+		Combination.mergeFile(processingDir, industries, industryDirs,
+				"tokens.through.occ", processingDir + "/" + "merge.dat");
+
+		Segregator.init();
+		Segregator.makeDict(processingDir + "/" + "merge.dat", " ");
+		Segregator.saveToFile(processingDir + "/" + "segregat.txt", "	", 1);
+		Segregator.clear();
 		
 		Tfidf.init();
 		Tfidf.calculate(processingDir + "/" + "merge.dat", 1);
 		Tfidf.saveToFile(processingDir + "/" + "result", "	");
 		Tfidf.saveToHtml(processingDir + "/" + "result.html", " ");
+		Tfidf.clear();
 	}
 }
