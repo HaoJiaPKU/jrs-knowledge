@@ -13,6 +13,7 @@ package cn.edu.pku.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.tokenizer.NLPTokenizer;
 
+import cn.edu.pku.filter.Statistic;
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
 
@@ -36,6 +38,7 @@ public class HanLPSegmenter
 	public static final String StopwordFile = "stopwords.txt";
 	public static final String StopSigns = "[\\p{P}~$`^=|<>～｀＄＾＋＝｜＜＞￥× \\s|\t|\r|\n]+";
 	public static Pattern pattern = Pattern.compile("[a-b]|[d-z]");
+	
 	
 	/** 
 	 * 加载停用词、停用符号表
@@ -103,7 +106,7 @@ public class HanLPSegmenter
 		textContent = textContent.replaceAll("Div[+]Css", "@pattern3@");
 		textContent = textContent.replaceAll("Css[+]Div", "@pattern3@");
 		textContent = textContent.replaceAll("[+]", " ");
-		textContent = textContent.replaceAll("@pattern1@", "c++ ");
+		textContent = textContent.replaceAll("@pattern1@", "cpp ");
 		textContent = textContent.replaceAll("@pattern2@", ".net");
 		textContent = textContent.replaceAll("@pattern3@", "div+css");
 		textContent = textContent.replaceAll("sql server", "sqlserver");
@@ -114,6 +117,37 @@ public class HanLPSegmenter
 		textContent = textContent.replaceAll("SQL Server", "sqlserver");
 		textContent = textContent.replaceAll("c #", "c#");
 		return textContent;
+	}
+	
+	public static String replaceToken(String token) {
+		if(token.equals("cpp")) {
+			token = "c++";
+		}
+		if(token.equals("ccpp")) {
+			token = "c c++";
+		}
+		if(token.equals("vcpp")) {
+			token = "visualc++";
+		}
+		if(token.equals("visualcpp")) {
+			token = "visualc++";
+		}
+		if(token.equals("pythoncpp")) {
+			token = "python c++";
+		}
+		if(token.equals("qtcpp")) {
+			token = "qt c++";
+		}
+		if(token.equals("javaccpp")) {
+			token = "java c c++";
+		}
+		if (token.equals("j2") || token.equals("ee")) {
+			token = "j2ee";
+		}
+		if (token.equals("me")) {
+			token = "javame";
+		}
+		return token;
 	}
 	
 	/**
@@ -130,7 +164,7 @@ public class HanLPSegmenter
 		token = lowerCase(token.trim());
 			
 		//去除c以外的其他单个字母和汉字
-		if(token.length() == 1 && !token.equals("c")) {
+		if(token.length() == 1 && !token.equals("c") && !token.equals("r")) {
 			return null;
 		}
 		
@@ -139,9 +173,9 @@ public class HanLPSegmenter
 			return null;
 		}
 		
-		if (token.equals("ee")) {
-			token = "j2ee";
-		}
+		token = replaceToken(token);
+		
+		
 		token = token.replaceAll("\r", "");
 		token = token.replaceAll("\n", "");
 		token = token.replaceAll("\t", "");
@@ -349,6 +383,81 @@ public class HanLPSegmenter
 		foToken.closeOutput();
 		foPos.closeOutput();
 		foLoc.closeOutput();
+		fi.closeInput();
+	}
+	
+	public static void removeDuplicateData(String inputPath, String outputPath) {
+		FileInput fi = new FileInput(inputPath);
+		FileOutput fo = new FileOutput(outputPath);
+		HashSet<String> dataDict = new HashSet<String> ();
+		String line = new String ();
+		int counter = 0;
+		try {
+			while ((line = fi.reader.readLine()) != null) {
+				line = line.trim();
+				int firstSpace = line.indexOf(" ");
+				if (firstSpace > 0 && line.length() >= firstSpace + 1
+						&& line.substring(firstSpace + 1).length() > 0
+						) {
+					if (!dataDict.contains(line.substring(firstSpace + 1))) {
+						dataDict.add(line.substring(firstSpace + 1));
+						fo.t3.write(line);
+						fo.t3.newLine();
+						counter ++;
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(counter + " pieces of data");
+		fo.closeOutput();
+		fi.closeInput();
+	}
+	
+	public static void removeLongTailWord(String inputPath, String outputPath,
+			boolean idSave) {
+		FileInput fi = new FileInput(inputPath);
+		FileOutput fo = new FileOutput(outputPath);
+
+		String line = new String ();
+		try {
+			while ((line = fi.reader.readLine()) != null) {
+				line = line.trim();
+				String [] tokens = line.split(" ");
+				if (tokens.length < 1) {
+					continue;
+				}
+				String content = new String();
+				boolean firstWord = true;
+				if (idSave) {
+					content = tokens[0];
+					firstWord = false;
+				}
+				for (int i = 1; i < tokens.length; i ++) {
+					if (tokens[i] == null || tokens[i].length() < 1) {
+						continue;
+					}
+					if (Statistic.dict.containsKey(tokens[i])) {
+						if (firstWord) {
+							content += tokens[i];
+							firstWord = false;
+						} else {
+							content += " " + tokens[i];
+						}
+					}
+				}
+				if (content.indexOf(" ") != -1) {
+					fo.t3.write(content);
+					fo.t3.newLine();
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fo.closeOutput();
 		fi.closeInput();
 	}
 	

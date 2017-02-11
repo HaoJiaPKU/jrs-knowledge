@@ -13,7 +13,7 @@ public class Main implements Runnable{
 		option.inf = false;
 		option.modelName = "model-final";
 		option.niters = 1000;
-		option.K = 11;
+		option.K = 100;
 		Estimator estimator = new Estimator();
 		estimator.init(option);
 		estimator.estimate();

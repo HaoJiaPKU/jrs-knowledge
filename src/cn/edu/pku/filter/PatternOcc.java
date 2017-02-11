@@ -18,19 +18,23 @@ public class PatternOcc {
 
 	public static Set<String> dictRes
 			= new TreeSet<String>();
-	public static HashMap<String, Double> dictOcc
+	public static HashMap<String, Double> dictOccScore
 			= new HashMap<String, Double>();
+	public static HashMap<String, Integer> dictOccTf
+			= new HashMap<String, Integer>();
 	public static HashMap<String, Integer> dictPos
 			= new HashMap<String, Integer>();
 	
 	public static void init() {
 		dictRes.clear();
-		dictOcc.clear();
+		dictOccScore.clear();
+		dictOccTf.clear();
 		dictPos.clear();
 	}
 	
 	public static void clear() {
-		dictOcc.clear();
+		dictOccScore.clear();
+		dictOccTf.clear();
 		dictPos.clear();
 	}
 	
@@ -62,7 +66,7 @@ public class PatternOcc {
 	
 	//加载共线关系的词典
 	public static void loadDictOcc(String inputPath, String inputSeperator,
-			String str, double threshold) {
+			String str, int thresTf, double thresScore) {
 		FileInput fi = new FileInput(inputPath);
 		String line = new String ();
 		try {
@@ -75,11 +79,14 @@ public class PatternOcc {
 				}
 				String value = tokens[0].substring(
 						tokens[0].indexOf("→") + 1, tokens[0].length() - 1);
-				tokens[5] = tokens[5].substring(
-						tokens[5].indexOf("=") + 1);
+				//score=
+				tokens[5] = tokens[5].substring(6);
+				//tf=
+				tokens[1] = tokens[1].substring(3);
+				int tf = Integer.parseInt(tokens[1]);
 				double score = Double.parseDouble(tokens[5]);
-				if (score >= threshold) {
-					dictOcc.put(value, score);
+				if (score >= thresScore && tf >= thresTf) {
+					dictOccScore.put(value, score);
 				}
 			}
 		} catch (IOException e) {
@@ -90,7 +97,7 @@ public class PatternOcc {
 	}
 	
 	public static void getCandidate(int num) {
-		Map.Entry[] set = getSortedHashMapByValue(dictOcc);
+		Map.Entry[] set = getSortedHashMapByValue(dictOccScore);
 		for (int i = 0; i < set.length && i < num; i ++) {
 			String key = set[i].getKey().toString();
 			if (dictPos.containsKey(key)) {
@@ -141,13 +148,14 @@ public class PatternOcc {
 	public static void calculate(
 			String outputDir,
 			String [] tokens,
-			double [] thres,
+			int [] thresTf,
+			double [] thresScore,
 			int candidateNum) {
 		init();
 		for (int i = 0; i < tokens.length; i ++) {
 			loadDictPos(outputDir + "/" + "tokens.pos", " ");
 			loadDictOcc(outputDir + "/" + "tokens.occ", " ",
-					tokens[i], thres[i]);
+					tokens[i], thresTf[i], thresScore[i]);
 			getCandidate(candidateNum);
 			clear();
 		}
@@ -163,15 +171,18 @@ public class PatternOcc {
 							"了解",
 							"掌握"
 							};
-		double [] thres = {
-//				0, 0, 0, 0, 0,
+		int [] thresTf = {
+				0, 0, 0, 0, 0,
+							};
+		double [] thresScore = {
+				0, 0, 0, 0, 0,
 							8.5,
 							2.5,
 							3.5,
 							8.5,
 							8.5
 							};
-		calculate(FilterConf.ProcessingPath, tokens, thres, 500);
+		calculate(FilterConf.ProcessingPath, tokens, thresTf, thresScore, 500);
 	}
 	
 }
