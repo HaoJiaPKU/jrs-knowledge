@@ -6,7 +6,7 @@ import cn.edu.pku.util.FileInput;
 
 public class FilterConf {
 
-	public static final String ProcessingPath = "../proCategory";
+	public static final String ProcessingPath = "../proIndustry";
 	public static String [] fields;
 	public static String [] fieldDirs;
 	

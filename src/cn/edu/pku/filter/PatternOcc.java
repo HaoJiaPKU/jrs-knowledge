@@ -48,7 +48,7 @@ public class PatternOcc {
 				if (tokens.length <= 1) {
 					continue;
 				}
-				for (int i = 1; i < tokens.length; i ++) {
+				for (int i = 0; i < tokens.length; i ++) {
 					int tempCounter = 1;
 					if (dictPos.containsKey(tokens[i])) {
 						tempCounter = dictPos.get(tokens[i]) + 1;
