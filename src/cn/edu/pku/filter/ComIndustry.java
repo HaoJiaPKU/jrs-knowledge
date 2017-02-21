@@ -50,6 +50,7 @@ public class ComIndustry {
 					-100, -100, -100, -100, -100, -100,
 					-100, -100, -100, -100, -100, -100,
 					};
+		int dataSize = 15000;
 		
 		FileDirs.makeDirs(FilterConf.ProcessingPath);
 		
@@ -80,7 +81,7 @@ public class ComIndustry {
 					"com_industry",
 					FilterConf.fields[i],
 					fields,
-					15000
+					dataSize
 					);
 			System.out.println("提取数据结束");
 			
@@ -186,7 +187,7 @@ public class ComIndustry {
 //			PatternOcc.saveToFile(FilterConf.ProcessingPath
 //					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.through.occ.txt", " ");
 			System.out.println("模式提取结束");
-			
+			System.out.println();
 		}
 		
 		Combination.mergeFile(

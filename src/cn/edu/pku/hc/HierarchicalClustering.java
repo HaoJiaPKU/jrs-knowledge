@@ -8,14 +8,23 @@ import java.util.HashMap;
 import java.util.List;  
 import java.util.Map;
 
-import cn.edu.pku.util.FileInput;  
+import cn.edu.pku.util.FileInput;
+import cn.edu.pku.util.FileOutput;  
   
 public class HierarchicalClustering {  
   
     private List<Cluster> clusters = null;  
-  
-    public HierarchicalClustering(String inputPath, String inputSeperator) { 
-        initData(inputPath, inputSeperator);  
+    private HashMap<String, Cluster> dict
+    	= new HashMap<String, Cluster>();
+    private FileOutput fo;
+    private FileOutput foSeq;
+    private FileOutput foNonSeq;
+    private FileOutput foDis;
+    
+    public HierarchicalClustering(String inputPath, String inputSeperator
+    		, String outputDis) { 
+    	foDis = new FileOutput (outputDis);
+        initData(inputPath, inputSeperator);
     }  
   
     /** 
@@ -23,9 +32,9 @@ public class HierarchicalClustering {
      *  
      * @throws IOException 
      */  
-    private void initData(String inputPath, String inputSeperator) {  
+    private void initData(String inputPath, String inputSeperator) {
+    	
         clusters = new ArrayList<Cluster>();  
-        
         FileInput fi = new FileInput(inputPath); 
         String line = null;  
         int i = 0;  
@@ -41,12 +50,16 @@ public class HierarchicalClustering {
 			    cluster.setId(i ++);  
 			    cluster.setVector(list);
 			    clusters.add(cluster);
+			    dict.put(s[0], cluster);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}  
-  
+		}
+        
+//        System.out.print(CosDistance.getDistance(
+//        			dict.get("java").getVector(),
+//        			dict.get("ppt").getVector()));
     }  
   
     public Cluster hcluster() {   
@@ -80,7 +93,7 @@ public class HierarchicalClustering {
 //                    }
 //  
 //                    double d = distances.get(key);  
-                    if (d < closest) {  
+                    if (d > closest) {  
                         closest = d;  
                         lowestpair1 = i;  
                         lowestpair2 = j;  
@@ -93,7 +106,19 @@ public class HierarchicalClustering {
             List<Double> midvec = mergevec(
             		clusters.get(lowestpair1),  
                     clusters.get(lowestpair2));  
-              
+//            System.out.println(
+//            		clusters.get(lowestpair1).getName() + "	"
+//            		+ clusters.get(lowestpair2).getName() + " "
+//            		+ closest);
+            
+            try {
+				foDis.t3.write(String.valueOf(closest));
+				foDis.t3.newLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            
             Cluster cluster = new Cluster(
             		clusters.get(lowestpair1),
             		clusters.get(lowestpair2),
@@ -127,30 +152,64 @@ public class HierarchicalClustering {
     /** 
      * 打印输出 
      */  
-    public void printCluster(Cluster cluster, int n) {  
-        for (int i = 0; i < n; i++) {  
-            System.out.print("  ");  
-        }  
-        //负数标记代表这是一个分支  
-        if (cluster.getId() < 0) {  
-            System.out.println("-");  
-        } else {  
-            //代表是一个叶子节点   
-            System.out.println(cluster.getName());  
-        }  
-          
-        if (cluster.getLeft()!= null) {  
-            printCluster(cluster.getLeft(), ++ n);  
-        }  
-        if (cluster.getRight()!=null) {  
-            printCluster(cluster.getRight(), ++ n);  
-        }  
-    }  
+    public void saveCluster(
+    		String outputPath,
+    		String outputPathSeq,
+    		String outputPathNonSeq,
+    		Cluster cluster, int n) {
+    	fo = new FileOutput (outputPath);
+    	foSeq = new FileOutput (outputPathSeq);
+    	foNonSeq = new FileOutput (outputPathNonSeq);
+    	writeToFile(cluster, n, 0);
+        fo.closeOutput();
+        foSeq.closeOutput();
+        foNonSeq.closeOutput();
+        foDis.closeOutput();
+    }
+    
+    public void writeToFile(Cluster cluster, int n, int upN) {
+    	try {
+    		for (int i = 0; i < upN; i++) {
+				fo.t3.write("  ");
+	        }
+	    	for (int i = upN; i < n; i++) {
+				fo.t3.write("┗━");
+	        }
+	    	foNonSeq.t3.write("-");
+	        //负数标记代表这是一个分支  
+	        if (cluster.getId() < 0) {  
+	        	fo.t3.write("┓");
+	        	fo.t3.newLine();
+	        	foSeq.t3.write("-");
+	        } else {  
+	            //代表是一个叶子节点   
+	        	fo.t3.write("━");
+	        	fo.t3.write(cluster.getName());
+	        	fo.t3.newLine();
+	        	foSeq.t3.write(cluster.getName());
+	        	foNonSeq.t3.write(cluster.getName());
+	        }
+	        if (cluster.getLeft() != null) {  
+	        	writeToFile(cluster.getLeft(), n + 1, n);  
+	        }  
+	        if (cluster.getRight() != null) {  
+	        	writeToFile(cluster.getRight(), n + 1, n);  
+	        }
+	        foNonSeq.t3.write("-");
+    	} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+    }
   
     public static void main(String[] args) {  
         HierarchicalClustering hierarchicalClustering
-        	= new HierarchicalClustering("../proIndustry/vec.txt", "	");  
-        hierarchicalClustering.printCluster(
+        	= new HierarchicalClustering("../proIndustry/vec.txt", "	",
+        			"../proIndustry/hclusterDis.txt");  
+        hierarchicalClustering.saveCluster(
+        		"../proIndustry/hcluster.txt",
+        		"../proIndustry/hclusterSeq.txt",
+        		"../proIndustry/hclusterNonSeq.txt",
         		hierarchicalClustering.hcluster(), 0);  
     }  
   

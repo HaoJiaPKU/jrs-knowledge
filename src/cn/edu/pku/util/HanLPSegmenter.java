@@ -126,10 +126,7 @@ public class HanLPSegmenter
 		if(token.equals("ccpp")) {
 			token = "c c++";
 		}
-		if(token.equals("vcpp")) {
-			token = "visualc++";
-		}
-		if(token.equals("visualcpp")) {
+		if(token.equals("vcpp") || token.equals("visualcpp")) {
 			token = "visualc++";
 		}
 		if(token.equals("pythoncpp")) {
@@ -141,11 +138,36 @@ public class HanLPSegmenter
 		if(token.equals("javaccpp")) {
 			token = "java c c++";
 		}
-		if (token.equals("j2") || token.equals("ee")) {
+		if (token.equals("j2") || token.equals("ee") || token.equals("javaee")) {
 			token = "j2ee";
 		}
-		if (token.equals("me")) {
-			token = "javame";
+		if (token.equals("se") || token.equals("javase")) {
+			token = "j2se";
+		}
+		if (token.equals("me") || token.equals("javame")) {
+			token = "j2me";
+		}
+		if (token.equals("es")) {
+			token = "elasticsearch";
+		}
+		if (token.equals("js") || token.equals("javascrip")) {
+			token = "javascript";
+		}
+		if (token.equals("go")) {
+			token = "golang";
+		}
+		if(token.equals("reduce")) {
+			token = "mapreduce";
+		}
+		if(token.equals("map")) {
+			return "";
+		}
+		if(token.equals("rest")) {
+			return "restful";
+		}
+		if (token.indexOf("js") == token.length() - 2
+				&& token.length() > 2 ) {
+			token = token.substring(0, token.length() - 2);
 		}
 		return token;
 	}
