@@ -1,4 +1,4 @@
-package cn.edu.pku.word2vec;
+package cn.edu.pku.w2v;
 /**
  * 这是一个抽象类，意思是神经元
  * @author jf320

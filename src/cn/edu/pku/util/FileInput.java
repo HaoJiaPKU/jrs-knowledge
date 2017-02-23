@@ -14,6 +14,10 @@ public class FileInput {
 	
 	public static final String InputIncoding = "UTF-8";
 	
+	public FileInput () {
+		
+	}
+	
 	public FileInput (String inputPath) {
 		initInput(inputPath);
 	}

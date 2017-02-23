@@ -35,13 +35,13 @@ public class LeafNode {
 		this.predictValue = predictValue;
 	}
 	
-	public void updataPredictValue(HashMap<Integer, Double> targets, int K) {
+	public void updatePredictValue(HashMap<Integer, Double> targets, int K) {
 		double sum1 = 0;
 		for (Integer id : idset) {
 			sum1 += targets.get(id);
 		}
 		if (sum1 == 0) {
-			predictValue = 0;
+			predictValue = 0.0;
 			return;
 		}
 		double sum2 = 0;
@@ -50,7 +50,7 @@ public class LeafNode {
 			sum2 += num * (1.0 - num);
 		}
 		try {
-			predictValue = (K - 1) / K * (sum1 / sum2);
+			predictValue = (double)(K - 1) / (double) K * (sum1 / sum2);
 		} catch (Exception e) {
 			System.out.println("zero division");
 		}

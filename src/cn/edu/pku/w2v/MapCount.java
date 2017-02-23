@@ -3,7 +3,7 @@
 // (powered by Fernflower decompiler)
 //
 
-package cn.edu.pku.word2vec;
+package cn.edu.pku.w2v;
 
 import java.util.HashMap;
 import java.util.Iterator;

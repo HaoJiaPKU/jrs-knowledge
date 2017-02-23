@@ -1,4 +1,4 @@
-package cn.edu.pku.word2vec;
+package cn.edu.pku.w2v;
 
 import java.io.*;
 import java.lang.reflect.Array;

@@ -151,8 +151,8 @@ public class Util {
 		} else {
 			LeafNode node = new LeafNode(remainedSet);
 			int K = dataset.getLabelSize();
-			node.updataPredictValue(targets, K);
-			leafNodes.add(node);
+			node.updatePredictValue(targets, K);
+			leafNodes.add(new LeafNode(node));
 			Tree tree = new Tree();
 			tree.leafNode = new LeafNode(node);
 			return tree;

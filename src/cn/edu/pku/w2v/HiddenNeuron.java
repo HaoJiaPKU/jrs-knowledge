@@ -1,4 +1,4 @@
-package cn.edu.pku.word2vec;
+package cn.edu.pku.w2v;
 /**
  * 这是隐藏节点，继承于神经元的，其多出的部分也就是输出的部分，是一个数组
  * @author jf320

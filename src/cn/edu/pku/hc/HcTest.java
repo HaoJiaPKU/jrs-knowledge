@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import cn.edu.pku.word2vec.Learn;
-import cn.edu.pku.word2vec.ModelToFile;
-import cn.edu.pku.word2vec.Word2VEC;
-import cn.edu.pku.word2vec.WordEntry;
+import cn.edu.pku.w2v.Learn;
+import cn.edu.pku.w2v.ModelToFile;
+import cn.edu.pku.w2v.Word2VEC;
+import cn.edu.pku.w2v.WordEntry;
 
 public class HcTest {
 

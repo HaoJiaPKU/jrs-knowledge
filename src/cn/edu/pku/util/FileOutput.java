@@ -16,6 +16,10 @@ public class FileOutput {
 	
 	public static final String EncodingOutput = "UTF-8";
 	
+	public FileOutput () {
+		
+	}
+	
 	public FileOutput (String outputPath) {
 		initOutput(outputPath);
 	}

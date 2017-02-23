@@ -86,8 +86,15 @@ public class Model {
 	public HashMap<String, Double> computeInstanceFValue(Instance instance,
 			HashSet<String> labelValueset) {
 		HashMap<String, Double> fValue = new HashMap<String, Double> ();
-		for(String label : labelValueset) {
+		for (String label : labelValueset) {
 			fValue.put(label, 0.0);
+		}
+		for (Integer iter : trees.keySet()) {
+			for (String label : labelValueset) {
+				Tree tree = trees.get(iter).get(label);
+				double t = fValue.get(label) + learnRate * tree.getPredictValue(instance);
+				fValue.put(label, t);
+			}
 		}
 		return fValue;
 	}
@@ -130,10 +137,6 @@ public class Model {
 			if (sampleRate > 0 && sampleRate < 1) {
 				subset = Util.sample(subset, (int)(subset.size() * sampleRate));
 			}
-//			for (Integer id : subset) {
-//				System.out.print(id + " ");
-//			}
-//			System.out.println();
 			trees.put(iter, new HashMap<String, Tree>());
 			HashMap<Integer, HashMap<String, Double>> residual
 				= computeResidual(dataset, subset, f);
@@ -153,20 +156,21 @@ public class Model {
 			if (testData != null && testData.size() != 0.0) {
 				String res = test(dataset, testData);
 				accuracy = Double.parseDouble(res.substring(0, res.indexOf(" ")));
-				aveRisk = Double.parseDouble(res.substring(res.indexOf(" ")));
+				aveRisk = Double.parseDouble(res.substring(res.indexOf(" ") + 1));
 			}
 			double trainLoss = computeLoss(dataset, trainData, f);
 			double testLoss = computeLoss(dataset, testData, f);
 			System.out.println("accuracy=" + accuracy
-						+ " average train loss=" + trainLoss
-						+ " average test loss=" + testLoss);
+						+ "  average train loss=" + trainLoss
+						+ "  average test loss=" + testLoss
+						+ "  average risk=" + aveRisk);
 			System.out.println((iter + 1) + "th iteration completed");
+			System.out.println();
 			try {
-				fo.t3.write("accuracy=" + accuracy
-						+ " average train loss=" + trainLoss
-						+ " average test loss=" + testLoss);
-				fo.t3.newLine();
-				fo.t3.write((iter + 1) + "th iteration completed");
+				fo.t3.write(accuracy
+						+ "	" + trainLoss
+						+ "	" + testLoss
+						+ "	" + aveRisk);
 				fo.t3.newLine();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -206,8 +210,9 @@ public class Model {
 		HashMap<String, Double> expValues = new HashMap<String, Double> ();
 		double expSum = 0.0;
 		for (String label : fValue.keySet()) {
-			expValues.put(label, fValue.get(label));
-			expSum += fValue.get(label);
+			double t = Math.exp(fValue.get(label));
+			expValues.put(label, t);
+			expSum += t;
 		}
 		HashMap<String, Double> probs = new HashMap<String, Double>();
 		for (String label : expValues.keySet()) {
@@ -225,4 +230,5 @@ public class Model {
 		}
 		return predictLabel;
 	}
+	
 }

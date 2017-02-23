@@ -39,7 +39,6 @@ public class HanLPSegmenter
 	public static final String StopSigns = "[\\p{P}~$`^=|<>～｀＄＾＋＝｜＜＞￥× \\s|\t|\r|\n]+";
 	public static Pattern pattern = Pattern.compile("[a-b]|[d-z]");
 	
-	
 	/** 
 	 * 加载停用词、停用符号表
 	 * @param stopWordsFilePath 停用词表文件路径
@@ -119,6 +118,9 @@ public class HanLPSegmenter
 		return textContent;
 	}
 	
+	/**
+	 * 将特殊词汇进行替换
+	 * */
 	public static String replaceToken(String token) {
 		if(token.equals("cpp")) {
 			token = "c++";
@@ -228,7 +230,8 @@ public class HanLPSegmenter
 				|| token.equals("学历")
 				|| token.equals("本科")
 				|| token.equals("专科")
-				|| token.equals("能力")				
+				|| token.equals("能力")
+				|| token.equals("基础")
 				) {
 			return null;
 		}
@@ -248,11 +251,67 @@ public class HanLPSegmenter
 	
 	/**
 	 * 对文本进行分词
+	 * */
+	public static String[] segmentation(
+			String content,
+			boolean isNormalized,
+			boolean isSave,
+			String outputPath) {
+		
+		FileOutput fo = new FileOutput();
+		if (isSave) {
+			fo = new FileOutput(outputPath);
+		}
+		
+		Segment segmenter = HanLP.newSegment();
+		segmenter.enablePartOfSpeechTagging(true);	
+		
+		content = preStopWord(content.trim());
+		List<Term> termList = segmenter.seg(content);
+		
+		String [] temp = new String[termList.size()];
+		int index = 0;
+		Iterator it = termList.iterator();
+		while (it.hasNext()) {
+			String [] term = it.next().toString().split("/");
+			if (isNormalized) {
+				term[0] = normalizedToken(term[0]);
+				if (term[0] == null
+						|| term[0].length() == 0
+						|| term[0].equals("")) {
+					continue;
+				}
+			}
+			temp[index ++] = term[0];
+		}
+		
+		String [] ret = new String[index];
+		for (int i = 0; i < index; i ++) {
+			ret[i] = temp[i];
+			if (isSave) {
+				try {
+					fo.t3.write(ret[i] + " ");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		if (isSave) {
+			fo.closeOutput();
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * 对文本进行分词
 	 * @param inputPath 输入文件路径
 	 * @param outputPath 输出文件路径
 	 * @param indices 需要分词的域的索引
 	 * */
-	public static void segmentation(
+	public static void segmentationForFeature(
 			String inputPath,
 			String inputSeperator,
 			String outputPathTFIDF,
@@ -271,8 +330,8 @@ public class HanLPSegmenter
 		FileOutput foLoc = new FileOutput(outputPathLoc);
 		loadStopword();
 		
-		Segment segment = HanLP.newSegment();
-		segment.enablePartOfSpeechTagging(true);
+		Segment segmenter = HanLP.newSegment();
+		segmenter.enablePartOfSpeechTagging(true);	
 		
 		int counter = 0;
 		String line = new String();
@@ -313,7 +372,7 @@ public class HanLPSegmenter
 				}
 				
 				content = preStopWord(content.trim());
-				List<Term> termList = segment.seg(content);
+				List<Term> termList = segmenter.seg(content);
 				
 				ArrayList<String> token = new ArrayList<String>();
 				ArrayList<String> pos = new ArrayList<String>();
@@ -408,6 +467,79 @@ public class HanLPSegmenter
 		fi.closeInput();
 	}
 	
+	/**
+	 * 对文本进行分词
+	 * @param inputPath 输入文件路径
+	 * @param outputPath 输出文件路径
+	 * @param indices 需要分词的域的索引
+	 * */
+	public static void segmentationForGBDT(
+			String inputPath,
+			String inputSeperator,
+			String outputPath,
+			String outputSeperator) {		
+		FileInput fi = new FileInput(inputPath);
+		FileOutput fo = new FileOutput(outputPath);
+		loadStopword();
+		
+		Segment segmenter = HanLP.newSegment();
+		segmenter.enablePartOfSpeechTagging(true);	
+		
+		int counter = 0;
+		String line = new String();
+		try {
+			while ((line = fi.reader.readLine()) != null) {
+				String content = new String();
+				String [] fields = line.split(inputSeperator);
+				
+				boolean flag = true;
+				for (int i = 0; i < fields.length; i ++) {
+					if (fields[i] == null
+							|| fields[i].length() == 0
+							|| fields[i].equals("")) {
+						flag = false;
+						break;
+					}
+				}
+				if (!flag) {
+					continue;
+				}
+				
+				for (int i = 0; i < fields.length; i ++) {
+					content = preStopWord(fields[i].trim());
+					List<Term> termList = segmenter.seg(content);
+					
+					Iterator it = termList.iterator();
+					while (it.hasNext()) {
+						String [] term = it.next().toString().split("/");
+						term[0] = normalizedToken(term[0]);
+						if (term[0] == null
+								|| term[0].length() == 0
+								|| term[0].equals("")) {
+							continue;
+						}
+						fo.t3.write(term[0] + " ");
+					}
+					if (i != fields.length - 1) {
+						fo.t3.write(outputSeperator);
+					}
+				}
+				fo.t3.newLine();
+				
+				if (++ counter % 1000 == 0) {
+					System.out.println(counter + " results");
+				}
+			}
+			System.out.println(counter + " results");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		fo.closeOutput();
+		fi.closeInput();
+	}
+	
 	public static void removeDuplicateData(String inputPath, String outputPath) {
 		FileInput fi = new FileInput(inputPath);
 		FileOutput fo = new FileOutput(outputPath);
@@ -482,16 +614,4 @@ public class HanLPSegmenter
 		fo.closeOutput();
 		fi.closeInput();
 	}
-	
-    public static void main(String[] args)
-    {
-    	int[] indices = {3};
-		segmentation(
-					"../processing/text", "	",
-					"../processing/tokens",
-					"../processing/tokens.pos",
-					"../processing/tokens.pos.loc", " ",
-					indices
-					);
-    }
 }

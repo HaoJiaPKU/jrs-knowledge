@@ -1,4 +1,4 @@
-package cn.edu.pku.word2vec;
+package cn.edu.pku.w2v;
 
 /**
  * 词的对象，包含了一个词名和词得分。

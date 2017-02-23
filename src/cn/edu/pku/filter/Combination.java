@@ -245,7 +245,7 @@ public class Combination {
 	}
 	
 	public static void mergeFile(
-			String processingDir,
+			String FeatureDir,
 			String [] industries,
 			String [] industryDirs,
 			String inputFileName,
@@ -253,7 +253,7 @@ public class Combination {
 			) {
 		FileOutput fo = new FileOutput(outputPath);
 		for (int i = 0; i < industryDirs.length; i ++) {
-			FileInput fi = new FileInput(processingDir
+			FileInput fi = new FileInput(FeatureDir
 					+ "/" + industryDirs[i] + "/" + inputFileName);
 			try {
 				fo.t3.write(industries[i]);
@@ -286,41 +286,41 @@ public class Combination {
 	public static void main(String [] args) {
 		init();
 
-//		load(FilterConf.ProcessingPath + "tokens.pos.con", " ");
-//		add(FilterConf.ProcessingPath + "tokens.pos.span", " ");
-//		saveToFile(FilterConf.ProcessingPath + "tokens.pos.con.span", " ");
-//		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.con.span."
+//		load(FilterConf.FeaturePath + "tokens.pos.con", " ");
+//		add(FilterConf.FeaturePath + "tokens.pos.span", " ");
+//		saveToFile(FilterConf.FeaturePath + "tokens.pos.con.span", " ");
+//		saveToHtml(FilterConf.FeaturePath + "tokens.pos.con.span."
 //				+ Threshold + ".html", " ");	
 //		statistic();
-//		saveStatistic(FilterConf.ProcessingPath + "tokens.pos.con.span.statistic."
+//		saveStatistic(FilterConf.FeaturePath + "tokens.pos.con.span.statistic."
 //				+ Threshold + ".html");
 		
-//		load(FilterConf.ProcessingPath + "tokens.pos.con", " ");
-//		add(FilterConf.ProcessingPath + "tokens.pos.tfidf", " ");
-//		saveToFile(FilterConf.ProcessingPath + "tokens.pos.con.tfidf", " ");
-//		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.con.tfidf."
+//		load(FilterConf.FeaturePath + "tokens.pos.con", " ");
+//		add(FilterConf.FeaturePath + "tokens.pos.tfidf", " ");
+//		saveToFile(FilterConf.FeaturePath + "tokens.pos.con.tfidf", " ");
+//		saveToHtml(FilterConf.FeaturePath + "tokens.pos.con.tfidf."
 //				+ Threshold + ".html", " ");	
 //		statistic();
-//		saveStatistic(FilterConf.ProcessingPath + "tokens.pos.con.tfidf.statistic."
+//		saveStatistic(FilterConf.FeaturePath + "tokens.pos.con.tfidf.statistic."
 //				+ Threshold + ".html");
 		
-//		load(FilterConf.ProcessingPath + "tokens.pos.span", " ");
-//		add(FilterConf.ProcessingPath + "tokens.pos.tfidf", " ");
-//		saveToFile(FilterConf.ProcessingPath + "tokens.pos.span.tfidf", " ");
-//		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.span.tfidf."
+//		load(FilterConf.FeaturePath + "tokens.pos.span", " ");
+//		add(FilterConf.FeaturePath + "tokens.pos.tfidf", " ");
+//		saveToFile(FilterConf.FeaturePath + "tokens.pos.span.tfidf", " ");
+//		saveToHtml(FilterConf.FeaturePath + "tokens.pos.span.tfidf."
 //				+ Threshold + ".html", " ");	
 //		statistic();
-//		saveStatistic(FilterConf.ProcessingPath + "tokens.pos.span.tfidf.statistic."
+//		saveStatistic(FilterConf.FeaturePath + "tokens.pos.span.tfidf.statistic."
 //				+ Threshold + ".html");
 		
-		load(FilterConf.ProcessingPath + "tokens.pos.span", " ");
-		add(FilterConf.ProcessingPath + "tokens.pos.con", " ");
-		add(FilterConf.ProcessingPath + "tokens.pos.tfidf", " ");
-		saveToFile(FilterConf.ProcessingPath + "tokens.pos.span.con.tfidf", " ");
-		saveToHtml(FilterConf.ProcessingPath + "tokens.pos.span.con.tfidf."
+		load(FilterConf.FeaturePath + "tokens.pos.span", " ");
+		add(FilterConf.FeaturePath + "tokens.pos.con", " ");
+		add(FilterConf.FeaturePath + "tokens.pos.tfidf", " ");
+		saveToFile(FilterConf.FeaturePath + "tokens.pos.span.con.tfidf", " ");
+		saveToHtml(FilterConf.FeaturePath + "tokens.pos.span.con.tfidf."
 				+ Threshold + ".html", " ");	
 		statistic();
-		saveStatistic(FilterConf.ProcessingPath + "tokens.pos.span.con.tfidf.statistic."
+		saveStatistic(FilterConf.FeaturePath + "tokens.pos.span.con.tfidf.statistic."
 				+ Threshold + ".html");
 	}
 	
