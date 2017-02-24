@@ -122,6 +122,9 @@ public class HanLPSegmenter
 	 * 将特殊词汇进行替换
 	 * */
 	public static String replaceToken(String token) {
+		if(token.equals("net")) {
+			token = ".net";
+		}
 		if(token.equals("cpp")) {
 			token = "c++";
 		}
@@ -539,79 +542,5 @@ public class HanLPSegmenter
 		fo.closeOutput();
 		fi.closeInput();
 	}
-	
-	public static void removeDuplicateData(String inputPath, String outputPath) {
-		FileInput fi = new FileInput(inputPath);
-		FileOutput fo = new FileOutput(outputPath);
-		HashSet<String> dataDict = new HashSet<String> ();
-		String line = new String ();
-		int counter = 0;
-		try {
-			while ((line = fi.reader.readLine()) != null) {
-				line = line.trim();
-				int firstSpace = line.indexOf(" ");
-				if (firstSpace > 0 && line.length() >= firstSpace + 1
-						&& line.substring(firstSpace + 1).length() > 0
-						) {
-					if (!dataDict.contains(line.substring(firstSpace + 1))) {
-						dataDict.add(line.substring(firstSpace + 1));
-						fo.t3.write(line);
-						fo.t3.newLine();
-						counter ++;
-					}
-				}
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println(counter + " pieces of data");
-		fo.closeOutput();
-		fi.closeInput();
-	}
-	
-	public static void removeLongTailWord(String inputPath, String outputPath,
-			boolean idSave) {
-		FileInput fi = new FileInput(inputPath);
-		FileOutput fo = new FileOutput(outputPath);
 
-		String line = new String ();
-		try {
-			while ((line = fi.reader.readLine()) != null) {
-				line = line.trim();
-				String [] tokens = line.split(" ");
-				if (tokens.length < 1) {
-					continue;
-				}
-				String content = new String();
-				boolean firstWord = true;
-				if (idSave) {
-					content = tokens[0];
-					firstWord = false;
-				}
-				for (int i = 1; i < tokens.length; i ++) {
-					if (tokens[i] == null || tokens[i].length() < 1) {
-						continue;
-					}
-					if (Statistic.dict.containsKey(tokens[i])) {
-						if (firstWord) {
-							content += tokens[i];
-							firstWord = false;
-						} else {
-							content += " " + tokens[i];
-						}
-					}
-				}
-				if (content.indexOf(" ") != -1) {
-					fo.t3.write(content);
-					fo.t3.newLine();
-				}
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		fo.closeOutput();
-		fi.closeInput();
-	}
 }

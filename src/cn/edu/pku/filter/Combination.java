@@ -246,7 +246,6 @@ public class Combination {
 	
 	public static void mergeFile(
 			String FeatureDir,
-			String [] industries,
 			String [] industryDirs,
 			String inputFileName,
 			String outputPath
@@ -256,7 +255,7 @@ public class Combination {
 			FileInput fi = new FileInput(FeatureDir
 					+ "/" + industryDirs[i] + "/" + inputFileName);
 			try {
-				fo.t3.write(industries[i]);
+				fo.t3.write(industryDirs[i]);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

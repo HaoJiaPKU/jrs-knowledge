@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Word2VEC {
+public class Word2Vec {
 
 	public static void main(String[] args) throws IOException {
 
@@ -20,7 +20,7 @@ public class Word2VEC {
 		// learn.learnFile(new File("library/xh.txt"));
 		// learn.saveModel(new File("library/javaSkip1"));
 
-		Word2VEC vec = new Word2VEC();
+		Word2Vec vec = new Word2Vec();
 		vec.loadJavaModel("library/javaSkip1");
 
 		// System.out.println("ä¸­å›½" + "\t" +

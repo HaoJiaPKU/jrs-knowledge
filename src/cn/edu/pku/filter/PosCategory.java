@@ -7,6 +7,7 @@ import cn.edu.pku.conf.DatabaseConf;
 import cn.edu.pku.conf.FilterConf;
 import cn.edu.pku.conf.ZhilianConf;
 import cn.edu.pku.object.AbstractObj;
+import cn.edu.pku.pipeline.FeatureProcessor;
 import cn.edu.pku.util.FileDirs;
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
@@ -97,15 +98,15 @@ public class PosCategory {
 					);
 			System.out.println("分词结束");
 			
-			HanLPSegmenter.removeDuplicateData(FilterConf.FeaturePath
+			FeatureProcessor.removeDuplicateData(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup",
 				 	FilterConf.FeaturePath
 				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp");
-			HanLPSegmenter.removeDuplicateData(FilterConf.FeaturePath
+			FeatureProcessor.removeDuplicateData(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.dup",
 				 	FilterConf.FeaturePath
 				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.tmp");
-			HanLPSegmenter.removeDuplicateData(FilterConf.FeaturePath
+			FeatureProcessor.removeDuplicateData(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.loc.dup",
 				 	FilterConf.FeaturePath
 				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.loc.tmp");
@@ -116,7 +117,7 @@ public class PosCategory {
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp", " ", 20);
 			Statistic.saveToFile(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.stata.txt", "	");
-			HanLPSegmenter.removeLongTailWord(FilterConf.FeaturePath
+			FeatureProcessor.removeLongTailWord(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp",
 				 	FilterConf.FeaturePath
 				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt",
@@ -128,7 +129,7 @@ public class PosCategory {
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.tmp", " ", 20);
 			Statistic.saveToFile(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.stata.txt", "	");
-			HanLPSegmenter.removeLongTailWord(FilterConf.FeaturePath
+			FeatureProcessor.removeLongTailWord(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.tmp",
 				 	FilterConf.FeaturePath
 				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.txt",
@@ -183,7 +184,6 @@ public class PosCategory {
 		
 		Combination.mergeFile(
 				FilterConf.FeaturePath,
-				FilterConf.fields,
 				FilterConf.fieldDirs,
 				"tokens.through.occ.txt",
 				FilterConf.FeaturePath + "/" + "merge.dat");

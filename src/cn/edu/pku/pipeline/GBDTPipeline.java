@@ -35,44 +35,33 @@ public class GBDTPipeline {
 					"pos_description"
 					};
 		int[] indices = {1};
-		String [] tokens = {
-					"熟练掌握",
-					"熟悉",
-					"熟练",
-					"精通",
-					"了解",
-					"掌握",
-					"使用",
-					"运用",
-					
-					"参与",
-					"负责",
-					"能够",
-					"具有",
-					"具备"
-					};
 		int dataSize = 20000;
 		String seperator = "@@@@@@";
 		
 		FileDirs.makeDirs(FilterConf.GBDTPath);
+		//统计行业
+		AbstractObj.feildsToConf(FilterConf.GBDTPath
+				+ "/" + "industry.conf",
+				sources,
+				date,
+				"com_industry",
+				null,
+				null);
 		
-//		AbstractObj.feildsToConf(FilterConf.GBDTPath
-//				+ "/" + "industry.conf",
-//				sources,
-//				date,
-//				"com_industry",
-//				null,
-//				null);
-		
+		//选出数量前10位的行业
 		FilterConf.readFieldFromConf(
 				FilterConf.GBDTPath + "/" + "industry.conf",
-				20);
+				10);
 		
+		//创建目录
 		for (int i = 0; i < FilterConf.fields.length; i ++) {
 			FileDirs.makeDirs(FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i]);
 		}
+		
 		FilterConf.fieldDirs[0] = "计算机软件";
+		FilterConf.fields[0] = "计算机软件";
+		//对行业逐一计算
 		for (int i = 0; i < 1; i ++) {
 			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
 			
@@ -83,7 +72,7 @@ public class GBDTPipeline {
 					sources,
 					date,
 					"com_industry",
-					FilterConf.fieldDirs[i],
+					FilterConf.fields[i],
 					fields,
 					dataSize
 					);
@@ -142,6 +131,7 @@ public class GBDTPipeline {
 					0.1,
 					3,
 					-1);
+			System.out.println("GBDT训练结束");
 			
 			System.out.println();
 		}

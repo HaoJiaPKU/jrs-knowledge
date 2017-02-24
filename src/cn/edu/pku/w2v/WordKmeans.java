@@ -25,7 +25,7 @@ public class WordKmeans {
 	 */
     public static void main(String[] args) throws IOException {
         //创建一个W2V对象
-    	Word2VEC vec = new Word2VEC();
+    	Word2Vec vec = new Word2Vec();
     	//加载谷歌模型，这里可以自己设置自己的模型
         vec.loadGoogleModel("vectors.bin");
         System.out.println("load model ok!");
