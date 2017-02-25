@@ -1,10 +1,16 @@
 package cn.edu.pku.gbdt;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
 
 public class Model {
@@ -16,6 +22,11 @@ public class Model {
 	public int splitPoints;
 	public HashMap<Integer, HashMap<String, Tree>> trees;
 	
+	public Model() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public Model(int maxIter, double sampleRate, double learnRate, int maxDepth, int splitPoints) {
 		super();
 		this.maxIter = maxIter;
@@ -231,4 +242,54 @@ public class Model {
 		return predictLabel;
 	}
 	
+	public void save(String modelDisplay, String modelReuse) {
+		FileOutput fo1 = new FileOutput(modelDisplay);
+		FileOutput fo2 = new FileOutput(modelReuse);
+		ArrayList<Tree> treeList = new ArrayList<Tree>();
+		for (Integer id : trees.keySet()) {
+			HashMap<String, Tree> t = trees.get(id);
+			for (String label : t.keySet()) {
+				treeList.add(t.get(label));
+			}
+		}
+		
+		ObjectMapper om = new ObjectMapper();
+		try {
+			fo1.t3.write("{\"trees\":[" + "\n");
+			for (int j = 0; j < treeList.size() - 1; j++)
+				fo1.t3.write(om.writeValueAsString(treeList.get(j)) + ",\n");
+			fo1.t3.write(om.writeValueAsString(treeList.get(treeList.size() - 1)) + "]}");
+		
+			fo2.t3.write(om.writeValueAsString(this));
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fo1.closeOutput();
+		fo2.closeOutput();
+	}
+
+	public void load(String modelPath) {
+		FileInput fi = new FileInput(modelPath);
+		ObjectMapper om = new ObjectMapper();
+		try {
+			Model model = om.readValue(fi.reader.readLine(), Model.class);
+			this.maxIter = model.maxIter;
+			this.sampleRate = model.sampleRate;
+			this.learnRate = model.learnRate;
+			this.maxDepth = model.maxDepth;
+			this.splitPoints = model.splitPoints;
+			this.trees = (HashMap<Integer, HashMap<String, Tree>>) model.trees.clone();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fi.closeInput();
+	}
 }

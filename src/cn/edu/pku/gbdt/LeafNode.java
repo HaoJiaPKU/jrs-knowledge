@@ -14,6 +14,11 @@ public class LeafNode {
 		this.predictValue = node.predictValue;
 	}
 	
+	public LeafNode() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public LeafNode(HashSet<Integer> idset) {
 		this.idset = (HashSet<Integer>) idset.clone();
 		predictValue = 0;

@@ -8,22 +8,27 @@ import java.util.HashMap;
 import java.util.List;  
 import java.util.Map;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;  
   
-public class HierarchicalClustering {  
+public class Model {  
   
-    private List<Cluster> clusters = null;  
-    private HashMap<String, Cluster> dict
+    public ArrayList<Cluster> clusters = null;  
+    public HashMap<String, Cluster> dict
     	= new HashMap<String, Cluster>();
-    private FileOutput fo;
-    private FileOutput foSeq;
-    private FileOutput foNonSeq;
-    private FileOutput foDis;
     
-    public HierarchicalClustering(String inputPath, String inputSeperator
-    		, String outputDis) { 
-    	foDis = new FileOutput (outputDis);
+    public Model() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Model(String inputPath,
+    		String inputSeperator
+    		) {
         initData(inputPath, inputSeperator);
     }  
   
@@ -62,12 +67,13 @@ public class HierarchicalClustering {
 //        			dict.get("ppt").getVector()));
     }  
   
-    public Cluster hcluster() {   
-  
-        int currentId = -1;  
-  
-        while (clusters.size() > 1) {  
-        	System.out.println(clusters.size());
+    public Cluster hcluster(String outputDis) {
+    	FileOutput foDis = new FileOutput (outputDis);
+        int currentId = -1; 
+        while (clusters.size() > 1) {
+        	if (clusters.size() % 100 == 0) {
+        		System.out.println(clusters.size());
+        	}
             // 最短距离的两聚类id  
             int lowestpair1 = 0;  
             int lowestpair2 = 1;  
@@ -137,7 +143,8 @@ public class HierarchicalClustering {
                 clusters.remove(clusters.get(lowestpair2));  
             }  
             clusters.add(cluster);  
-        }  
+        }
+        foDis.closeOutput();
         return clusters.get(0);  
     }  
   
@@ -152,22 +159,22 @@ public class HierarchicalClustering {
     /** 
      * 打印输出 
      */  
-    public void saveCluster(
+    public void printClusterAsText(
     		String outputPath,
     		String outputPathSeq,
     		String outputPathNonSeq,
     		Cluster cluster, int n) {
-    	fo = new FileOutput (outputPath);
-    	foSeq = new FileOutput (outputPathSeq);
-    	foNonSeq = new FileOutput (outputPathNonSeq);
-    	writeToFile(cluster, n, 0);
+    	FileOutput fo = new FileOutput (outputPath);
+    	FileOutput foSeq = new FileOutput (outputPathSeq);
+    	FileOutput foNonSeq = new FileOutput (outputPathNonSeq);
+    	writeToFile(cluster, n, 0, fo, foSeq, foNonSeq);
         fo.closeOutput();
         foSeq.closeOutput();
         foNonSeq.closeOutput();
-        foDis.closeOutput();
     }
     
-    public void writeToFile(Cluster cluster, int n, int upN) {
+    public void writeToFile(Cluster cluster, int n, int upN,
+    		FileOutput fo, FileOutput foSeq, FileOutput foNonSeq) {
     	try {
     		for (int i = 0; i < upN; i++) {
 				fo.t3.write("  ");
@@ -190,10 +197,10 @@ public class HierarchicalClustering {
 	        	foNonSeq.t3.write(cluster.getName());
 	        }
 	        if (cluster.getLeft() != null) {  
-	        	writeToFile(cluster.getLeft(), n + 1, n);  
+	        	writeToFile(cluster.getLeft(), n + 1, n, fo, foSeq, foNonSeq);  
 	        }  
 	        if (cluster.getRight() != null) {  
-	        	writeToFile(cluster.getRight(), n + 1, n);  
+	        	writeToFile(cluster.getRight(), n + 1, n, fo, foSeq, foNonSeq);  
 	        }
 	        foNonSeq.t3.write("-");
     	} catch (IOException e) {
@@ -202,16 +209,44 @@ public class HierarchicalClustering {
 		}  
     }
   
-    public static void main(String[] args) {  
-        HierarchicalClustering hierarchicalClustering
-        	= new HierarchicalClustering("../proIndustry/vec.txt", "	",
-        			"../proIndustry/hclusterDis.txt");  
-        hierarchicalClustering.saveCluster(
-        		"../proIndustry/hcluster.txt",
-        		"../proIndustry/hclusterSeq.txt",
-        		"../proIndustry/hclusterNonSeq.txt",
-        		hierarchicalClustering.hcluster(), 0);  
-    }  
-  
+    public void save(String modelPath) {
+		FileOutput fo = new FileOutput(modelPath);
+//		ArrayList<Tree> treeList = new ArrayList<Tree>();
+//		for (Integer id : trees.keySet()) {
+//			HashMap<String, Tree> t = trees.get(id);
+//			for (String label : t.keySet()) {
+//				treeList.add(t.get(label));
+//			}
+//		}
+		
+		ObjectMapper om = new ObjectMapper();
+		try {
+			fo.t3.write(om.writeValueAsString(this));
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fo.closeOutput();
+	}
+    
+    public void load(String modelPath) {
+		FileInput fi = new FileInput(modelPath);
+		ObjectMapper om = new ObjectMapper();
+		try {
+			Model model = om.readValue(fi.reader.readLine(), Model.class);
+			this.clusters = (ArrayList<Cluster>) model.clusters.clone();
+			this.dict = (HashMap<String, Cluster>) model.dict.clone();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fi.closeInput();
+	}
 }  
 

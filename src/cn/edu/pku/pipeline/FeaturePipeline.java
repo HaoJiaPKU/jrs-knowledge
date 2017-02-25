@@ -212,12 +212,18 @@ public class FeaturePipeline {
 //			for(int j = 0; j < 20; j ++) {
 //				System.out.println(result2.toArray()[j]);
 //			}
+//			
+//			//层次聚类
+//			HC.run(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.vec.txt", "	",
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/",
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.json");
 			
-			//层次聚类
-			HC.run(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.vec.txt", "	",
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "hclusterDis.txt",
+			//测试模型反序列化
+			HC.testDeserialization(FilterConf.FeaturePath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.json",
 					FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/");
 			
