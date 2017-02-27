@@ -28,24 +28,27 @@ import cn.edu.pku.filter.Statistic;
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
 
-/**
- * 词性标注
- * @author hankcs
- */
 public class HanLPSegmenter
 {
+	/** 停用词、停用符号表 */
 	public static HashSet<String> stopword = new HashSet<String> ();
-	public static final String StopwordFile = "stopwords.txt";
+	/** 停用词、停用符号文件 */
+	public static String stopwordsFile = "stopwords.txt";
+	/** 停用符号 */
 	public static final String StopSigns = "[\\p{P}~$`^=|<>～｀＄＾＋＝｜＜＞￥× \\s|\t|\r|\n]+";
-	public static Pattern pattern = Pattern.compile("[a-b]|[d-z]");
+	/** 停用模式 */
+	public static Pattern pattern = Pattern.compile("[a-b]|[d-q]|[s-z]");
 	
 	/** 
 	 * 加载停用词、停用符号表
 	 * @param stopWordsFilePath 停用词表文件路径
 	 * @throws IOException 找不到停用词、停用符号文件
 	 */
-	public static void loadStopword() {
-		FileInput fi = new FileInput(StopwordFile);
+	public static void loadStopword(String _stopwordsFile) {
+		if(_stopwordsFile != null)
+			stopwordsFile = _stopwordsFile;
+		stopword.clear();
+		FileInput fi = new FileInput(stopwordsFile);
 		String line = new String ();
 		try {
 			while ((line = fi.reader.readLine()) != null) {
@@ -331,7 +334,7 @@ public class HanLPSegmenter
 		FileOutput foToken = new FileOutput(outputPathTFIDF);
 		FileOutput foPos = new FileOutput(outputPathPos);
 		FileOutput foLoc = new FileOutput(outputPathLoc);
-		loadStopword();
+		loadStopword(null);
 		
 		Segment segmenter = HanLP.newSegment();
 		segmenter.enablePartOfSpeechTagging(true);	
@@ -483,7 +486,7 @@ public class HanLPSegmenter
 			String outputSeperator) {		
 		FileInput fi = new FileInput(inputPath);
 		FileOutput fo = new FileOutput(outputPath);
-		loadStopword();
+		loadStopword(null);
 		
 		Segment segmenter = HanLP.newSegment();
 		segmenter.enablePartOfSpeechTagging(true);	

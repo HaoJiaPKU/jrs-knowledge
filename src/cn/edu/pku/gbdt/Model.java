@@ -20,6 +20,7 @@ public class Model {
 	public double learnRate;
 	public int maxDepth;
 	public int splitPoints;
+	public HashSet<String> labelValueset;
 	public HashMap<Integer, HashMap<String, Tree>> trees;
 	
 	public Model() {
@@ -27,7 +28,8 @@ public class Model {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Model(int maxIter, double sampleRate, double learnRate, int maxDepth, int splitPoints) {
+	public Model(int maxIter, double sampleRate, double learnRate,
+			int maxDepth, int splitPoints, HashSet<String> labelValueset) {
 		super();
 		this.maxIter = maxIter;
 		this.sampleRate = sampleRate;
@@ -35,12 +37,13 @@ public class Model {
 		this.maxDepth = maxDepth;
 		this.splitPoints = splitPoints;
 		this.trees = new HashMap<Integer, HashMap<String, Tree>>();
+		this.labelValueset = (HashSet<String>) labelValueset.clone();
 	}
 	
 	public void initialize(HashMap<Integer, HashMap<String, Double>> f, DataSet dataset) {
 		for (Integer id : dataset.getInstanceIdset()) {
 			HashMap<String, Double> t = new HashMap<String, Double>();
-			for (String label : dataset.getLabelValueset()) {
+			for (String label : labelValueset) {
 				t.put(label, 0.0);
 			}
 			f.put(id, t);
@@ -52,14 +55,13 @@ public class Model {
 			HashMap<Integer, HashMap<String, Double>> f) {
 		HashMap<Integer, HashMap<String, Double>> residual
 			= new HashMap<Integer, HashMap<String, Double>>();
-		HashSet<String> labelValueSet = dataset.getLabelValueset();
 		for (Integer id : subset) {
 			HashMap<String, Double> residualId = new HashMap<String, Double>();
 			double pSum = 0.0;
-			for (String label : labelValueSet) {
+			for (String label : labelValueset) {
 				pSum += Math.exp(f.get(id).get(label));
 			}
-			for (String label : labelValueSet) {
+			for (String label : labelValueset) {
 				double p = Math.exp(f.get(id).get(label)) / pSum;
 				double y = 0.0;
 				if (dataset.getInstance(id).strTypeFeature.get("label").equals(label)) {
@@ -94,8 +96,7 @@ public class Model {
 		}
 	}
 	
-	public HashMap<String, Double> computeInstanceFValue(Instance instance,
-			HashSet<String> labelValueset) {
+	public HashMap<String, Double> computeInstanceFValue(Instance instance) {
 		HashMap<String, Double> fValue = new HashMap<String, Double> ();
 		for (String label : labelValueset) {
 			fValue.put(label, 0.0);
@@ -119,7 +120,7 @@ public class Model {
 			if (f.containsKey(id)) {
 				fValues = f.get(id);
 			} else {
-				fValues = computeInstanceFValue(instance, dataset.getLabelValueset());
+				fValues = computeInstanceFValue(instance);
 			}
 			HashMap<String, Double> expValues = new HashMap<String, Double>();
 			double sumExpValues = 0.0;
@@ -140,7 +141,6 @@ public class Model {
 	public void train(DataSet dataset, HashSet<Integer> trainData,
 			String outputPath, HashSet<Integer> testData) {
 		FileOutput fo = new FileOutput(outputPath);
-		HashSet<String> labelValueset = dataset.getLabelValueset();
 		HashMap<Integer, HashMap<String, Double>> f = new HashMap<Integer, HashMap<String, Double>>();
 		initialize(f, dataset);
 		for (int iter = 0; iter < maxIter; iter ++) {
@@ -193,11 +193,10 @@ public class Model {
 	
 	public String test(DataSet dataset, HashSet<Integer> testData) {
 		int rightPrediction = 0;
-		HashSet<String> labelValueset = dataset.getLabelValueset();
 		double risk = 0.0;
 		for (Integer id : testData) {
 			Instance instance = dataset.getInstance(id);
-			HashMap<String, Double> probs = predict(instance, labelValueset);
+			HashMap<String, Double> probs = predict(instance);
 			String predictLabel = predictLabel(probs);
 			double singleRisk = 0.0;
 			for (String label : probs.keySet()) {
@@ -216,8 +215,8 @@ public class Model {
 				+ " " + String.valueOf(risk / (double) testData.size()));
 	}
 	
-	public HashMap<String, Double> predict(Instance instance, HashSet<String> labelValueset) {
-		HashMap<String, Double> fValue = computeInstanceFValue(instance, labelValueset);
+	public HashMap<String, Double> predict(Instance instance) {
+		HashMap<String, Double> fValue = computeInstanceFValue(instance);
 		HashMap<String, Double> expValues = new HashMap<String, Double> ();
 		double expSum = 0.0;
 		for (String label : fValue.keySet()) {

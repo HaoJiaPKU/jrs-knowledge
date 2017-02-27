@@ -119,27 +119,27 @@ public class GBDTPipeline {
 //					+ "/" + FilterConf.fieldDirs[i] + "/" + "position.num.stata.txt", 10);//15个类
 //			System.out.println("向量表示结束");
 			
-//			//GBDT训练
-//			GBDT.run(FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "vec.csv",
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "status.txt",
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "modelUI.json",
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.json",
-//					20,
-//					0.5,
-//					0.1,
-//					3,
-//					-1);
-//			System.out.println("GBDT训练结束");
-			
-			//测试模型反序列化
-			GBDT.testDeserialization(FilterConf.GBDTPath
+			//GBDT训练
+			GBDT.run(FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "vec.csv",
 					FilterConf.GBDTPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.json");
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "status.txt",
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "modelUI.json",
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.json",
+					10,
+					0.5,
+					0.1,
+					3,
+					-1);
+			System.out.println("GBDT训练结束");
+			
+//			//测试模型反序列化
+//			GBDT.testDeserialization(FilterConf.GBDTPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "vec.csv",
+//					FilterConf.GBDTPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.json");
 			
 			System.out.println();
 		}
