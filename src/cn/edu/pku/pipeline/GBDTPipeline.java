@@ -39,14 +39,14 @@ public class GBDTPipeline {
 		String seperator = "@@@@@@";
 		
 		FileDirs.makeDirs(FilterConf.GBDTPath);
-//		//统计行业
-//		AbstractObj.feildsToConf(FilterConf.GBDTPath
-//				+ "/" + "industry.conf",
-//				sources,
-//				date,
-//				"com_industry",
-//				null,
-//				null);
+		//统计行业
+		AbstractObj.feildsToConf(FilterConf.GBDTPath
+				+ "/" + "industry.conf",
+				sources,
+				date,
+				"com_industry",
+				null,
+				null);
 		
 		//选出数量前10位的行业
 		FilterConf.readFieldFromConf(
@@ -59,65 +59,67 @@ public class GBDTPipeline {
 					+ "/" + FilterConf.fieldDirs[i]);
 		}
 		
-		FilterConf.fieldDirs[0] = "计算机软件";
-		FilterConf.fields[0] = "计算机软件";
+		//For Test
+//		FilterConf.fieldDirs[0] = "计算机软件";
+//		FilterConf.fields[0] = "计算机软件";
+		
 		//对行业逐一计算
-		for (int i = 0; i < 1; i ++) {
-//			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
-//			
-//			AbstractObj.feildsToText(
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt",
-//					"@@@@@@",
-//					sources,
-//					date,
-//					"com_industry",
-//					FilterConf.fields[i],
-//					fields,
-//					dataSize
-//					);
-//			System.out.println("提取数据结束");
-//			
-//			RegularExp.extractFromRegularExp(
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", seperator,
-//				 	FilterConf.GBDTPath
-//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", seperator,
-//					indices);
-//			System.out.println("正则匹配结束");
-//			
-//			HanLPSegmenter.segmentationForGBDT(
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", seperator,
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt", seperator
-//					);
-//			System.out.println("分词结束");
-//			
-//			GBDTProcessor.removeDuplicateData(FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt",
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt");
-//			System.out.println("去重结束");
-//			
-//			GBDTProcessor.init();
-//			GBDTProcessor.loadFeatureAsDict(FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.stata.txt", "	", Integer.MAX_VALUE);
-//			GBDTProcessor.extractFeature(FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt", seperator,
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt", seperator);
-//			System.out.println("提取特征结束");
-//			
-//			GBDTProcessor.loadFeatureAsArray(FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.stata.txt", "	", 100);//特征数量
-//			GBDTProcessor.textToVector(FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt", seperator,
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "vec.csv",
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "position.num.stata.txt", 10);//15个类
-//			System.out.println("向量表示结束");
+		for (int i = 0; i < FilterConf.fieldDirs.length; i ++) {
+			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
+			
+			AbstractObj.feildsToText(
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt",
+					"@@@@@@",
+					sources,
+					date,
+					"com_industry",
+					FilterConf.fields[i],
+					fields,
+					dataSize
+					);
+			System.out.println("提取数据结束");
+			
+			RegularExp.extractFromRegularExp(
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", seperator,
+				 	FilterConf.GBDTPath
+				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", seperator,
+					indices);
+			System.out.println("正则匹配结束");
+			
+			HanLPSegmenter.segmentationForGBDT(
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", seperator,
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt", seperator
+					);
+			System.out.println("分词结束");
+			
+			GBDTProcessor.removeDuplicateData(FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt",
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt");
+			System.out.println("去重结束");
+			
+			GBDTProcessor.init();
+			GBDTProcessor.loadFeatureAsDict(FilterConf.FeaturePath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.stata.txt", "	", Integer.MAX_VALUE);
+			GBDTProcessor.extractFeature(FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt", seperator,
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt", seperator);
+			System.out.println("提取特征结束");
+			
+			GBDTProcessor.loadFeatureAsArray(FilterConf.FeaturePath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.stata.txt", "	", 100);//特征数量
+			GBDTProcessor.textToVector(FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt", seperator,
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "vec.csv",
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "position.num.stata.txt", 15);//15个类
+			System.out.println("向量表示结束");
 			
 			//GBDT训练
 			GBDT.run(FilterConf.GBDTPath
@@ -125,10 +127,12 @@ public class GBDTPipeline {
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "status.txt",
 					FilterConf.GBDTPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "modelUI.json",
+					+ "/" + FilterConf.fieldDirs[i] + "/"
+							+ FilterConf.fieldDirs[i] + ".gbdt.modelUI.json",
 					FilterConf.GBDTPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.json",
-					10,
+					+ "/" + FilterConf.fieldDirs[i] + "/"
+							+ FilterConf.fieldDirs[i] + ".gbdt.model.json",
+					30,//迭代次数
 					0.5,
 					0.1,
 					3,

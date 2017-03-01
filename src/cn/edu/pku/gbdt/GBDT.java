@@ -28,7 +28,10 @@ public class GBDT {
 		//GBDT训练
 		DataSet dataset = new DataSet(dataPath);
 		dataset.describe();
-		Model model = new Model(maxIter, sampleRate, learnRate, maxDepth, splitPoints, dataset.getLabelValueset());
+		Model model = new Model(maxIter, sampleRate, learnRate, maxDepth, splitPoints,
+				dataset.getNumTypeFeature(),
+				dataset.getStrTypeFeature(),
+				dataset.getLabelValueset());
 		HashSet<Integer> trainData = Util.sample(dataset.getInstanceIdset(), dataset.instances.size() * 2 / 3);
 		HashSet<Integer> testData = Util.minusSet(dataset.getInstanceIdset(), trainData);
 		model.train(dataset, trainData, statusPath, testData);

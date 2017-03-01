@@ -9,6 +9,8 @@ public class LeafNode {
 	public HashSet<Integer> idset;
 	public double predictValue;
 	
+	
+	
 	public LeafNode(LeafNode node) {
 		this.idset = (HashSet<Integer>) node.idset.clone();
 		this.predictValue = node.predictValue;

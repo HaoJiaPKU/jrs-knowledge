@@ -21,23 +21,103 @@ public class Model {
 	public int maxDepth;
 	public int splitPoints;
 	public HashSet<String> labelValueset;
+	public HashMap<String, HashSet<Double>> numTypeFeature;
+	public HashMap<String, HashSet<String>> strTypeFeature;
 	public HashMap<Integer, HashMap<String, Tree>> trees;
 	
+	
+	public int getMaxIter() {
+		return maxIter;
+	}
+
+	public void setMaxIter(int maxIter) {
+		this.maxIter = maxIter;
+	}
+
+	public double getSampleRate() {
+		return sampleRate;
+	}
+
+	public void setSampleRate(double sampleRate) {
+		this.sampleRate = sampleRate;
+	}
+
+	public double getLearnRate() {
+		return learnRate;
+	}
+
+	public void setLearnRate(double learnRate) {
+		this.learnRate = learnRate;
+	}
+
+	public int getMaxDepth() {
+		return maxDepth;
+	}
+
+	public void setMaxDepth(int maxDepth) {
+		this.maxDepth = maxDepth;
+	}
+
+	public int getSplitPoints() {
+		return splitPoints;
+	}
+
+	public void setSplitPoints(int splitPoints) {
+		this.splitPoints = splitPoints;
+	}
+
+	public HashSet<String> getLabelValueset() {
+		return labelValueset;
+	}
+
+	public void setLabelValueset(HashSet<String> labelValueset) {
+		this.labelValueset = labelValueset;
+	}
+
+	public HashMap<String, HashSet<Double>> getNumTypeFeature() {
+		return numTypeFeature;
+	}
+
+	public void setNumTypeFeature(HashMap<String, HashSet<Double>> numTypeFeature) {
+		this.numTypeFeature = numTypeFeature;
+	}
+
+	public HashMap<String, HashSet<String>> getStrTypeFeature() {
+		return strTypeFeature;
+	}
+
+	public void setStrTypeFeature(HashMap<String, HashSet<String>> strTypeFeature) {
+		this.strTypeFeature = strTypeFeature;
+	}
+
+	public HashMap<Integer, HashMap<String, Tree>> getTrees() {
+		return trees;
+	}
+
+	public void setTrees(HashMap<Integer, HashMap<String, Tree>> trees) {
+		this.trees = trees;
+	}
+
 	public Model() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	public Model(int maxIter, double sampleRate, double learnRate,
-			int maxDepth, int splitPoints, HashSet<String> labelValueset) {
+			int maxDepth, int splitPoints,
+			HashMap<String, HashSet<Double>> numTypeFeature,
+			HashMap<String, HashSet<String>> strTypeFeature,
+			HashSet<String> labelValueset) {
 		super();
 		this.maxIter = maxIter;
 		this.sampleRate = sampleRate;
 		this.learnRate = learnRate;
 		this.maxDepth = maxDepth;
 		this.splitPoints = splitPoints;
-		this.trees = new HashMap<Integer, HashMap<String, Tree>>();
+		this.numTypeFeature = (HashMap<String, HashSet<Double>>) numTypeFeature.clone();
+		this.strTypeFeature = (HashMap<String, HashSet<String>>) strTypeFeature.clone();
 		this.labelValueset = (HashSet<String>) labelValueset.clone();
+		this.trees = new HashMap<Integer, HashMap<String, Tree>>();
 	}
 	
 	public void initialize(HashMap<Integer, HashMap<String, Double>> f, DataSet dataset) {
@@ -284,6 +364,9 @@ public class Model {
 			this.learnRate = model.learnRate;
 			this.maxDepth = model.maxDepth;
 			this.splitPoints = model.splitPoints;
+			this.numTypeFeature = (HashMap<String, HashSet<Double>>) model.numTypeFeature.clone();
+			this.strTypeFeature = (HashMap<String, HashSet<String>>) model.strTypeFeature.clone();
+			this.labelValueset = (HashSet<String>) model.labelValueset.clone();
 			this.trees = (HashMap<Integer, HashMap<String, Tree>>) model.trees.clone();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

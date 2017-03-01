@@ -11,14 +11,47 @@ import cn.edu.pku.util.FileInput;
 public class DataSet {
 	
 	public HashMap<Integer, Instance> instances;
-	public HashMap<String, HashSet<Double>> distinctValueset;
-	public ArrayList<String> fieldNames;
-	public HashMap<String, HashSet<String>> fieldType;
+	public HashMap<String, Integer> fieldNames;
+	public HashMap<String, HashSet<Double>> numTypeFeature;
+	public HashMap<String, HashSet<String>> strTypeFeature;
 	
+	
+	public HashMap<Integer, Instance> getInstances() {
+		return instances;
+	}
+
+	public void setInstances(HashMap<Integer, Instance> instances) {
+		this.instances = instances;
+	}
+
+	public HashMap<String, Integer> getFieldNames() {
+		return fieldNames;
+	}
+
+	public void setFieldNames(HashMap<String, Integer> fieldNames) {
+		this.fieldNames = fieldNames;
+	}
+
+	public HashMap<String, HashSet<Double>> getNumTypeFeature() {
+		return numTypeFeature;
+	}
+
+	public void setNumTypeFeature(HashMap<String, HashSet<Double>> numTypeFeature) {
+		this.numTypeFeature = numTypeFeature;
+	}
+
+	public HashMap<String, HashSet<String>> getStrTypeFeature() {
+		return strTypeFeature;
+	}
+
+	public void setStrTypeFeature(HashMap<String, HashSet<String>> strTypeFeature) {
+		this.strTypeFeature = strTypeFeature;
+	}
+
 	public DataSet (String fileName) {
 		int lineCnt = 0;
 		instances = new HashMap<Integer, Instance>();
-		distinctValueset = new HashMap<String, HashSet<Double>>();
+		numTypeFeature = new HashMap<String, HashSet<Double>>();
 		FileInput fi = new FileInput(fileName);
 		String line = new String ();
 		try {
@@ -32,9 +65,10 @@ public class DataSet {
 				//更换数据之后需要更改****************
 				//表头
 				if (lineCnt == 0) {
-					fieldNames = new ArrayList<String>();
+//					System.out.println("第一行表头");
+					fieldNames = new HashMap<String, Integer>();
 					for (int i = 0; i < fields.length; i ++) {
-						fieldNames.add(fields[i]);
+						fieldNames.put(fields[i], i);
 					}
 				} else {
 					if (fields.length != fieldNames.size()) {
@@ -42,17 +76,17 @@ public class DataSet {
 						continue;
 					}
 					if (lineCnt == 1) {
-						fieldType = new HashMap<String, HashSet<String>>();
-						for (int i = 0; i < fieldNames.size(); i ++) {
+						strTypeFeature = new HashMap<String, HashSet<String>>();
+						for (String fieldName : fieldNames.keySet()) {
 							HashSet<String> valueSet = new HashSet<String>();
 							try {
-								Double.parseDouble(fields[i]);
-								distinctValueset.put(
-										fieldNames.get(i), new HashSet<Double>());
+								Double.parseDouble(fields[fieldNames.get(fieldName)]);
+								numTypeFeature.put(
+										fieldName, new HashSet<Double>());
 							} catch (Exception e) {
-								valueSet.add(fields[i]);
+								valueSet.add(fields[fieldNames.get(fieldName)]);
 							}
-							fieldType.put(fieldNames.get(i), (HashSet<String>) valueSet.clone());
+							strTypeFeature.put(fieldName, (HashSet<String>) valueSet.clone());
 						}
 					}
 					instances.put(lineCnt, makeInstance(fields));
@@ -68,23 +102,22 @@ public class DataSet {
 	
 	public Instance makeInstance(String[] fields) {
 		Instance instance = new Instance();
-		for (int i = 0; i < fields.length; i ++) {
-			String fieldName = fieldNames.get(i);
+		for (String fieldName : fieldNames.keySet()) {
 			if (isRealTypeField(fieldName)) {
 				try {
-					double value = Double.parseDouble(fields[i]);
+					double value = Double.parseDouble(fields[fieldNames.get(fieldName)]);
 					instance.numTypeFeature.put(fieldName, value);
-					HashSet<Double> t = distinctValueset.get(fieldName);
+					HashSet<Double> t = numTypeFeature.get(fieldName);
 					t.add(value);
-					distinctValueset.put(fieldName, t);
+					numTypeFeature.put(fieldName, t);
 				} catch (Exception e) {
 					System.out.println("value type conflict");
 				}
 			} else {
-				instance.strTypeFeature.put(fieldName, fields[i]);
-				HashSet<String> t = fieldType.get(fieldName);
-				t.add(fields[i]);
-				fieldType.put(fieldName, t);
+				instance.strTypeFeature.put(fieldName, fields[fieldNames.get(fieldName)]);
+				HashSet<String> t = strTypeFeature.get(fieldName);
+				t.add(fields[fieldNames.get(fieldName)]);
+				strTypeFeature.put(fieldName, t);
 			}
 		}
 		return instance;
@@ -92,15 +125,14 @@ public class DataSet {
 	
 	public void describe() {
 		String info = "feature:";
-		for (int i = 0; i < fieldNames.size(); i ++) {
-			info += " " + fieldNames.get(i);
+		for (String fieldName : fieldNames.keySet()) {
+			info += " " + fieldName;
 		}
 		info += "\ndatasize: " + instances.size() + "\n";
-		for (int i = 0; i < fieldNames.size(); i ++) {
-			String fieldName = fieldNames.get(i);
+		for (String fieldName : fieldNames.keySet()) {
 			info += "\ndescription for field:" + fieldName + "\n";
-			if (isRealTypeField(fieldNames.get(i))) {
-				HashSet<Double> t = distinctValueset.get(fieldName);
+			if (isRealTypeField(fieldName)) {
+				HashSet<Double> t = numTypeFeature.get(fieldName);
 				info += "real value, distinct values number:" + t.size();
 				double maxValue = -0x7fffffff, minValue = 0x7777777;
 				for (Double num : t) {
@@ -114,7 +146,7 @@ public class DataSet {
 				info += "\nrange [" + String.valueOf(minValue) + ", "
 						+ String.valueOf(maxValue) + "]\n";
 			} else {
-				HashSet<String> t = fieldType.get(fieldName);
+				HashSet<String> t = strTypeFeature.get(fieldName);
 				info += "enum type, distinct values number:" + t.size();
 				info += "\nvalue [";
 				for (String value : t) {
@@ -127,10 +159,10 @@ public class DataSet {
 	}
 	
 	public boolean isRealTypeField(String name) {
-		if (!fieldNames.contains(name)) {
+		if (!fieldNames.containsKey(name)) {
 			System.out.println("field name not in the dictionary");
 		}
-		return fieldType.get(name).size() == 0;
+		return strTypeFeature.get(name).size() == 0;
 	}
 	
 	public HashSet<Integer> getInstanceIdset() {
@@ -142,30 +174,25 @@ public class DataSet {
 	}
 	
 	public int getLabelSize() {
-		return fieldType.get("label").size();
+		return strTypeFeature.get("label").size();
 	}
 	
 	public HashSet<String> getLabelValueset() {
-		return fieldType.get("label");
+		return strTypeFeature.get("label");
 	}
 	
 	public Instance getInstance(int id) {
 		return instances.get(id);
 	}
 	
-	public ArrayList<String> getAttribute() {
-		ArrayList<String> ret = new ArrayList<String>();
-		for (int i = 0; i < fieldNames.size(); i ++) {
-			if (!fieldNames.get(i).equals("label")) {
-				ret.add(fieldNames.get(i));
+	public HashSet<String> getAttribute() {
+		HashSet<String> ret = new HashSet<String>();
+		for (String fieldName : fieldNames.keySet()) {
+			if (!fieldName.equals("label")) {
+				ret.add(fieldName);
 			}
 		}
 		return ret;
-	}
-	
-	public static void main(String [] args) {
-		DataSet dataset = new DataSet("../GBDT/data/adult.data.csv");
-		dataset.describe();
 	}
 }
 

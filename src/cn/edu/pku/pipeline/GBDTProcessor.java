@@ -167,6 +167,9 @@ public class GBDTProcessor {
 				line = line.trim();
 				String features = new String();
 				String items [] = line.split(inputSeperator);
+				if (items.length < 2) {
+					continue;
+				}
 				String label = items[0].trim().split(" ")[0];
 //				if (!(label.equals("java") || label.equals("c++")
 //						|| label.equals("产品")

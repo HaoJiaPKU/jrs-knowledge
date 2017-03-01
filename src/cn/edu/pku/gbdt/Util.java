@@ -54,17 +54,17 @@ public class Util {
 			HashMap<Integer, Double> targets, int depth, HashSet<LeafNode> leafNodes,
 			int maxDepth, double splitPoint) {
 		if (depth < maxDepth) {
-			ArrayList<String> attributes = dataset.getAttribute();
+			HashSet<String> attributes = (HashSet<String>) dataset.getAttribute().clone();
 			double loss = -1.0;
 			String selectedAttribute = null;
 			double numConditionValue = 0;
 			String strConditionValue = null;
 			HashSet<Integer> selectedLeftIdSet = new HashSet<Integer>();
 			HashSet<Integer> selectedRightIdSet = new HashSet<Integer>();
-			for (int i = 0; i < attributes.size(); i ++) {
-				boolean isRealType = dataset.isRealTypeField(attributes.get(i));
+			for (String attribute : attributes) {
+				boolean isRealType = dataset.isRealTypeField(attribute);
 				if(isRealType) {
-					HashSet<Double> numAttrValues = dataset.distinctValueset.get(attributes.get(i));
+					HashSet<Double> numAttrValues = dataset.numTypeFeature.get(attribute);
 					if (splitPoint > 0 && numAttrValues.size() > splitPoint) {
 						//TODO 实现随机抽样函数
 					}
@@ -73,7 +73,7 @@ public class Util {
 						HashSet<Integer> rightIdSet = new HashSet<Integer>();
 						for (Integer id : remainedSet) {
 							Instance instance = dataset.getInstance(id);
-							double value = instance.numTypeFeature.get(attributes.get(i));
+							double value = instance.numTypeFeature.get(attribute);
 							if (value < attrValue) {
 								leftIdSet.add(id);
 							} else {
@@ -91,7 +91,7 @@ public class Util {
 						double sumLoss = computeMinLoss(leftTargets)
 								+ computeMinLoss(rightTargets);
 						if (loss < 0 || sumLoss < loss) {
-							selectedAttribute = new String(attributes.get(i));
+							selectedAttribute = new String(attribute);
 							numConditionValue = attrValue;
 							loss = sumLoss;
 							selectedLeftIdSet = (HashSet<Integer>) leftIdSet.clone();
@@ -99,13 +99,13 @@ public class Util {
 						}
 					}
 				} else {
-					HashSet<String> strAttrValues = dataset.fieldType.get(attributes.get(i));
+					HashSet<String> strAttrValues = dataset.strTypeFeature.get(attribute);
 					for (String attrValue : strAttrValues) {
 						HashSet<Integer> leftIdSet = new HashSet<Integer>();
 						HashSet<Integer> rightIdSet = new HashSet<Integer>();
 						for (Integer id : remainedSet) {
 							Instance instance = dataset.getInstance(id);
-							String value = instance.strTypeFeature.get(attributes.get(i));
+							String value = instance.strTypeFeature.get(attribute);
 							if (value.equals(attrValue)) {
 								leftIdSet.add(id);
 							} else {
@@ -123,7 +123,7 @@ public class Util {
 						double sumLoss = computeMinLoss(leftTargets)
 								+ computeMinLoss(rightTargets);
 						if (loss < 0 || sumLoss < loss) {
-							selectedAttribute = new String(attributes.get(i));
+							selectedAttribute = new String(attribute);
 							strConditionValue = new String(attrValue);
 							loss = sumLoss;
 							selectedLeftIdSet = (HashSet<Integer>) leftIdSet.clone();
