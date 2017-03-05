@@ -20,10 +20,12 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.hankcs.hanlp.HanLP;
+import com.hankcs.hanlp.dependency.CRFDependencyParser;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.tokenizer.NLPTokenizer;
 
+import cn.edu.pku.conf.FilePathConf;
 import cn.edu.pku.filter.Statistic;
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
@@ -33,7 +35,7 @@ public class HanLPSegmenter
 	/** 停用词、停用符号表 */
 	public static HashSet<String> stopword = new HashSet<String> ();
 	/** 停用词、停用符号文件 */
-	public static String stopwordsFile = "stopwords.txt";
+	public static String stopwordsFile = FilePathConf.stopwordsFile;
 	/** 停用符号 */
 	public static final String StopSigns = "[\\p{P}~$`^=|<>～｀＄＾＋＝｜＜＞￥× \\s|\t|\r|\n]+";
 	/** 停用模式 */
@@ -546,4 +548,9 @@ public class HanLPSegmenter
 		fi.closeInput();
 	}
 
+	public static void main(String [] args) {
+		System.out.println(
+				CRFDependencyParser
+				.compute("了解Jquery等Javascript开发架构和框架"));
+	}
 }

@@ -59,12 +59,12 @@ public class FeaturePipeline {
 		
 		FileDirs.makeDirs(FilterConf.FeaturePath);
 		//统计行业
-		AbstractObj.feildsToConf(FilterConf.FeaturePath
-				+ "/" + "industry.conf",
-				sources,
-				date,
-				"com_industry",
-				null, null);
+//		AbstractObj.feildsToConf(FilterConf.FeaturePath
+//				+ "/" + "industry.conf",
+//				sources,
+//				date,
+//				"com_industry",
+//				null, null);
 		
 		//选出数量前10位的行业
 		FilterConf.readFieldFromConf(
@@ -78,11 +78,11 @@ public class FeaturePipeline {
 		}
 		
 		//For Test
-//		FilterConf.fieldDirs[0] = "计算机软件";
-//		FilterConf.fields[0] = "计算机软件";
+		FilterConf.fieldDirs[0] = "计算机软件";
+		FilterConf.fields[0] = "计算机软件";
 		
 		//对行业逐一计算
-		for (int i = 0; i < FilterConf.fieldDirs.length; i ++) {
+		for (int i = 0; i < 1; i ++) {
 			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
 			
 			AbstractObj.feildsToText(
@@ -108,7 +108,7 @@ public class FeaturePipeline {
 			
 			HanLPSegmenter.segmentationForFeature(
 					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", "	",
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", "	",
 					FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt",
 					FilterConf.FeaturePath
@@ -158,6 +158,7 @@ public class FeaturePipeline {
 			Statistic.clear();
 			System.out.println("统计提取结束");
 			
+			/**
 //			HanLPOccurrence.extractFormTokens(
 //					FilterConf.FeaturePath
 //					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt",
@@ -186,6 +187,7 @@ public class FeaturePipeline {
 //			PatternOcc.saveToFile(FilterConf.FeaturePath
 //					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.through.occ.txt", " ");
 //			System.out.println("模式提取结束");
+			*/
 			
 			//训练w2v模型
 			W2V.run(FilterConf.FeaturePath

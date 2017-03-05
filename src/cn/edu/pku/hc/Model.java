@@ -38,7 +38,6 @@ public class Model {
      * @throws IOException 
      */  
     private void initData(String inputPath, String inputSeperator) {
-    	
         clusters = new ArrayList<Cluster>();  
         FileInput fi = new FileInput(inputPath); 
         String line = null;  
@@ -67,10 +66,14 @@ public class Model {
 //        			dict.get("ppt").getVector()));
     }  
   
-    public Cluster hcluster(String outputDis) {
+    public ArrayList<Cluster> hcluster(String outputDis) {
     	FileOutput foDis = new FileOutput (outputDis);
-        int currentId = -1; 
+        int currentId = -1;
+        int clustersNum = clusters.size();
         while (clusters.size() > 1) {
+        	if (clusters.size() <= clustersNum * 0.0) {
+        		break;
+        	}
         	if (clusters.size() % 100 == 0) {
         		System.out.println(clusters.size());
         	}
@@ -81,42 +84,24 @@ public class Model {
             double closest = CosDistance.getDistance(
             		clusters.get(0).getVector(),
             		clusters.get(1).getVector());  
-//            // 用distances来缓存任意两聚类之间的距离,其中map集合的键为两个聚类的id  
-//            Map<Integer[], Double> distances = new HashMap<Integer[], Double>(); 
             
             for (int i = 0; i < clusters.size(); i ++) {  
-                for (int j = i + 1; j < clusters.size(); j ++) {  
-//                  Integer[] key = {
-//                    		clusters.get(i).getId(),  
-//                            clusters.get(j).getId()};
+                for (int j = i + 1; j < clusters.size(); j ++) {
                     double d = CosDistance.getDistance(  
                             clusters.get(i).getVector(),
                             clusters.get(j).getVector());
-//                    if (!distances.containsKey(key)) {  
-//                        distances.put(key, CosDistance.getDistance(  
-//                                clusters.get(i).getVector(),
-//                                clusters.get(j).getVector()));  
-//                    }
-//  
-//                    double d = distances.get(key);  
                     if (d > closest) {  
                         closest = d;  
                         lowestpair1 = i;  
                         lowestpair2 = j;  
-                    }  
-//                    System.out.println(i + " " + j);
+                    }
                 }  
             }  
   
             // 计算两个最短距离聚类的平均值  
             List<Double> midvec = mergevec(
             		clusters.get(lowestpair1),  
-                    clusters.get(lowestpair2));  
-//            System.out.println(
-//            		clusters.get(lowestpair1).getName() + "	"
-//            		+ clusters.get(lowestpair2).getName() + " "
-//            		+ closest);
-            
+                    clusters.get(lowestpair2));            
             try {
 				foDis.t3.write(String.valueOf(closest));
 				foDis.t3.newLine();
@@ -145,7 +130,7 @@ public class Model {
             clusters.add(cluster);  
         }
         foDis.closeOutput();
-        return clusters.get(0);  
+        return clusters;  
     }  
   
     private List<Double> mergevec(Cluster cluster1, Cluster cluster2) {  
@@ -163,11 +148,13 @@ public class Model {
     		String outputPath,
     		String outputPathSeq,
     		String outputPathNonSeq,
-    		Cluster cluster, int n) {
+    		ArrayList<Cluster> clusters, int n) {
     	FileOutput fo = new FileOutput (outputPath);
     	FileOutput foSeq = new FileOutput (outputPathSeq);
     	FileOutput foNonSeq = new FileOutput (outputPathNonSeq);
-    	writeToFile(cluster, n, 0, fo, foSeq, foNonSeq);
+    	for (int i = 0; i < clusters.size(); i ++) {
+    		writeToFile(clusters.get(i), n, 0, fo, foSeq, foNonSeq);
+    	}
         fo.closeOutput();
         foSeq.closeOutput();
         foNonSeq.closeOutput();

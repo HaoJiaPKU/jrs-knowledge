@@ -170,13 +170,7 @@ public class GBDTProcessor {
 				if (items.length < 2) {
 					continue;
 				}
-				String label = items[0].trim().split(" ")[0];
-//				if (!(label.equals("java") || label.equals("c++")
-//						|| label.equals("产品")
-//						|| label.equals("html")
-//						|| label.equals("数据库"))) {
-//					continue;
-//				}
+				String label [] = items[0].trim().split(" ");
 				String tokens [] = items[1].trim().split(" ");
 				double tf [] = new double [array.size()];
 				for (int i = 0; i < tf.length; i ++) {
@@ -194,14 +188,19 @@ public class GBDTProcessor {
 					features += "," + String.valueOf(tf[i]);
 				}
 				
-				HashSet<String> t;
-				if (!posDict.containsKey(label)) {
-					t = new HashSet<String> ();
-				} else {
-					t = posDict.get(label);
+				for (int i = 0; i < label.length; i ++) {
+					if (label == null || label.length == 0) {
+						continue;
+					}
+					HashSet<String> t;
+					if (!posDict.containsKey(label[i])) {
+						t = new HashSet<String> ();
+					} else {
+						t = posDict.get(label[i]);
+					}
+					t.add(features);
+					posDict.put(label[i], t);
 				}
-				t.add(features);
-				posDict.put(label, t);
 			}
 			
 			fo.t3.write("label");
