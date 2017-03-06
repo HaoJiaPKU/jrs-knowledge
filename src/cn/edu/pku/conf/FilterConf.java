@@ -24,7 +24,7 @@ public class FilterConf {
 //				System.out.println(fields[counter]);
 				fieldDirs[counter] = tokens[0]
 						.trim()
-						.replaceAll("/", "|");
+						.replaceAll("/", "or");
 //				System.out.println(fieldDirs[counter]);
 				counter ++;
 				if (counter >= num) {
