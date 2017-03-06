@@ -26,7 +26,6 @@ import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.tokenizer.NLPTokenizer;
 
 import cn.edu.pku.conf.FilePathConf;
-import cn.edu.pku.filter.Statistic;
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
 
@@ -127,6 +126,9 @@ public class HanLPSegmenter
 	 * 将特殊词汇进行替换
 	 * */
 	public static String replaceToken(String token) {
+		if(token.equals("r")) {
+			token = "r语言";
+		}
 		if(token.equals("net")) {
 			token = ".net";
 		}
@@ -134,7 +136,7 @@ public class HanLPSegmenter
 			token = "c++";
 		}
 		if(token.equals("ccpp")) {
-			token = "c c++";
+			token = "c语言 c++";
 		}
 		if(token.equals("vcpp") || token.equals("visualcpp")) {
 			token = "visualc++";
@@ -146,7 +148,7 @@ public class HanLPSegmenter
 			token = "qt c++";
 		}
 		if(token.equals("javaccpp")) {
-			token = "java c c++";
+			token = "java c语言 c++";
 		}
 		if (token.equals("j2") || token.equals("ee") || token.equals("javaee")) {
 			token = "j2ee";
@@ -174,6 +176,15 @@ public class HanLPSegmenter
 		}
 		if(token.equals("rest")) {
 			return "restful";
+		}
+		if(token.equals("pl")) {
+			return "plsql";
+		}
+		if (token.equals("power") || token.equals("designer")) {
+			token = "powerdesigner";
+		}
+		if(token.equals("native")) {
+			return "reactnative";
 		}
 		if (token.indexOf("js") == token.length() - 2
 				&& token.length() > 2 ) {
@@ -238,8 +249,10 @@ public class HanLPSegmenter
 				|| token.equals("学历")
 				|| token.equals("本科")
 				|| token.equals("专科")
-				|| token.equals("能力")
+				|| token.equals("大专")
 				|| token.equals("基础")
+				|| token.equals("高薪")
+				|| token.equals("薪资")
 				) {
 			return null;
 		}

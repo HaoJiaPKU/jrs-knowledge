@@ -77,7 +77,7 @@ public class PosCategory {
 					);
 			System.out.println("提取数据结束");
 			
-			RegularExp.extractFromRegularExp(
+			RegularExp.extractRegularExpFromText(
 					FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", "	",
 				 	FilterConf.FeaturePath

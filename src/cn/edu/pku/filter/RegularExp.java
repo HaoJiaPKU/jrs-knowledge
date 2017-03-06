@@ -30,7 +30,7 @@ public class RegularExp {
 //			"学习.+?[，|；|。|！|,|;|.|!]",
 			};
 	
-	public static void extractFromRegularExp (
+	public static void extractRegularExpFromText (
 			String inputPath,
 			String inputSeperator,
 			String outputPath,
@@ -99,11 +99,10 @@ public class RegularExp {
 	
 	public static void main(String [] args) {
 		
-		String line = "编程语言编程语言是一种采用一类可编程的存储"
-				+ "存储类别的理解,c语言是一门通用计算机编程语言";
+		String line = "数据库，是创建在关系模型基础上的数据库，借助于集合代数等数学概念和方法来处理数据库中的数据。";
 		line = line.toLowerCase();
 		String[] expressions = {
-							"编程语言[^，|；|。|！|,|;|.|!|\\s|((?!编程语言).)]*?是[一]*[[种|类|门|个|款]+][^，|；|。|！|,|;|.|!|\\s]*存储",
+							"数据库.*?是.*?数据",
 							};
 		for (int i = 0; i < expressions.length; i ++) {
 			Pattern pattern = Pattern.compile(expressions[i]);

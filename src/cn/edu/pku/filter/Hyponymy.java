@@ -1,5 +1,6 @@
 package cn.edu.pku.filter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -22,12 +23,15 @@ import cn.edu.pku.conf.FilterConf;
 import cn.edu.pku.hc.Cluster;
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
+import cn.edu.pku.util.HanLPSegmenter;
 import cn.edu.pku.util.UrlUtil;
 import cn.edu.pku.w2v.Word2Vec;
 import cn.edu.pku.w2v.WordEntry;
 
 public class Hyponymy {
-
+	
+	public static final String Sign = "[\\p{P}~$`^=|<>～｀＄＾＋＝｜＜＞￥× \\s|\t|\r|\n]";
+	public static final String NonSign = "[^\\p{P}~$`^=|<>～｀＄＾＋＝｜＜＞￥× \\s|\t|\r|\n]";
 	//最终提取结果
 	public static HashMap<HyponymyPair, String> hypDict
 			= new HashMap<HyponymyPair, String>();
@@ -45,7 +49,10 @@ public class Hyponymy {
 			= new HashMap<String, String>();
 	public static Word2Vec w2v = new Word2Vec();
 
-	public static void init(String inputPath, String inputSeperator, String W2VModelPath) {
+	public static void init(String inputPath,
+			String inputSeperator,
+			String W2VModelPath,
+			String wikiPath) {
 		hypDict.clear();
 		wordInCluster.clear();
 		wordOfCluster.clear();
@@ -76,6 +83,27 @@ public class Hyponymy {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        
+        if (!new File(wikiPath).exists()) {
+        	return;
+        }
+        fi = new FileInput(wikiPath); 
+       	line = null;
+        try {
+			while ((line = fi.reader.readLine()) != null) {  
+				String[] s = line.split(inputSeperator);
+				if (s.length < 2) {
+					continue;
+				}
+			    wordWiki.put(s[0].trim(), s[1].trim().toLowerCase());
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//        for (String word : wordWiki.keySet()) {
+//        	System.out.println(word + " " + wordWiki.get(word));
+//        }
 //        System.out.println(wordOfCluster.size());
 	}
 	
@@ -118,6 +146,90 @@ public class Hyponymy {
 		fo.closeOutput();
 	}
 	
+	public static void getHyponymyPairFromWiki(String outputPath) {
+		Pattern pattern;
+		Matcher matcher;
+		String expression;
+		
+		for (String word1 : wordWiki.keySet()) {
+			String explaination = wordWiki.get(word1);
+			while (explaination.indexOf("（") != -1 && explaination.indexOf("）") != -1
+					&& explaination.indexOf("（") < explaination.indexOf("）")) {
+				explaination = explaination.substring(0, explaination.indexOf("（"))
+						+ explaination.substring(explaination.indexOf("）") + 1);
+			}
+			while (explaination.indexOf("[") != -1 && explaination.indexOf("]") != -1
+					&& explaination.indexOf("[") < explaination.indexOf("]")) {
+				explaination = explaination.substring(0, explaination.indexOf("["))
+						+ explaination.substring(explaination.indexOf("]") + 1);
+			}
+			word1 = word1.replaceAll("[+]", "p");
+			explaination = explaination.replaceAll("[+]", "p");
+			explaination = explaination.replaceAll(" ", "").trim();
+
+//			String candidate = null;
+//			while (explaination.indexOf("。") != -1) {
+//				String can = explaination.substring(0, explaination.indexOf("。") + 1);
+//				explaination = explaination.substring(explaination.indexOf("。") + 1);
+//				if (candidate == null || can.length() < candidate.length()) {
+//					candidate = can;
+//				}
+//			}
+//			if (candidate != null) {
+//				explaination = candidate;
+//			} else {
+//				continue;
+//			}
+
+			boolean flag = wikiAnalyze(
+					word1, ".*?是[一]*[种|类|门|个|款|套].+?[，|。|；]", explaination);
+//			if (!flag) {
+//				flag = wikiAnalyze(
+//					word1, ".*?是.*?[一]*[种|类|门|个|款].+?[，|。|；]", explaination);
+//			}
+//			if (!flag) {
+//				flag = wikiAnalyze(
+//					word1, ".*?[是|指].*?的.+?[，|。|；]", explaination);
+//			}
+		}
+		
+		FileOutput fo = new FileOutput(outputPath);
+		try {
+			for (HyponymyPair p : hypDict.keySet()) {
+				fo.t3.write(p.hypernym + "	" + p.hyponym + "	" + hypDict.get(p));
+				fo.t3.newLine();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fo.closeOutput();
+	}
+	
+	public static boolean wikiAnalyze(String word, String p, String explaination) {
+		String expression = word + p;
+		Pattern pattern = Pattern.compile(expression);
+		Matcher matcher = pattern.matcher(explaination);
+		String candidate = null;
+		boolean flag = false;
+		while (matcher.find()) {
+			String group = matcher.group().toString();
+			if (candidate == null || group.length() < candidate.length()) {
+				candidate = group;
+			}
+			flag = true;
+		}
+		if (flag) {
+			System.out.println(word + " " + candidate);
+			String [] tokens = HanLPSegmenter.segmentation(candidate, true, false, null);
+			System.out.println(word + " " + tokens[tokens.length - 1]);
+			HyponymyPair hp = new HyponymyPair(word, tokens[tokens.length - 1]);
+			hypDict.put(hp, candidate);
+		}
+		return flag;
+	}
+	
+	//对所有词汇两两判断上下位关系
 	public static void run(String outputPath) {
 		for (int i = 0; i < wordInCluster.size(); i ++) {
 			for (int j = i + 1; j < wordInCluster.size(); j ++) {
@@ -139,6 +251,7 @@ public class Hyponymy {
 		fo.closeOutput();
 	}
 	
+	//对20个最接近的词汇两两判断上下位关系
 	public static void run(String outputPath, int num) {
 		for (int i = 0; i < wordInCluster.size(); i ++) {
 			String word1 = wordInCluster.get(i).getName();
@@ -240,26 +353,30 @@ public class Hyponymy {
 	}
 	
 	public static void main(String [] args) {
-//		init(FilterConf.FeaturePath
-//				+ "/" + "计算机软件" + "/" + "w2v.vec.txt", "	",
-//			FilterConf.FeaturePath
-//				+ "/" + "计算机软件" + "/" + "w2v.model");
+		init(FilterConf.FeaturePath
+				+ "/" + "计算机软件" + "/" + "w2v.vec.txt", "	",
+			FilterConf.FeaturePath
+				+ "/" + "计算机软件" + "/" + "w2v.model",
+			FilterConf.FeaturePath
+				+ "/" + "计算机软件" + "/" + "token.pos.wiki.txt");
+		getHyponymyPairFromWiki(FilterConf.FeaturePath
+				+ "/" + "计算机软件" + "/" + "hyp.txt");
 //		getExplainationFromWiki(FilterConf.FeaturePath
 //				+ "/" + "计算机软件" + "/" + "token.pos.wiki.txt");
 //		run(FilterConf.FeaturePath
 //				+ "/" + "计算机软件" + "/" + "hyp.txt", 20);
 		
-		try {
-			String content = UrlUtil.getHTML(
-					"https://zh.wikipedia.org/wiki/"
-					+ URLEncoder.encode("maven", "gb2312"));
-			Document doc = Jsoup.parse(content);
-			Element div = doc.select("p").first();
-			System.out.println(HanLP.convertToSimplifiedChinese(div.text()));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			String content = UrlUtil.getHTML(
+//					"https://zh.wikipedia.org/wiki/"
+//					+ URLEncoder.encode("maven", "gb2312"));
+//			Document doc = Jsoup.parse(content);
+//			Element div = doc.select("p").first();
+//			System.out.println(HanLP.convertToSimplifiedChinese(div.text()));
+//		} catch (UnsupportedEncodingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 }
 
