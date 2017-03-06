@@ -127,11 +127,9 @@ public class GBDTPipeline {
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "vec.csv",
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "status.txt",
-					FilterConf.GBDTPath
-					+ "/" + FilterConf.fieldDirs[i] + "/gbdt.model/"
+					FilterConf.GBDTPath + "/gbdt.model/"
 							+ FilterConf.fieldDirs[i] + ".gbdt.modelUI.json",
-					FilterConf.GBDTPath
-					+ "/" + FilterConf.fieldDirs[i] + "/gbdt.model/"
+					FilterConf.GBDTPath + "/gbdt.model/"
 							+ FilterConf.fieldDirs[i] + ".gbdt.model.json",
 					20,//迭代次数
 					0.5,
