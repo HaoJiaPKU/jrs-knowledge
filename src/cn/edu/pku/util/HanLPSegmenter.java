@@ -224,38 +224,38 @@ public class HanLPSegmenter
 		token = token.replaceAll("\t", "");
 		token = token.trim();
 		
-		//去除停用词和网址等特殊词
-		if(isStopWords(token)
-				|| token.length() == 0
-				|| token.contains("-")
-				|| token.contains("@")
-				|| token.contains("COM")
-				|| token.contains("com")
-				|| token.contains("CN")
-				|| token.contains("cn")
-				|| token.contains("WWW")
-				|| token.contains("www")) {
-			return null;
-		}
-		
-		if (token.equals("职位")
-				|| token.equals("职业")
-				|| token.equals("岗位")
-				|| token.equals("职责")
-				|| token.equals("描述")
-				|| token.equals("要求")
-				|| token.equals("专业")
-				|| token.equals("毕业生")
-				|| token.equals("学历")
-				|| token.equals("本科")
-				|| token.equals("专科")
-				|| token.equals("大专")
-				|| token.equals("基础")
-				|| token.equals("高薪")
-				|| token.equals("薪资")
-				) {
-			return null;
-		}
+//		//去除停用词和网址等特殊词
+//		if(isStopWords(token)
+//				|| token.length() == 0
+//				|| token.contains("-")
+//				|| token.contains("@")
+//				|| token.contains("COM")
+//				|| token.contains("com")
+//				|| token.contains("CN")
+//				|| token.contains("cn")
+//				|| token.contains("WWW")
+//				|| token.contains("www")) {
+//			return null;
+//		}
+//		
+//		if (token.equals("职位")
+//				|| token.equals("职业")
+//				|| token.equals("岗位")
+//				|| token.equals("职责")
+//				|| token.equals("描述")
+//				|| token.equals("要求")
+//				|| token.equals("专业")
+//				|| token.equals("毕业生")
+//				|| token.equals("学历")
+//				|| token.equals("本科")
+//				|| token.equals("专科")
+//				|| token.equals("大专")
+//				|| token.equals("基础")
+//				|| token.equals("高薪")
+//				|| token.equals("薪资")
+//				) {
+//			return null;
+//		}
 		return token;
 	}	
 	
@@ -296,10 +296,11 @@ public class HanLPSegmenter
 		while (it.hasNext()) {
 			String [] term = it.next().toString().split("/");
 			if (isNormalized) {
-				term[0] = normalizedToken(term[0]);
+				term[0] = normalizedToken(term[0].trim());
 				if (term[0] == null
 						|| term[0].length() == 0
-						|| term[0].equals("")) {
+						|| term[0].equals("")
+						|| isStopWords(term[0])) {
 					continue;
 				}
 			}
@@ -401,10 +402,11 @@ public class HanLPSegmenter
 				Iterator it = termList.iterator();
 				while (it.hasNext()) {
 					String [] term = it.next().toString().split("/");
-					term[0] = normalizedToken(term[0]);
+					term[0] = normalizedToken(term[0].trim());
 					if (term[0] == null
 							|| term[0].length() == 0
-							|| term[0].equals("")) {
+							|| term[0].equals("")
+							|| isStopWords(term[0])) {
 						continue;
 					}
 					token.add(term[0]);
@@ -533,10 +535,11 @@ public class HanLPSegmenter
 					Iterator it = termList.iterator();
 					while (it.hasNext()) {
 						String [] term = it.next().toString().split("/");
-						term[0] = normalizedToken(term[0]);
+						term[0] = normalizedToken(term[0].trim());
 						if (term[0] == null
 								|| term[0].length() == 0
-								|| term[0].equals("")) {
+								|| term[0].equals("")
+								|| isStopWords(term[0])) {
 							continue;
 						}
 						fo.t3.write(term[0] + " ");

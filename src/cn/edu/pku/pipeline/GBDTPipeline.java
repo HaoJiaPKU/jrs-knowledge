@@ -119,7 +119,7 @@ public class GBDTPipeline {
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "vec.csv",
 					FilterConf.GBDTPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "position.num.stata.txt", 10);//15个类
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "position.num.stata.txt", 15);//15个类
 			System.out.println("向量表示结束");
 			
 			//GBDT训练

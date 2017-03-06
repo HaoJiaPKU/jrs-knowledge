@@ -214,13 +214,13 @@ public class FeaturePipeline {
 				e.printStackTrace();
 			}
 			
-			//层次聚类
-			HC.run(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.vec.txt", "	",
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/",
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "hc.model.json");
+//			//层次聚类
+//			HC.run(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.vec.txt", "	",
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/",
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "hc.model.json");
 			
 //			//测试模型反序列化
 //			HC.testDeserialization(FilterConf.FeaturePath
@@ -237,16 +237,16 @@ public class FeaturePipeline {
 //				FilterConf.fieldDirs,
 //				"tokens.through.occ.txt",
 //				FilterConf.FeaturePath + "/" + "all.txt");
-		Combination.mergeFile(
-				FilterConf.FeaturePath,
-				FilterConf.fieldDirs,
-				"tokens.txt",
-				FilterConf.FeaturePath + "/" + "all.tokens.txt");
-		Combination.mergeFile(
-				FilterConf.FeaturePath,
-				FilterConf.fieldDirs,
-				"tokens.pos.txt",
-				FilterConf.FeaturePath + "/" + "all.tokens.pos.txt");
+//		Combination.mergeFile(
+//				FilterConf.FeaturePath,
+//				FilterConf.fieldDirs,
+//				"tokens.txt",
+//				FilterConf.FeaturePath + "/" + "all.tokens.txt");
+//		Combination.mergeFile(
+//				FilterConf.FeaturePath,
+//				FilterConf.fieldDirs,
+//				"tokens.pos.txt",
+//				FilterConf.FeaturePath + "/" + "all.tokens.pos.txt");
 		
 		/**
 		Segregator.init();
