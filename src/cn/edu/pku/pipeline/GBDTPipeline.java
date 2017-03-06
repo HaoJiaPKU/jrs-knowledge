@@ -79,7 +79,7 @@ public class GBDTPipeline {
 					fields,
 					dataSize
 					);
-			System.out.println("提取数据结束");
+			System.out.println("提取数据完成");
 			
 			RegularExp.extractRegularExpFromText(
 					FilterConf.GBDTPath
@@ -87,7 +87,7 @@ public class GBDTPipeline {
 				 	FilterConf.GBDTPath
 				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", seperator,
 					indices);
-			System.out.println("正则匹配结束");
+			System.out.println("正则匹配完成");
 			
 			HanLPSegmenter.segmentationForGBDT(
 					FilterConf.GBDTPath
@@ -95,13 +95,13 @@ public class GBDTPipeline {
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt", seperator
 					);
-			System.out.println("分词结束");
+			System.out.println("分词完成");
 			
 			GBDTProcessor.removeDuplicateData(FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt",
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt");
-			System.out.println("去重结束");
+			System.out.println("去重完成");
 			
 			GBDTProcessor.init();
 			GBDTProcessor.loadFeatureAsDict(FilterConf.FeaturePath
@@ -110,7 +110,7 @@ public class GBDTPipeline {
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt", seperator,
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt", seperator);
-			System.out.println("提取特征结束");
+			System.out.println("提取特征完成");
 			
 			GBDTProcessor.loadFeatureAsArray(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.stata.txt", "	", 100);//特征数量
@@ -120,7 +120,7 @@ public class GBDTPipeline {
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "vec.csv",
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "position.num.stata.txt", 15);//15个类
-			System.out.println("向量表示结束");
+			System.out.println("向量表示完成");
 			
 			//GBDT训练
 			GBDT.run(FilterConf.GBDTPath
@@ -132,11 +132,11 @@ public class GBDTPipeline {
 					FilterConf.GBDTPath + "/gbdt.model/"
 							+ FilterConf.fieldDirs[i] + ".gbdt.model.json",
 					20,//迭代次数
-					0.5,
-					0.1,
-					3,
+					0.5,//采样率
+					0.1,//学习速率
+					3,//决策树深度
 					-1);
-			System.out.println("GBDT训练结束");
+			System.out.println("GBDT训练完成");
 			
 //			//测试模型反序列化
 //			GBDT.testDeserialization(FilterConf.GBDTPath

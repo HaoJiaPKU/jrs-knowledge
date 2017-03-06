@@ -1,12 +1,14 @@
 package cn.edu.pku.pipeline;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import cn.edu.pku.conf.DatabaseConf;
 import cn.edu.pku.conf.FilterConf;
 import cn.edu.pku.conf.ZhilianConf;
 import cn.edu.pku.filter.Combination;
+import cn.edu.pku.filter.Hyponymy;
 import cn.edu.pku.filter.PatternOcc;
 import cn.edu.pku.filter.RegularExp;
 import cn.edu.pku.filter.Statistic;
@@ -60,12 +62,12 @@ public class FeaturePipeline {
 		
 		FileDirs.makeDirs(FilterConf.FeaturePath);
 		//统计行业
-		AbstractObj.feildsToConf(FilterConf.FeaturePath
-				+ "/" + "industry.conf",
-				sources,
-				date,
-				"com_industry",
-				null, null);
+//		AbstractObj.feildsToConf(FilterConf.FeaturePath
+//				+ "/" + "industry.conf",
+//				sources,
+//				date,
+//				"com_industry",
+//				null, null);
 		
 		//选出数量前10位的行业
 		FilterConf.readFieldFromConf(
@@ -82,137 +84,151 @@ public class FeaturePipeline {
 //		FilterConf.fieldDirs[0] = "计算机软件";
 //		FilterConf.fields[0] = "计算机软件";
 		
+		HashSet<String> alreadyExist = new HashSet<String>();
+		alreadyExist.add("基金or证券or期货or投资");
+		alreadyExist.add("互联网or电子商务");
+		alreadyExist.add("基金or证券or期货or投资");
+		
 		//对行业逐一计算
 		for (int i = 0; i < FilterConf.fieldDirs.length; i ++) {
+			if (alreadyExist.contains(FilterConf.fieldDirs[i])) {
+				continue;
+			}
 			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
 			
-			AbstractObj.feildsToText(
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt",
-					"	",
-					sources,
-					date,
-					"com_industry",
-					FilterConf.fields[i],
-					fields,
-					dataSize
-					);
-			System.out.println("提取数据结束");
-			
-			RegularExp.extractRegularExpFromText(
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", "	",
-				 	FilterConf.FeaturePath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", "	",
-					indices);
-			System.out.println("正则匹配结束");
-			
-			HanLPSegmenter.segmentationForFeature(
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", "	",
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt",
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.dup.txt",
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.loc.dup.txt", " ",
-					indices
-					);
-			System.out.println("分词结束");
-			
-			FeatureProcessor.removeDuplicateData(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt",
-				 	FilterConf.FeaturePath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt");
-			FeatureProcessor.removeDuplicateData(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.dup.txt",
-				 	FilterConf.FeaturePath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.tmp.txt");
-			FeatureProcessor.removeDuplicateData(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.loc.dup.txt",
-				 	FilterConf.FeaturePath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.loc.tmp.txt");
-			System.out.println("去重结束");
-			
-			Statistic.init();
-			Statistic.load(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt", " ", 30);
-			Statistic.saveToFile(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.stata.txt", "	");
-			FeatureProcessor.removeLongTailWord(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt",
-				 	FilterConf.FeaturePath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt",
-				 	false);
-			Statistic.clear();
-			
-			Statistic.init();
-			Statistic.load(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.tmp.txt", " ", 20);
-			Statistic.saveToFile(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.stata.txt", "	");
-			FeatureProcessor.removeLongTailWord(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.tmp.txt",
-				 	FilterConf.FeaturePath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.txt",
-				 	false);
-			Statistic.clear();
-			System.out.println("统计提取结束");
-			
-			/**
-//			HanLPOccurrence.extractFormTokens(
+//			AbstractObj.feildsToText(
 //					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt",
+//					"	",
+//					sources,
+//					date,
+//					"com_industry",
+//					FilterConf.fields[i],
+//					fields,
+//					dataSize
+//					);
+//			System.out.println("提取数据完成");
+//			
+//			RegularExp.extractRegularExpFromText(
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", "	",
+//				 	FilterConf.FeaturePath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", "	",
+//					indices);
+//			System.out.println("正则匹配完成");
+//			
+//			HanLPSegmenter.segmentationForFeature(
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", "	",
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt",
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.dup.txt",
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.loc.dup.txt", " ",
+//					indices
+//					);
+//			System.out.println("分词完成");
+//			
+//			FeatureProcessor.removeDuplicateData(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt",
+//				 	FilterConf.FeaturePath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt");
+//			FeatureProcessor.removeDuplicateData(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.dup.txt",
+//				 	FilterConf.FeaturePath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.tmp.txt");
+//			FeatureProcessor.removeDuplicateData(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.loc.dup.txt",
+//				 	FilterConf.FeaturePath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.loc.tmp.txt");
+//			System.out.println("去重完成");
+//			
+//			Statistic.init();
+//			Statistic.load(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt", " ", 30);
+//			Statistic.saveToFile(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.stata.txt", "	");
+//			FeatureProcessor.removeLongTailWord(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.tmp.txt",
+//				 	FilterConf.FeaturePath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt",
+//				 	false);
+//			Statistic.clear();
+//			
+//			Statistic.init();
+//			Statistic.load(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.tmp.txt", " ", 20);
+//			Statistic.saveToFile(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.stata.txt", "	");
+//			FeatureProcessor.removeLongTailWord(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.tmp.txt",
+//				 	FilterConf.FeaturePath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.txt",
+//				 	false);
+//			Statistic.clear();
+//			System.out.println("统计提取完成");
+//			
+//			/**
+////			HanLPOccurrence.extractFormTokens(
+////					FilterConf.FeaturePath
+////					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt",
+////					FilterConf.FeaturePath
+////					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.occ.txt"
+////					);
+////			HanLPOccurrence.extractFormTokens(
+////					FilterConf.FeaturePath
+////					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.txt",
+////					FilterConf.FeaturePath
+////					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.occ.txt"
+////					);
+////			System.out.println("共现关系提取完成");
+////			
+////			//对每个"熟练"等词提取
+////			PatternOcc.init();
+////			for (int j = 0; j < tokens.length; j ++) {
+////				PatternOcc.loadDictPos(FilterConf.FeaturePath
+////					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.txt", " ");
+////				PatternOcc.loadDictOcc(FilterConf.FeaturePath
+////					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.occ.txt", " ",
+////					tokens[j], thresTf[j], thresScore[j]);
+////				PatternOcc.getCandidate(150);
+////				PatternOcc.clear();
+////			}
+////			PatternOcc.saveToFile(FilterConf.FeaturePath
+////					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.through.occ.txt", " ");
+////			System.out.println("模式提取完成");
+//			*/
+//			
+//			//训练w2v模型
+//			W2V.run(FilterConf.FeaturePath
 //					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt",
 //					FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.occ.txt"
-//					);
-//			HanLPOccurrence.extractFormTokens(
-//					FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.txt",
-//					FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.occ.txt"
-//					);
-//			System.out.println("共现关系提取结束");
-//			
-//			//对每个"熟练"等词提取
-//			PatternOcc.init();
-//			for (int j = 0; j < tokens.length; j ++) {
-//				PatternOcc.loadDictPos(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.model");
+//			FeatureProcessor.init();
+//			FeatureProcessor.loadDictPos(FilterConf.FeaturePath
 //					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.txt", " ");
-//				PatternOcc.loadDictOcc(FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.occ.txt", " ",
-//					tokens[j], thresTf[j], thresScore[j]);
-//				PatternOcc.getCandidate(150);
-//				PatternOcc.clear();
-//			}
-//			PatternOcc.saveToFile(FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.through.occ.txt", " ");
-//			System.out.println("模式提取结束");
-			*/
+//			FeatureProcessor.saveToFile(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.model",
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.vec.txt", "	");
+//			FeatureProcessor.clear();
+//			System.out.println("w2v训练完成");
 			
-			//训练w2v模型
-			W2V.run(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.txt",
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.model");
-			FeatureProcessor.init();
-			FeatureProcessor.loadDictPos(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.txt", " ");
-			FeatureProcessor.saveToFile(FilterConf.FeaturePath
+			//提取上下位关系
+			Hyponymy.init(FilterConf.FeaturePath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.vec.txt", "	",
+				FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.model",
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.vec.txt", "	");
-			FeatureProcessor.clear();
-			System.out.println("w2v训练结束");
-			
-			Word2Vec w2v = new Word2Vec();
-			try {
-				w2v.loadJavaModel(FilterConf.FeaturePath
-						+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.model");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				FilterConf.FeaturePath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.wiki.txt");
+//			Hyponymy.getExplainationFromWiki(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.wiki.txt");
+//			Hyponymy.getHyponymyPairFromWiki(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "hyp.txt");
+			Hyponymy.getExplainationFromBaidu(FilterConf.FeaturePath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.baidu.txt");
+			System.out.println("上下位关系提取完成");
 			
 //			//层次聚类
 //			HC.run(FilterConf.FeaturePath
@@ -260,7 +276,7 @@ public class FeaturePipeline {
 		Tfidf.saveToHtml(FilterConf.FeaturePath + "/" + "result.html", " ");
 		Tfidf.clear();
 		
-		System.out.println("词汇归类结束");
+		System.out.println("词汇归类完成");
 		*/
 	}
 }
