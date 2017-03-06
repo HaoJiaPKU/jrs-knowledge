@@ -6,6 +6,7 @@ import java.util.Set;
 import cn.edu.pku.conf.DatabaseConf;
 import cn.edu.pku.conf.FilterConf;
 import cn.edu.pku.conf.ZhilianConf;
+import cn.edu.pku.filter.Combination;
 import cn.edu.pku.filter.PatternOcc;
 import cn.edu.pku.filter.RegularExp;
 import cn.edu.pku.filter.Statistic;
@@ -59,12 +60,12 @@ public class FeaturePipeline {
 		
 		FileDirs.makeDirs(FilterConf.FeaturePath);
 		//统计行业
-//		AbstractObj.feildsToConf(FilterConf.FeaturePath
-//				+ "/" + "industry.conf",
-//				sources,
-//				date,
-//				"com_industry",
-//				null, null);
+		AbstractObj.feildsToConf(FilterConf.FeaturePath
+				+ "/" + "industry.conf",
+				sources,
+				date,
+				"com_industry",
+				null, null);
 		
 		//选出数量前10位的行业
 		FilterConf.readFieldFromConf(
@@ -78,11 +79,11 @@ public class FeaturePipeline {
 		}
 		
 		//For Test
-		FilterConf.fieldDirs[0] = "计算机软件";
-		FilterConf.fields[0] = "计算机软件";
+//		FilterConf.fieldDirs[0] = "计算机软件";
+//		FilterConf.fields[0] = "计算机软件";
 		
 		//对行业逐一计算
-		for (int i = 0; i < 1; i ++) {
+		for (int i = 0; i < FilterConf.fieldDirs.length; i ++) {
 			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
 			
 			AbstractObj.feildsToText(
@@ -230,23 +231,24 @@ public class FeaturePipeline {
 			System.out.println();
 		}
 		
-		/**
-		Combination.mergeFile(
-				FilterConf.FeaturePath,
-				FilterConf.fieldDirs,
-				"tokens.through.occ.txt",
-				FilterConf.FeaturePath + "/" + "merge.txt");
+		
+//		Combination.mergeFile(
+//				FilterConf.FeaturePath,
+//				FilterConf.fieldDirs,
+//				"tokens.through.occ.txt",
+//				FilterConf.FeaturePath + "/" + "all.txt");
 		Combination.mergeFile(
 				FilterConf.FeaturePath,
 				FilterConf.fieldDirs,
 				"tokens.txt",
-				FilterConf.FeaturePath + "/" + "merge.tokens.txt");
+				FilterConf.FeaturePath + "/" + "all.tokens.txt");
 		Combination.mergeFile(
 				FilterConf.FeaturePath,
 				FilterConf.fieldDirs,
 				"tokens.pos.txt",
-				FilterConf.FeaturePath + "/" + "merge.tokens.pos.txt");
-
+				FilterConf.FeaturePath + "/" + "all.tokens.pos.txt");
+		
+		/**
 		Segregator.init();
 		Segregator.makeDict(FilterConf.FeaturePath + "/" + "merge.txt", " ");
 		Segregator.saveToFile(FilterConf.FeaturePath + "/" + "segregat.txt", "	", 2);
