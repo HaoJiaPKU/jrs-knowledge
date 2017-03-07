@@ -100,7 +100,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				dataType : "json",
 				contentType : "application/x-www-form-urlencoded; charset=utf-8",
 				success : function(json){
-					console.log(json);			
+					console.log(json);
+					zNodes = json;
+					$.fn.zTree.init($("#div1"), setting, zNodes);
+					$.fn.zTree.init($("#div2"), setting);
 					document.close();
 				},
 				error : function(xhr, status){

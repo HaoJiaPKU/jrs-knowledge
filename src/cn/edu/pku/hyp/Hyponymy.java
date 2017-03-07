@@ -39,8 +39,8 @@ public class Hyponymy {
 	public HashSet<HyponymyObj> hypDict
 			= new HashSet<HyponymyObj>();
 	//带有向量的单词词典
-	public HashMap<String, Cluster> wordOfCluster
-			= new HashMap<String, Cluster>();
+	public HashSet<String> wordDict
+			= new HashSet<String>();
 	//单词与维基百科解释
 	public HashMap<String, String> wordWiki
 			= new HashMap<String, String>();
@@ -48,27 +48,27 @@ public class Hyponymy {
 	public HashMap<String, String> wordBaidu
 			= new HashMap<String, String>();
 
+	public Hyponymy() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void init(String inputPath,
 			String inputSeperator,
 			String wikiPath,
 			String baiduPath) {
 		hypDict.clear();
-		wordOfCluster.clear();
+		wordDict.clear();
 		wordWiki.clear();
 		wordBaidu.clear();
         FileInput fi = new FileInput(inputPath); 
         String line = null;
         try {
 			while ((line = fi.reader.readLine()) != null) {  
-				String[] s = line.split(inputSeperator);  
-			    Cluster cluster = new Cluster();  
-			    List<Double> list = new ArrayList<Double>();
-			    cluster.setName(s[0]);
-			    for (int j = 1; j < s.length; j ++) {
-			    	list.add(Double.parseDouble(s[j]));
-			    }
-			    cluster.setVector(list);
-			    wordOfCluster.put(s[0], cluster);
+				String[] s = line.split(inputSeperator);
+				if (s.length < 2) {
+					continue;
+				}
+			    wordDict.add(s[0].trim());
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -112,13 +112,13 @@ public class Hyponymy {
 	
 	public void clear() {
 		hypDict.clear();
-		wordOfCluster.clear();
+		wordDict.clear();
 		wordWiki.clear();
 		wordBaidu.clear();
 	}
 	
-	public void getExplainationFromWiki(String outputPath) {
-		for (String word : wordOfCluster.keySet()) {
+	public void crawlExplainationFromWiki(String outputPath) {
+		for (String word : wordDict) {
 			try {
 				System.out.println(word);
 				String content = UrlUtil.getHTML(
@@ -171,9 +171,9 @@ public class Hyponymy {
 		return flag;
 	}
 	
-	public void getExplainationFromBaidu(String outputPath) {
+	public void crawlExplainationFromBaidu(String outputPath) {
 //		int counter = 0;
-		for (String word : wordOfCluster.keySet()) {
+		for (String word : wordDict) {
 			try {
 //				if (counter ++ >= 1) {
 //					break;
@@ -227,7 +227,7 @@ public class Hyponymy {
 		fo.closeOutput();
 	}
 	
-	public void getHyponymyPair() {
+	public void analyzeHyponymyPair() {
 		for (String word : wordWiki.keySet()) {
 			String explaination = wordWiki.get(word);
 			while (explaination.indexOf("（") != -1 && explaination.indexOf("）") != -1
@@ -293,7 +293,7 @@ public class Hyponymy {
 		try {
 			fo.t3.write(om
 				.writerWithDefaultPrettyPrinter()
-				.writeValueAsString(this.hypDict));
+				.writeValueAsString(this));
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -311,8 +311,13 @@ public class Hyponymy {
 		FileInput fi = new FileInput(modelPath);
 		ObjectMapper om = new ObjectMapper();
 		try {
-			Hyponymy model = om.readValue(fi.reader.readLine(), Hyponymy.class);
-			this.hypDict = (HashSet<HyponymyObj>) model.hypDict.clone();
+			String content = new String();
+			String line = null;
+			while((line = fi.reader.readLine()) != null) {
+				content += line;
+			}
+			Hyponymy hyp = om.readValue(content, Hyponymy.class);
+			this.hypDict = (HashSet<HyponymyObj>) hyp.hypDict.clone();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -323,7 +328,7 @@ public class Hyponymy {
 	public static void main(String [] args) {
 		Hyponymy hyponymy = new Hyponymy();
 		hyponymy.init(FilterConf.FeaturePath
-				+ "/" + "计算机软件" + "/" + "w2v.vec.txt", "	",
+				+ "/" + "计算机软件" + "/" + "tokens.pos.stata.txt", "	",
 			FilterConf.FeaturePath
 				+ "/" + "计算机软件" + "/" + "token.pos.wiki.txt",
 			FilterConf.FeaturePath
@@ -333,8 +338,10 @@ public class Hyponymy {
 //		hyponymy.getExplainationFromBaidu(FilterConf.FeaturePath
 //				+ "/" + "计算机软件" + "/" + "token.pos.baidu.txt");
 		
-		hyponymy.getHyponymyPair();
+		hyponymy.analyzeHyponymyPair();
 		hyponymy.save(FilterConf.FeaturePath
+				+ "/" + "计算机软件" + "/" + "hyp.txt");
+		hyponymy.load(FilterConf.FeaturePath
 				+ "/" + "计算机软件" + "/" + "hyp.txt");
 	}
 }

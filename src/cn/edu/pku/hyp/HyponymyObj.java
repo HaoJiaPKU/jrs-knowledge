@@ -31,16 +31,21 @@ public class HyponymyObj {
 	}
 
 	public HyponymyObj() {
-		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	public HyponymyObj(String hypernym, String hyponym, String explaination) {
-		super();
 		this.hypernym = hypernym;
 		this.hyponym = hyponym;
 		this.explaination = explaination;
 	}
+
+	public HyponymyObj(HyponymyObj hyp) {
+		this.hypernym = hyp.hypernym;
+		this.hyponym = hyp.hyponym;
+		this.explaination = hyp.explaination;
+	}
+	
 
 	@Override
 	public int hashCode() {

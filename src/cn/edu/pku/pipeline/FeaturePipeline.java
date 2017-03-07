@@ -215,7 +215,7 @@ public class FeaturePipeline {
 			//提取上下位关系
 			Hyponymy hyponymy = new Hyponymy();
 			hyponymy.init(FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.vec.txt", "	",
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.pos.stata.txt", "	",
 				FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.wiki.txt",
 				FilterConf.FeaturePath
@@ -224,7 +224,9 @@ public class FeaturePipeline {
 //					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.wiki.txt");
 //			hyponymy.getExplainationFromBaidu(FilterConf.FeaturePath
 //					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.baidu.txt");
-			hyponymy.getHyponymyPair();
+			hyponymy.analyzeHyponymyPair();
+			hyponymy.save(FilterConf.FeaturePath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "hyp.txt");
 			System.out.println("上下位关系提取完成");
 			
 //			//层次聚类
