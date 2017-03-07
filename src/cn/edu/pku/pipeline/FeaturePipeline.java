@@ -8,11 +8,11 @@ import cn.edu.pku.conf.DatabaseConf;
 import cn.edu.pku.conf.FilterConf;
 import cn.edu.pku.conf.ZhilianConf;
 import cn.edu.pku.filter.Combination;
-import cn.edu.pku.filter.Hyponymy;
 import cn.edu.pku.filter.PatternOcc;
 import cn.edu.pku.filter.RegularExp;
 import cn.edu.pku.filter.Statistic;
 import cn.edu.pku.hc.HC;
+import cn.edu.pku.hyp.Hyponymy;
 import cn.edu.pku.object.AbstractObj;
 import cn.edu.pku.util.FileDirs;
 import cn.edu.pku.util.HanLPOccurrence;
@@ -80,17 +80,17 @@ public class FeaturePipeline {
 					+ "/" + FilterConf.fieldDirs[i]);
 		}
 		
-		//For Test
-		FilterConf.fieldDirs[0] = "保险";
-		FilterConf.fields[0] = "保险";
+//		//For Test
+//		FilterConf.fieldDirs[0] = "媒体or出版or影视or文化传播";
+//		FilterConf.fields[0] = "媒体or出版or影视or文化传播";
 		
-		HashSet<String> alreadyExist = new HashSet<String>();
+//		HashSet<String> alreadyExist = new HashSet<String>();
 		
 		//对行业逐一计算
-		for (int i = 0; i < 1; i ++) {
-			if (alreadyExist.contains(FilterConf.fieldDirs[i])) {
-				continue;
-			}
+		for (int i = 0; i < FilterConf.fieldDirs.length; i ++) {
+//			if (alreadyExist.contains(FilterConf.fieldDirs[i])) {
+//				continue;
+//			}
 			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
 			
 //			AbstractObj.feildsToText(
@@ -213,18 +213,18 @@ public class FeaturePipeline {
 //			System.out.println("w2v训练完成");
 			
 			//提取上下位关系
-			Hyponymy.init(FilterConf.FeaturePath
+			Hyponymy hyponymy = new Hyponymy();
+			hyponymy.init(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.vec.txt", "	",
 				FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "w2v.model",
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.wiki.txt",
 				FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.wiki.txt");
-//			Hyponymy.getExplainationFromWiki(FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.wiki.txt");
-//			Hyponymy.getHyponymyPairFromWiki(FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "hyp.txt");
-			Hyponymy.getExplainationFromBaidu(FilterConf.FeaturePath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.baidu.txt");
+//			hyponymy.getExplainationFromWiki(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.wiki.txt");
+//			hyponymy.getExplainationFromBaidu(FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "token.pos.baidu.txt");
+			hyponymy.getHyponymyPair();
 			System.out.println("上下位关系提取完成");
 			
 //			//层次聚类
