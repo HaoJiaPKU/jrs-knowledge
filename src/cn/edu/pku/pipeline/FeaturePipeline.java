@@ -81,16 +81,13 @@ public class FeaturePipeline {
 		}
 		
 		//For Test
-//		FilterConf.fieldDirs[0] = "计算机软件";
-//		FilterConf.fields[0] = "计算机软件";
+		FilterConf.fieldDirs[0] = "保险";
+		FilterConf.fields[0] = "保险";
 		
 		HashSet<String> alreadyExist = new HashSet<String>();
-		alreadyExist.add("基金or证券or期货or投资");
-		alreadyExist.add("互联网or电子商务");
-		alreadyExist.add("基金or证券or期货or投资");
 		
 		//对行业逐一计算
-		for (int i = 0; i < FilterConf.fieldDirs.length; i ++) {
+		for (int i = 0; i < 1; i ++) {
 			if (alreadyExist.contains(FilterConf.fieldDirs[i])) {
 				continue;
 			}
