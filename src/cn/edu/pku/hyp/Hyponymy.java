@@ -52,6 +52,13 @@ public class Hyponymy {
 		// TODO Auto-generated constructor stub
 	}
 
+	public void init() {
+		hypDict.clear();
+		wordDict.clear();
+		wordWiki.clear();
+		wordBaidu.clear();
+	}
+	
 	public void init(String inputPath,
 			String inputSeperator,
 			String wikiPath,
@@ -147,29 +154,6 @@ public class Hyponymy {
 		}
 		fo.closeOutput();
 	}
-		
-	public boolean analyze(String word, String p, String explaination) {
-		String expression = word + p;
-		Pattern pattern = Pattern.compile(expression);
-		Matcher matcher = pattern.matcher(explaination);
-		String candidate = null;
-		boolean flag = false;
-		while (matcher.find()) {
-			String group = matcher.group().toString();
-			if (candidate == null || group.length() < candidate.length()) {
-				candidate = group;
-			}
-			flag = true;
-		}
-		if (flag) {
-			System.out.println(word + " " + candidate);
-			String [] tokens = HanLPSegmenter.segmentation(candidate, true, false, null);
-			System.out.println(word + " " + tokens[tokens.length - 1]);
-			HyponymyObj hp = new HyponymyObj(word, tokens[tokens.length - 1], candidate);
-			hypDict.add(hp);
-		}
-		return flag;
-	}
 	
 	public void crawlExplainationFromBaidu(String outputPath) {
 //		int counter = 0;
@@ -225,6 +209,29 @@ public class Hyponymy {
 			e.printStackTrace();
 		}
 		fo.closeOutput();
+	}
+	
+	public boolean analyze(String word, String p, String explaination) {
+		String expression = word + p;
+		Pattern pattern = Pattern.compile(expression);
+		Matcher matcher = pattern.matcher(explaination);
+		String candidate = null;
+		boolean flag = false;
+		while (matcher.find()) {
+			String group = matcher.group().toString();
+			if (candidate == null || group.length() < candidate.length()) {
+				candidate = group;
+			}
+			flag = true;
+		}
+		if (flag) {
+			System.out.println(word + " " + candidate);
+			String [] tokens = HanLPSegmenter.segmentation(candidate, true, false, true, null);
+			System.out.println(word + " " + tokens[tokens.length - 1]);
+			HyponymyObj hp = new HyponymyObj(word, tokens[tokens.length - 1], candidate);
+			hypDict.add(hp);
+		}
+		return flag;
 	}
 	
 	public void analyzeHyponymyPair() {
@@ -287,7 +294,7 @@ public class Hyponymy {
 		System.out.println(hypDict.size());
 	}
 	
-	public void save (String outputPath) {
+	public void save(String outputPath) {
 		FileOutput fo = new FileOutput(outputPath);
 		ObjectMapper om = new ObjectMapper();
 		try {

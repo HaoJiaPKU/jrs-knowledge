@@ -86,12 +86,15 @@ public class GBDTPipeline {
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", seperator,
 				 	FilterConf.GBDTPath
 				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", seperator,
+				 	FilterConf.GBDTPath
+				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "hyp.dict.txt",
 					indices);
 			System.out.println("正则匹配完成");
 			
 			HanLPSegmenter.segmentationForGBDT(
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", seperator,
+					true,
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "tokens.dup.txt", seperator
 					);

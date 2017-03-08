@@ -1,11 +1,13 @@
 package cn.edu.pku.filter;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
+import cn.edu.pku.util.HanLPSegmenter;
 
 public class RegularExp {
 
@@ -33,7 +35,8 @@ public class RegularExp {
 	public static void extractRegularExpFromText (
 			String inputPath,
 			String inputSeperator,
-			String outputPath,
+			String outputRegPath,
+			String outputHypPath,
 			String outputSeperator,
 			int[] indices
 			) {
@@ -42,8 +45,12 @@ public class RegularExp {
 			return;
 		}
 		
+		HashMap<String, Integer> dict
+			= new HashMap<String, Integer> ();
+		
 		FileInput fi = new FileInput(inputPath);
-		FileOutput fo = new FileOutput(outputPath);
+		FileOutput foReg = new FileOutput(outputRegPath);
+		FileOutput foHyp = new FileOutput(outputHypPath);
 		
 		String line = new String();
 		try {
@@ -54,7 +61,7 @@ public class RegularExp {
 					continue;
 				}
 				
-				fo.t3.write(fields[0] + outputSeperator);
+				foReg.t3.write(fields[0] + outputSeperator);
 				
 				boolean [] flag = new boolean [fields.length];
 				for (int i = 1; i < fields.length; i ++) {
@@ -65,7 +72,7 @@ public class RegularExp {
 				}
 				for (int i = 1; i < flag.length; i ++) {
 					if (!flag[i]) {
-						fo.t3.write(fields[i] + outputSeperator);
+						foReg.t3.write(fields[i] + outputSeperator);
 					}
 				}
 				
@@ -80,20 +87,52 @@ public class RegularExp {
 					}
 				}
 				
+				String exp = "等.+?[，|。|；]";
+				Pattern p = Pattern.compile(exp);
+				Matcher m;
+			
 				for (int i = 0; i < expressions.length; i ++) {
 					Pattern pattern = Pattern.compile(expressions[i]);
 					Matcher matcher = pattern.matcher(line);
 					while(matcher.find()) {
-						fo.t3.write(matcher.group().toString());
+						String text = matcher.group().toString();
+						foReg.t3.write(text);
+						m = p.matcher(text);
+						while (m.find()) {
+							String [] tokens = HanLPSegmenter
+									.segmentation(text, true, false, true, null);
+							if (tokens.length > 0) {
+								String t = tokens[tokens.length - 1];
+								if (dict.containsKey(t)) {
+									dict.put(t, dict.get(t) + 1);
+								} else {
+									dict.put(t, 1);
+								}
+							}
+						}
 					}
 				}
-				fo.t3.newLine();
+				foReg.t3.newLine();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		fo.closeOutput();
+		
+		try {
+			for (String t : dict.keySet()) {
+				if (dict.get(t) >= 10) {
+					foHyp.t3.write(t +  "	" + dict.get(t));foHyp.t3.newLine();
+//					System.out.println(t +  "	" + dict.get(t));
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		foReg.closeOutput();
+		foHyp.closeOutput();
 		fi.closeInput();
 	}
 	

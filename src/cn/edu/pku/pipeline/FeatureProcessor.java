@@ -11,20 +11,23 @@ import cn.edu.pku.w2v.Word2Vec;
 
 public class FeatureProcessor {
 	
-	public static HashMap<String, Integer> dictPos
+	public static HashMap<String, Integer> posDict
 		= new HashMap<String, Integer> ();
 	
 	public static void init() {
-		dictPos.clear();
+		posDict.clear();
 	}
 	
 	public static void clear() {
-		dictPos.clear();
+		posDict.clear();
 	}
 	
 	//加载词性标注的词典
-	public static void loadDictPos(String inputPath, String inputSeperator) {
-		FileInput fi = new FileInput(inputPath);
+	public static void loadPosDict(
+			String inputPosPath,
+			String inputHypPath,
+			String inputSeperator) {
+		FileInput fi = new FileInput(inputPosPath);
 		String line = new String ();
 		try {
 			while ((line = fi.reader.readLine()) != null) {
@@ -32,14 +35,23 @@ public class FeatureProcessor {
 				if (tokens.length <= 1) {
 					continue;
 				}
-				for (int i = 0; i < tokens.length; i ++) {
-					int tempCounter = 1;
-					if (dictPos.containsKey(tokens[i])) {
-						tempCounter = dictPos.get(tokens[i]) + 1;
-						dictPos.remove(tokens[i]);
-					}
-					dictPos.put(tokens[i], tempCounter);
-				}			
+				posDict.put(tokens[0], Integer.parseInt(tokens[1]));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fi.closeInput();
+		
+		fi = new FileInput(inputHypPath);
+		line = new String ();
+		try {
+			while ((line = fi.reader.readLine()) != null) {
+				String [] tokens = line.trim().split(inputSeperator);
+				if (tokens.length <= 1) {
+					continue;
+				}
+				posDict.put(tokens[0], Integer.parseInt(tokens[1]));		
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -59,7 +71,7 @@ public class FeatureProcessor {
 			e1.printStackTrace();
 		}
 		try {
-			for (String word : dictPos.keySet()) {
+			for (String word : posDict.keySet()) {
 				float[] vec = w2v.getWordVector(word);
 				if (vec != null) {
 					fo.t3.write(word);
@@ -107,7 +119,8 @@ public class FeatureProcessor {
 		fi.closeInput();
 	}
 	
-	public static void removeLongTailWord(String inputPath, String outputPath,
+	public static void removeLongTailWord(
+			String inputPath, String outputPath,
 			boolean idSave) {
 		FileInput fi = new FileInput(inputPath);
 		FileOutput fo = new FileOutput(outputPath);

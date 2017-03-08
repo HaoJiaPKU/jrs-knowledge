@@ -19,33 +19,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
 	
+	<link rel="stylesheet" href="ztree/css/demo.css" type="text/css">
 	<link rel="stylesheet" href="ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
 	<script type="text/javascript" src="bootstrap/js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="ztree/js/jquery.ztree.core.js"></script>
 	<script type="text/javascript" src="ztree/js/jquery.ztree.excheck.js"></script>
 	<script type="text/javascript" src="ztree/js/jquery.ztree.exedit.js"></script>
-  </head>
-  
-  <body>
-    <h1>jrs-knowledge</h1>
-    <div>
-  		<button id="load">load</button>
-  	</div>
-  	<div class="">
-  		<ul id="div1" class="ztree"></ul>
-	</div>
-	<div class="">
-		<ul id="div2" class="ztree"></ul>
-	</div>
-  </body>
-  	
+
 	<script type="text/javascript">
-		var setting = {
+	var setting = {
 			edit: {
 				enable: true,
 				showRemoveBtn: true,
-				showRenameBtn: true,
-				editNameSelectAll: true,
+				showRenameBtn: true
 			},
 			data: {
 				simpleData: {
@@ -58,20 +44,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			}
 		};
 
-		var zNodes =[
-			{ id:1, pId:0, name:"父节点 1", open:true},
-			{ id:11, pId:1, name:"叶子节点 1-1"},
-			{ id:12, pId:1, name:"叶子节点 1-2"},
-			{ id:13, pId:1, name:"叶子节点 1-3"},
-			{ id:2, pId:0, name:"父节点 2", open:true},
-			{ id:21, pId:2, name:"叶子节点 2-1"},
-			{ id:22, pId:2, name:"叶子节点 2-2"},
-			{ id:23, pId:2, name:"叶子节点 2-3"},
-			{ id:3, pId:0, name:"父节点 3", open:true},
-			{ id:31, pId:3, name:"叶子节点 3-1"},
-			{ id:32, pId:3, name:"叶子节点 3-2"},
-			{ id:33, pId:3, name:"叶子节点 3-3"}
-		];
+		var zNodes =[];
 
 		function beforeDrag(treeId, treeNodes) {
 			for (var i=0,l=treeNodes.length; i<l; i++) {
@@ -88,8 +61,24 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		$(document).ready(function(){
 			$.fn.zTree.init($("#div1"), setting, zNodes);
 			$.fn.zTree.init($("#div2"), setting);
+			
 		});
-		
+	</script>
+  </head>
+  
+  <body>
+    <div>
+  		<button id="load">load</button>
+  	</div>
+  	<div style="float:left;">
+  		<ul id="div1" class="ztree"></ul>
+	</div>
+	<div style="float:right;">
+		<ul id="div2" class="ztree"></ul>
+	</div>
+  </body>
+  	
+	<script type="text/javascript">
 		$("#load").click(function(event){
 			console.log("click load");
 			$.ajax({

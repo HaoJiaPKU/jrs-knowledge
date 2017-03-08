@@ -126,9 +126,12 @@ public class HanLPSegmenter
 	 * 将特殊词汇进行替换
 	 * */
 	public static String replaceToken(String token) {
-		if(token.equals("r")) {
-			token = "r语言";
-		}
+//		if(token.equals("r")) {
+//			token = "r语言";
+//		}
+//		if(token.equals("c")) {
+//			token = "c语言";
+//		}
 		if(token.equals("net")) {
 			token = ".net";
 		}
@@ -218,7 +221,6 @@ public class HanLPSegmenter
 		
 		token = replaceToken(token);
 		
-		
 		token = token.replaceAll("\r", "");
 		token = token.replaceAll("\n", "");
 		token = token.replaceAll("\t", "");
@@ -277,6 +279,7 @@ public class HanLPSegmenter
 			String content,
 			boolean isNormalized,
 			boolean isSave,
+			boolean posSelect,
 			String outputPath) {
 		
 		FileOutput fo = new FileOutput();
@@ -295,6 +298,9 @@ public class HanLPSegmenter
 		Iterator it = termList.iterator();
 		while (it.hasNext()) {
 			String [] term = it.next().toString().split("/");
+			if (posSelect && !isGivenPos(term[1].trim())) {
+				continue;
+			}
 			if (isNormalized) {
 				term[0] = normalizedToken(term[0].trim());
 				if (term[0] == null
@@ -423,6 +429,9 @@ public class HanLPSegmenter
 						flag[i] = true;
 						continue;
 					}
+					if (isGivenPos(pos.get(i))) {
+						flag[i] = true;
+					}
 					if (pos.get(i).equals("v")) {
 						if (i + 1 < token.size()
 								&& token.get(i + 1) != null
@@ -499,6 +508,7 @@ public class HanLPSegmenter
 	public static void segmentationForGBDT(
 			String inputPath,
 			String inputSeperator,
+			boolean posSelect,
 			String outputPath,
 			String outputSeperator) {		
 		FileInput fi = new FileInput(inputPath);
@@ -535,6 +545,9 @@ public class HanLPSegmenter
 					Iterator it = termList.iterator();
 					while (it.hasNext()) {
 						String [] term = it.next().toString().split("/");
+						if (posSelect && !isGivenPos(term[1].trim())) {
+							continue;
+						}
 						term[0] = normalizedToken(term[0].trim());
 						if (term[0] == null
 								|| term[0].length() == 0

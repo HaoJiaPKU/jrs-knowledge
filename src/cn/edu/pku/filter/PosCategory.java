@@ -82,7 +82,8 @@ public class PosCategory {
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt", "	",
 				 	FilterConf.FeaturePath
 				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "text.reg.txt", "	",
-					indices);
+					"",
+				 	indices);
 			System.out.println("正则匹配结束");
 			
 			HanLPSegmenter.segmentationForFeature(
