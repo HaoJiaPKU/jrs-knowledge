@@ -359,7 +359,7 @@ public class Hyponymy {
 		for (String word : dict.keySet()) {
 			HashSet<String> s = dict.get(word);
 			for (String name : s) {
-				HyponymyObj hyp = new HyponymyObj(name, word, "");
+				HyponymyObj hyp = new HyponymyObj(word, name, "");
 				hypDict.add(hyp);
 			}
 		}
@@ -440,8 +440,6 @@ public class Hyponymy {
 		return entries;
 	}
 	
-	
-	
 	public void save(String outputPath) {
 		FileOutput fo = new FileOutput(outputPath);
 		ObjectMapper om = new ObjectMapper();
@@ -462,6 +460,22 @@ public class Hyponymy {
 		fo.closeOutput();
 	}
 	
+	public void save(String outputPath, String jsonContent) {
+		FileOutput fo = new FileOutput(outputPath);
+		try {
+			fo.t3.write(jsonContent);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fo.closeOutput();
+	}
 	
 	public void load(String modelPath) {
 		FileInput fi = new FileInput(modelPath);
