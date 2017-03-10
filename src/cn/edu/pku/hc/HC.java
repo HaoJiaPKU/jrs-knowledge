@@ -15,7 +15,7 @@ public class HC {
 				textModelPath + "hcluster.txt",
 				textModelPath + "hclusterSeq.txt",
 				textModelPath + "hclusterNonSeq.txt",
-	    		model.hcluster(textModelPath + "hclusterDis.txt"), 0);
+	    		model.train(textModelPath + "hclusterDis.txt"), 0);
 		model.save(modelPath);
 	}
 	
@@ -29,6 +29,7 @@ public class HC {
 				textModelPath + "hcluster.txt",
 				textModelPath + "hclusterSeq.txt",
 				textModelPath + "hclusterNonSeq.txt",
-	    		model.hcluster(textModelPath + "hclusterDis.txt"), 0);
+	    		model.train(textModelPath + "hclusterDis.txt"), 0);
+		model.save(modelPath);
 	}
 }

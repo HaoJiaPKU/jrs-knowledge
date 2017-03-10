@@ -126,12 +126,6 @@ public class HanLPSegmenter
 	 * 将特殊词汇进行替换
 	 * */
 	public static String replaceToken(String token) {
-//		if(token.equals("r")) {
-//			token = "r语言";
-//		}
-//		if(token.equals("c")) {
-//			token = "c语言";
-//		}
 		if(token.equals("net")) {
 			token = ".net";
 		}
@@ -139,7 +133,7 @@ public class HanLPSegmenter
 			token = "c++";
 		}
 		if(token.equals("ccpp")) {
-			token = "c语言 c++";
+			token = "c c++";
 		}
 		if(token.equals("vcpp") || token.equals("visualcpp")) {
 			token = "visualc++";
@@ -151,7 +145,7 @@ public class HanLPSegmenter
 			token = "qt c++";
 		}
 		if(token.equals("javaccpp")) {
-			token = "java c语言 c++";
+			token = "java c c++";
 		}
 		if (token.equals("j2") || token.equals("ee") || token.equals("javaee")) {
 			token = "j2ee";

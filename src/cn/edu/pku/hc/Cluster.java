@@ -13,11 +13,11 @@ public class Cluster {
     /** 
      * 左节点 
      */  
-    private Cluster left;  
+    private Cluster left = null;  
     /** 
      * 右节点 
      */  
-    private Cluster right;  
+    private Cluster right = null;  
     /** 
      * data 
      */  

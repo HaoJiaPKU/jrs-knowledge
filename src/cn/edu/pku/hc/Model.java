@@ -66,7 +66,7 @@ public class Model {
 //        			dict.get("ppt").getVector()));
     }  
   
-    public ArrayList<Cluster> hcluster(String outputDis) {
+    public ArrayList<Cluster> train(String outputDis) {
     	FileOutput foDis = new FileOutput (outputDis);
         int currentId = -1;
         int clustersNum = clusters.size();
@@ -208,7 +208,8 @@ public class Model {
 		
 		ObjectMapper om = new ObjectMapper();
 		try {
-			fo.t3.write(om.writeValueAsString(this));
+			fo.t3.write(om
+					.writeValueAsString(this));
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
