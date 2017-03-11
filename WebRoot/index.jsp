@@ -16,11 +16,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
 	
-	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="ztree/css/demo.css">
 	<link rel="stylesheet" href="ztree/css/zTreeStyle/zTreeStyle.css">
 	<link rel="stylesheet" href="bootstrap/style/overlay.css">
-	<script type="text/javascript" src="bootstrap/js/jquery-1.11.3.min.js"></script>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+	<script type="text/javascript" src="bootstrap/js/jquery-2.0.3.js"></script>
 	<script type="text/javascript" src="ztree/js/jquery.ztree.core.js"></script>
 	<script type="text/javascript" src="ztree/js/jquery.ztree.excheck.js"></script>
 	<script type="text/javascript" src="ztree/js/jquery.ztree.exedit.js"></script>
@@ -53,7 +54,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				setTimeout(function() {
 					var zTree = $.fn.zTree.getZTreeObj("window1");
 					zTree.cancelEditName();
-					alert("节点名称不能为空.");
+					alert("节点名称不能为空");
 				}, 0);
 				return false;
 			}
@@ -105,7 +106,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				setTimeout(function() {
 					var zTree = $.fn.zTree.getZTreeObj("window2");
 					zTree.cancelEditName();
-					alert("节点名称不能为空.");
+					alert("节点名称不能为空");
 				}, 0);
 				return false;
 			}
@@ -159,42 +160,42 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	</script>
   </head>
   
+  
   <body>
+  	<div class="container">
+  		<jsp:include page="navigation.jsp"/>
+  	</div>
+  	<div class="container" style="height:60px; width:100%;"></div>
+  	
 	<div id="light" class="white_content"></div>
 	<div id="fade" class="black_overlay"></div>  
-
-	<div>
-	    <div>
-	  		<button id="opendiv" onclick="openKnowware(1)">打开</button>
-	  	</div>
-	  	<div>
-	  		<button id="opendiv" onclick="saveKnowware(1)">保存</button>
-	  	</div>
-	  	<div>
-	  		<button id="opendiv" onclick="saveasKnowware(1)">另存为</button>
-	  	</div>
-	  	<div>
-	  		<button id="opendiv" onclick="renameKnowware(1)">重命名</button>
-	  	</div>
-	  	<div style="float:left;">
-	  		<ul id="window1" class="ztree"></ul>
-		</div>
-	</div>
-	<div>
-	    <div>
-	  		<button id="opendiv" onclick="openKnowware(2)">打开</button>
-	  	</div>
-	  	<div>
-	  		<button id="opendiv" onclick="saveKnowware(2)">保存</button>
-	  	</div>
-	  	<div>
-	  		<button id="opendiv" onclick="saveKnowware(2)">另存为</button>
-	  	</div>
-	  	<div>
-	  		<button id="opendiv" onclick="renameKnowware(2)">重命名</button>
-	  	</div>
-	  	<div style="float:right;">
-	  		<ul id="window2" class="ztree"></ul>
+	
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div id="container1" class="col-md-12">
+				<div id="buttons1" class="col-md-12 btn-group">
+			  		<button class="btn btn-default" id="openKnowware1" onclick="openKnowware(1)">打开</button>
+			  		<button class="btn btn-default" id="saveKnowware1" onclick="saveKnowware(1)">保存</button>
+			  		<button class="btn btn-default" id="saveasKnowware1" onclick="saveasKnowware(1)">另存为</button>
+			  		<button class="btn btn-default" id="renameKnowware1" onclick="renameKnowware(1)">重命名</button>
+			  		<button class="btn btn-default" id="newWindow" onclick="newWindow()">新窗口</button>
+			  	</div>
+			  	<div class="col-md-12">
+			  		<ul id="window1" class="ztree"></ul>
+				</div>
+			</div>
+			<div id="container2" class="col-md-6" style="display:none;">
+			    <div id="buttons2" class="col-md-12 btn-group">
+				 	<button class="btn btn-default" id="openKnowware1" onclick="openKnowware(2)">打开</button>
+				  	<button class="btn btn-default" id="saveKnowware1" onclick="saveKnowware(2)">保存</button>
+				  	<button class="btn btn-default" id="saveasKnowware1" onclick="saveasKnowware(2)">另存为</button>
+				  	<button class="btn btn-default" id="renameKnowware1" onclick="renameKnowware(2)">重命名</button>
+				  	<button class="btn btn-default" id="newWindow" onclick="closeWindow()">关闭</button>
+				</div>
+				<div class="col-md-12">
+			  		<ul id="window2" class="ztree"></ul>
+				</div>
+			</div>
 		</div>
 	</div>
 	
@@ -203,9 +204,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<script type="text/javascript">
 		var fileName1 = "";
 		var fileName2 = "";
-		function openKnowware(windowId) {  
-			document.getElementById('light').style.display='block';  
-			document.getElementById('fade').style.display='block';
+		function openKnowware(windowId) {
+			openList();
 			$.ajax({
 				url: "knowledge/open",
 				data: {},
@@ -214,37 +214,41 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				dataType : "json",
 				contentType : "application/x-www-form-urlencoded; charset=utf-8",
 				success : function(json){
-					for (var i = 0; i < json.length; i ++) {
-						var a = document.createElement("a");
-						a.setAttribute("id", json[i]);
-						a.setAttribute("name", json[i]);
-						a.setAttribute("style", "cursor:pointer;text-decoration:none;");
-						a.setAttribute("onclick", "loadKnowware(\"" + json[i] + "\", " + windowId + ")");
-						a.innerHTML = json[i];
-						var nobr = document.createElement("nobr");
-						nobr.appendChild(a);
-						var div = document.createElement("div");
-						div.appendChild(nobr);
-						$("#light").append(div);
-					}
+					makeList(json, windowId);
 					document.close();
 				},
 				error : function(xhr, status){
 					return false;
 				},
 				complete : function(xhr, status){
-					var a = document.createElement("a");
-					a.setAttribute("style", "cursor:pointer;text-decoration:none;floag:bottom;");
-					a.setAttribute("onclick", "colsediv()");
-					a.innerHTML = "取消";
-					var nobr = document.createElement("nobr");
-					nobr.appendChild(a);
-					var div = document.createElement("div");
-					div.appendChild(nobr);
-					$("#light").append(div);
 					console.log("open complete");
 				}
 			});
+		}
+		
+		function makeList(json, windowId) {
+			for (var i = 0; i < json.length; i ++) {
+				var a = document.createElement("a");
+				a.setAttribute("id", json[i]);
+				a.setAttribute("name", json[i]);
+				a.setAttribute("style", "cursor:pointer;text-decoration:none;");
+				a.setAttribute("onclick", "loadKnowware(\"" + json[i] + "\", " + windowId + ")");
+				a.innerHTML = json[i];
+				var nobr = document.createElement("nobr");
+				nobr.appendChild(a);
+				var div = document.createElement("div");
+				div.appendChild(nobr);
+				$("#light").append(div);
+			}
+			var a = document.createElement("a");
+			a.setAttribute("style", "cursor:pointer;text-decoration:none;floag:bottom;");
+			a.setAttribute("onclick", "colseList()");
+			a.innerHTML = "取消";
+			var nobr = document.createElement("nobr");
+			nobr.appendChild(a);
+			var div = document.createElement("div");
+			div.appendChild(nobr);
+			$("#light").append(div);
 		}
 		
 		function loadKnowware(fileName, windowId){  
@@ -268,7 +272,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						fileName2 = fileName;
 						$.fn.zTree.init($("#window2"), setting2, zNodes2);
 					}
-					colsediv();
+					colseList();
 					document.close();
 				},
 				error : function(xhr, status) {
@@ -377,11 +381,35 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				}
 			});
 		}
+		
+		function openList() {
+			document.getElementById('light').style.display='block';  
+			document.getElementById('fade').style.display='block';
+		}
 			
-		function colsediv() {
+		function colseList() {
 			$("#light").empty();
 			document.getElementById('light').style.display='none';  
 			document.getElementById('fade').style.display='none';  
+		}
+		
+		function newWindow() {
+			$("#container1").attr("class", "col-md-6");
+			$("#container2").attr("style", "display:block;");
+			var thisNode = document.getElementById("newWindow");
+			thisNode.parentNode.removeChild(thisNode);
+		}
+		
+		function closeWindow() {
+			$("#container1").attr("class", "col-md-12");
+			$("#container2").attr("style", "display:none;");
+			var f = document.getElementById("buttons1");
+			var newWindow = document.createElement("button");
+			newWindow.innerHTML = "新窗口";
+			newWindow.setAttribute("class", "btn btn-default");
+			newWindow.setAttribute("id", "newWindow");
+			newWindow.setAttribute("onclick", "newWindow()");
+			f.appendChild(newWindow);
 		}
 	</script>
 </html>

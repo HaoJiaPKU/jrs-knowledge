@@ -14,12 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.edu.pku.hyp.Hyponymy;
 import cn.edu.pku.hyp.HyponymyObj;
 import cn.edu.pku.hyp.TreeNode;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping("knowledge")
@@ -54,11 +53,11 @@ public class KnowledgeController {
 	public @ResponseBody String save(
 			HttpServletRequest request, HttpServletResponse response) {
 		String fileName = request.getParameter("fileName");
-		String list = request.getParameter("zNodes");
+		String zNodes = request.getParameter("zNodes");
 		Hyponymy hyponymy = new Hyponymy();
-		JSONArray arr = JSONObject.parseArray(list);
+		JSONArray arr = JSONArray.fromObject(zNodes);
 		for (int i = 0; i < arr.size(); i ++) {
-			JSONObject obj = JSONObject.parseObject(arr.get(i).toString());
+			JSONObject obj = JSONObject.fromObject(arr.get(i).toString());
 			HyponymyObj hyp = new HyponymyObj(obj.getString("pId"), obj.getString("name"), "");
 			hyponymy.hypDict.add(hyp);
 		}
