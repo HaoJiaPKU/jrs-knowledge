@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -243,25 +244,24 @@ public class Model {
 				trees.put(iter, t);
 				updataFValue(f, tree, leafNodes, subset, dataset, label);
 			}
-			double accuracy = 0.0, aveRisk = 0.0;
+			double accuracy[] = new double[6];
 			if (testData != null && testData.size() != 0.0) {
-				String res = test(dataset, testData);
-				accuracy = Double.parseDouble(res.substring(0, res.indexOf(" ")));
-				aveRisk = Double.parseDouble(res.substring(res.indexOf(" ") + 1));
+				accuracy = test(dataset, testData, 5);
 			}
 			double trainLoss = computeLoss(dataset, trainData, f);
 			double testLoss = computeLoss(dataset, testData, f);
-			System.out.println("accuracy=" + accuracy
-						+ "  average train loss=" + trainLoss
-						+ "  average test loss=" + testLoss
-						+ "  average risk=" + aveRisk);
+			String cri = new String();
+			for (int i = 0; i < 5; i ++) {
+				cri += "accuracy" + String.valueOf(i) + "=" + String.valueOf(accuracy[i]) + "  ";
+			}
+			cri += "average train loss=" + trainLoss
+					+ "  average test loss=" + testLoss
+					+ "  average risk=" + String.valueOf(accuracy[5]);
+			System.out.println(cri);
 			System.out.println((iter + 1) + "th iteration completed");
 			System.out.println();
 			try {
-				fo.t3.write(accuracy
-						+ "	" + trainLoss
-						+ "	" + testLoss
-						+ "	" + aveRisk);
+				fo.t3.write(cri);
 				fo.t3.newLine();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -271,13 +271,16 @@ public class Model {
 		fo.closeOutput();
 	}
 	
-	public String test(DataSet dataset, HashSet<Integer> testData) {
-		int rightPrediction = 0;
+	public double[] test(DataSet dataset, HashSet<Integer> testData, int predictNum) {
+		double rightPrediction[] = new double[predictNum + 1];
+		for (int i = 0; i < predictNum + 1; i ++) {
+			rightPrediction[i] = 0.0;
+		}
 		double risk = 0.0;
 		for (Integer id : testData) {
 			Instance instance = dataset.getInstance(id);
 			HashMap<String, Double> probs = predict(instance);
-			String predictLabel = predictLabel(probs);
+			String predictLabel[] = predictLabel(probs, predictNum);
 			double singleRisk = 0.0;
 			for (String label : probs.keySet()) {
 				if (label.equals(instance.strTypeFeature.get("label"))) {
@@ -287,12 +290,20 @@ public class Model {
 				}
 			}
 			risk += singleRisk / (double) probs.size();
-			if (instance.strTypeFeature.get("label").equals(predictLabel)) {
-				rightPrediction ++;
+			for (int i = 0; i < predictNum; i ++) {
+				if (instance.strTypeFeature.get("label").equals(predictLabel[i])) {
+					for (int j = i; j < predictNum; j ++) {
+						rightPrediction[j] += 1.0;
+					}
+					break;
+				}
 			}
 		}
-		return String.valueOf(((double) rightPrediction / (double) testData.size())
-				+ " " + String.valueOf(risk / (double) testData.size()));
+		for (int i = 0; i < predictNum; i ++) {
+			rightPrediction[i] /= (double) testData.size();
+		}
+		rightPrediction[predictNum] = risk / (double) testData.size();
+		return rightPrediction;
 	}
 	
 	public HashMap<String, Double> predict(Instance instance) {
@@ -311,15 +322,16 @@ public class Model {
 		return probs;
 	}
 	
-	public String predictLabel(HashMap<String, Double> probs) {
-		String predictLabel = null;
-		for (String label : probs.keySet()) {
-			if (predictLabel == null || probs.get(label) > probs.get(predictLabel)) {
-				predictLabel = label;
-			}
+	public String[] predictLabel(HashMap<String, Double> probs, int labelNum) {
+		Map.Entry[] set = Util.getSortedHashMapByDoubleValueDec(probs);
+		
+		String predictLabel[] = new String[labelNum];
+		for (int i = 0; i < labelNum; i ++) {
+			predictLabel[i] = set[i].getKey().toString();
 		}
 		return predictLabel;
 	}
+	
 	
 	public void save(String modelDisplay, String modelReuse) {
 		FileOutput fo1 = new FileOutput(modelDisplay);

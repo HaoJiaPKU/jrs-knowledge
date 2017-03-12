@@ -146,22 +146,16 @@ public class Model {
      */  
     public void printClusterAsText(
     		String outputPath,
-    		String outputPathSeq,
-    		String outputPathNonSeq,
     		ArrayList<Cluster> clusters, int n) {
     	FileOutput fo = new FileOutput (outputPath);
-    	FileOutput foSeq = new FileOutput (outputPathSeq);
-    	FileOutput foNonSeq = new FileOutput (outputPathNonSeq);
     	for (int i = 0; i < clusters.size(); i ++) {
-    		writeToFile(clusters.get(i), n, 0, fo, foSeq, foNonSeq);
+    		writeToFile(clusters.get(i), n, 0, fo);
     	}
         fo.closeOutput();
-        foSeq.closeOutput();
-        foNonSeq.closeOutput();
     }
     
     public void writeToFile(Cluster cluster, int n, int upN,
-    		FileOutput fo, FileOutput foSeq, FileOutput foNonSeq) {
+    		FileOutput fo) {
     	try {
     		for (int i = 0; i < upN; i++) {
 				fo.t3.write("  ");
@@ -169,27 +163,22 @@ public class Model {
 	    	for (int i = upN; i < n; i++) {
 				fo.t3.write("┗━");
 	        }
-	    	foNonSeq.t3.write("-");
 	        //负数标记代表这是一个分支  
 	        if (cluster.getId() < 0) {  
 	        	fo.t3.write("┓");
 	        	fo.t3.newLine();
-	        	foSeq.t3.write("-");
 	        } else {  
 	            //代表是一个叶子节点   
 	        	fo.t3.write("━");
 	        	fo.t3.write(cluster.getName());
 	        	fo.t3.newLine();
-	        	foSeq.t3.write(cluster.getName());
-	        	foNonSeq.t3.write(cluster.getName());
 	        }
 	        if (cluster.getLeft() != null) {  
-	        	writeToFile(cluster.getLeft(), n + 1, n, fo, foSeq, foNonSeq);  
+	        	writeToFile(cluster.getLeft(), n + 1, n, fo);  
 	        }  
 	        if (cluster.getRight() != null) {  
-	        	writeToFile(cluster.getRight(), n + 1, n, fo, foSeq, foNonSeq);  
+	        	writeToFile(cluster.getRight(), n + 1, n, fo);  
 	        }
-	        foNonSeq.t3.write("-");
     	} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

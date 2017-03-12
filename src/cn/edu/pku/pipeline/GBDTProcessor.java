@@ -228,7 +228,7 @@ public class GBDTProcessor {
 			for (int i = 0; i < K; i ++) {
 				String label = set[i].getKey().toString();
 //				System.out.println(label + " " + posDict.get(label).size());
-				HashSet<String> t = sample(posDict.get(label), sampleNum);
+				HashSet<String> t = sample(posDict.get(label), posDict.get(label).size());
 				for (String str : t) {
 					fo.t3.write(label + str);
 					fo.t3.newLine();

@@ -6,30 +6,30 @@ public class HC {
 			String inputPath,
 			String inputSeperator,
 			String textModelPath,
+			String textDistPath,
 			String modelPath
 			) {
 		Model model = new Model(
     				inputPath,
     				inputSeperator);  
 		model.printClusterAsText(
-				textModelPath + "hcluster.txt",
-				textModelPath + "hclusterSeq.txt",
-				textModelPath + "hclusterNonSeq.txt",
-	    		model.train(textModelPath + "hclusterDis.txt"), 0);
+				textModelPath,
+	    		model.train(textDistPath),
+	    		0);
 		model.save(modelPath);
 	}
 	
 	public static void testDeserialization(
 			String modelPath,
-			String textModelPath
+			String textModelPath,
+			String textDistPath
 			) {
 		Model model = new Model();
 		model.load(modelPath);
 		model.printClusterAsText(
-				textModelPath + "hcluster.txt",
-				textModelPath + "hclusterSeq.txt",
-				textModelPath + "hclusterNonSeq.txt",
-	    		model.train(textModelPath + "hclusterDis.txt"), 0);
+				textModelPath,
+	    		model.train(textDistPath),
+	    		0);
 		model.save(modelPath);
 	}
 }

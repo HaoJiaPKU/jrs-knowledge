@@ -47,7 +47,7 @@ public class GBDT {
 		HashSet<Integer> testData = Util.minusSet(dataset.getInstanceIdset(), trainData);
 		Model model = new Model();
 		model.load(modelPath);
-		System.out.println(model.test(dataset, testData));
+		System.out.println(model.test(dataset, testData, 5));
 	}
 	
 	public static void main(String[] args) {
