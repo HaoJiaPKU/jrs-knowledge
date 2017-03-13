@@ -32,7 +32,7 @@ public class KnowledgeController {
 		Hyponymy hyponymy = new Hyponymy();
 		hyponymy.load("knowledge/" + fileName);
 		for (HyponymyObj hyp : hyponymy.hypDict) {
-			TreeNode node = new TreeNode(hyp.hyponym, hyp.hypernym, hyp.hyponym);
+			TreeNode node = new TreeNode(hyp.hyponym, hyp.hypernym, hyp.hyponym, true);
 			list.add(node);
 		}
 		return list;

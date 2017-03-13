@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.lang.model.element.VariableElement;
 
+import cn.edu.pku.pipeline.FeatureProcessor;
+
 public class W2V {
 	
 	public static void run(
@@ -25,15 +27,22 @@ public class W2V {
 	
 	public static void main(String[] args) throws IOException {
 		
-		W2V.run("../proIndustry/计算机软件/tokens.pos.txt",
-				"../proIndustry/merge.tokens.pos.model");
+//		W2V.run("../java-apps/quansongci.txt",
+//				"../java-apps/quansongci.model");
 		
-		Word2Vec w2v = new Word2Vec();
-		w2v.loadJavaModel("../proIndustry/merge.tokens.pos.model");
-
-		Set<WordEntry> result2 = w2v.distance("语言");
-		for(int i = 0; i < 20; i ++) {
-			System.out.println(result2.toArray()[i]);
-		}
+		FeatureProcessor.init();
+		FeatureProcessor.saveAllToFile(
+				"../java-apps/quansongci.model",
+				"../java-apps/quansongci.tsv",
+				"	");
+		FeatureProcessor.clear();
+		
+//		Word2Vec w2v = new Word2Vec();
+//		w2v.loadJavaModel("../proIndustry/merge.tokens.pos.model");
+//
+//		Set<WordEntry> result2 = w2v.distance("语言");
+//		for(int i = 0; i < 20; i ++) {
+//			System.out.println(result2.toArray()[i]);
+//		}
 	}
 }

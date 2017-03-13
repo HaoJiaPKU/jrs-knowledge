@@ -89,6 +89,42 @@ public class FeatureProcessor {
 		fo.closeOutput();
 	}
 	
+	public static void saveAllToFile(String modelPath,
+			String outputPath, String outputSeperator) {
+		FileOutput fo = new FileOutput(outputPath);
+		Word2Vec w2v = new Word2Vec();
+		try {
+			w2v.loadJavaModel(modelPath);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			int counter = 0;
+			HashMap<String, float[]> dict = w2v.getWordMap();
+			for (String word : dict.keySet()) {
+				float[] vec = w2v.getWordVector(word);
+				if (vec != null) {
+//					fo.t3.write(word);
+					
+					for (int i = 0; i < vec.length - 1; i ++) {
+						fo.t3.write(String.valueOf(vec[i]) + outputSeperator);
+					}
+					fo.t3.write(String.valueOf(vec[vec.length - 1]));
+					
+					fo.t3.newLine();
+					counter ++;
+				}
+			}
+			System.out.println(counter);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		fo.closeOutput();
+	}
+	
 	public static void removeDuplicateData(String inputPath, String outputPath) {
 		FileInput fi = new FileInput(inputPath);
 		FileOutput fo = new FileOutput(outputPath);

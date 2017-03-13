@@ -53,6 +53,7 @@ public class Model {
 			    }
 			    cluster.setId(i ++);  
 			    cluster.setVector(list);
+			    cluster.setNum(1);;
 			    clusters.add(cluster);
 			    dict.put(s[0], cluster);
 			}
@@ -69,9 +70,15 @@ public class Model {
     public ArrayList<Cluster> train(String outputDis) {
     	FileOutput foDis = new FileOutput (outputDis);
         int currentId = -1;
-        int clustersNum = clusters.size();
+        int clustersNum = clusters.size() * 0;
+        int clustersMaxSize = Integer.MAX_VALUE;
+        boolean clusterFlag = true;
         while (clusters.size() > 1) {
-        	if (clusters.size() <= clustersNum * 0.0) {
+        	if (!clusterFlag) {
+        		break;
+        	}
+        	clusterFlag = false;
+        	if (clusters.size() <= clustersNum) {
         		break;
         	}
         	if (clusters.size() % 100 == 0) {
@@ -81,19 +88,24 @@ public class Model {
             int lowestpair1 = 0;  
             int lowestpair2 = 1;  
             // 最短距离  
-            double closest = CosDistance.getDistance(
-            		clusters.get(0).getVector(),
-            		clusters.get(1).getVector());  
+            double closest = -2.0;
             
-            for (int i = 0; i < clusters.size(); i ++) {  
+            for (int i = 0; i < clusters.size(); i ++) {
+            	if (clusters.get(i).getNum() >= clustersMaxSize) {
+            		continue;
+            	}
                 for (int j = i + 1; j < clusters.size(); j ++) {
+                	if (clusters.get(j).getNum() >= clustersMaxSize) {
+                		continue;
+                	}
                     double d = CosDistance.getDistance(  
                             clusters.get(i).getVector(),
                             clusters.get(j).getVector());
                     if (d > closest) {  
                         closest = d;  
                         lowestpair1 = i;  
-                        lowestpair2 = j;  
+                        lowestpair2 = j;
+                        clusterFlag = true;
                     }
                 }  
             }  
@@ -110,12 +122,17 @@ public class Model {
 				e.printStackTrace();
 			}
             
+            int num = clusters.get(lowestpair1).getNum()
+            		+ clusters.get(lowestpair2).getNum();
+            
             Cluster cluster = new Cluster(
             		clusters.get(lowestpair1),
             		clusters.get(lowestpair2),
             		midvec,
             		currentId,
-            		closest);  
+            		closest,
+            		null,
+            		num);  
   
             currentId -= 1;  
               

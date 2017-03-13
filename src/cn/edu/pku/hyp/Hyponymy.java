@@ -363,22 +363,6 @@ public class Hyponymy {
 				hypDict.add(hyp);
 			}
 		}
-		
-//		set = getSortedHashMapByValueSize(dict);
-//		dict.clear();
-//		for (int i = 0; i < set.length; i ++) {
-//			System.out.println(set[i].getKey().toString()
-//					+ " " + set[i].getValue());
-//		}
-		
-//		for (String name : dict.keySet()) {
-//			System.out.println(name);
-//			HashSet<String> t = dict.get(name);
-//			for (String k : t) {
-//				System.out.print(k + " ");
-//			}
-//			System.out.println();
-//		}
 	}
 	
 	public void dfs(HashMap<String, HashSet<String>> dict,
@@ -496,22 +480,6 @@ public class Hyponymy {
 	}
 	
 	public static void main(String [] args) {
-		Hyponymy hyponymy = new Hyponymy();
-		hyponymy.init(FilterConf.FeaturePath
-				+ "/" + "互联网or电子商务" + "/" + "stata.hyp.txt",
-				"	");
-//		hyponymy.getExplainationFromWiki(FilterConf.FeaturePath
-//				+ "/" + "互联网or电子商务" + "/" + "token.pos.wiki.txt");
-//		hyponymy.getExplainationFromBaidu(FilterConf.FeaturePath
-//				+ "/" + "互联网or电子商务" + "/" + "token.pos.baidu.txt");
-//		hyponymy.analyzeHyponymyPairFromBaike();
-		
-		hyponymy.analyzeHyponymyPairFromHCModel(FilterConf.FeaturePath
-				+ "/" + "互联网or电子商务" + "/" + "model.hc.json");
-		hyponymy.save(FilterConf.FeaturePath
-				+ "/" + "互联网or电子商务" + "/" + "hyp.txt");
-		hyponymy.load(FilterConf.FeaturePath
-				+ "/" + "互联网or电子商务" + "/" + "hyp.txt");
 		
 	}
 }

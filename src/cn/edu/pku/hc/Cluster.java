@@ -34,16 +34,22 @@ public class Cluster {
      * 标签名 
      */  
     private String name;  
-      
+    /** 
+     * 标签名 
+     */  
+    private int num;  
+    
     public Cluster(){}  
       
     public Cluster(Cluster left, Cluster right, List<Double> vector, int id,  
-            double distance) {  
+            double distance, String name, int num) {  
         this.left = left;  
         this.right = right;  
         this.vector = vector;  
         this.id = id;  
-        this.distance = distance;  
+        this.distance = distance;
+        this.name = name;
+        this.num = num;
     }  
   
     public Cluster getLeft() {  
@@ -92,6 +98,15 @@ public class Cluster {
   
     public void setName(String name) {  
         this.name = name;  
-    }  
-      
+    }
+
+	
+    public int getNum() {
+		return num;
+	}
+    
+
+	public void setNum(int num) {
+		this.num = num;
+	} 
 }  

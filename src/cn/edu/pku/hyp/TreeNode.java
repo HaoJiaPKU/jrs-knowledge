@@ -5,6 +5,7 @@ public class TreeNode {
 	public String id;
 	public String pId;
 	public String name;
+	public boolean open;
 	
 	public String getId() {
 		return id;
@@ -30,16 +31,25 @@ public class TreeNode {
 		this.name = name;
 	}
 	
-	public TreeNode(String id, String pId, String name) {
-		super();
-		this.id = id;
-		this.pId = pId;
-		this.name = name;
+	public boolean isOpen() {
+		return open;
+	}
+
+	public void setOpen(boolean open) {
+		this.open = open;
 	}
 
 	public TreeNode() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public TreeNode(String id, String pId, String name, boolean open) {
+		super();
+		this.id = id;
+		this.pId = pId;
+		this.name = name;
+		this.open = open;
 	}
 
 	@Override
@@ -48,6 +58,7 @@ public class TreeNode {
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (open ? 1231 : 1237);
 		result = prime * result + ((pId == null) ? 0 : pId.hashCode());
 		return result;
 	}
@@ -71,6 +82,8 @@ public class TreeNode {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (open != other.open)
+			return false;
 		if (pId == null) {
 			if (other.pId != null)
 				return false;
@@ -78,6 +91,6 @@ public class TreeNode {
 			return false;
 		return true;
 	}
-	
+
 	
 }
