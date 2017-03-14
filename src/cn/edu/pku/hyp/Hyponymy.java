@@ -231,7 +231,7 @@ public class Hyponymy {
 		fo.closeOutput();
 	}
 	
-	public boolean analyze(String word, String p, String explaination) {
+	public boolean extract(String word, String p, String explaination) {
 		String expression = word + p;
 		Pattern pattern = Pattern.compile(expression);
 		Matcher matcher = pattern.matcher(explaination);
@@ -254,7 +254,7 @@ public class Hyponymy {
 		return flag;
 	}
 	
-	public void analyzeHyponymyPairFromBaike() {
+	public void extractHyponymyPairFromBaike() {
 		for (String word : wordWiki.keySet()) {
 			String explaination = wordWiki.get(word);
 			while (explaination.indexOf("（") != -1 && explaination.indexOf("）") != -1
@@ -271,14 +271,14 @@ public class Hyponymy {
 			explaination = explaination.replaceAll("[+]", "p");
 			explaination = explaination.replaceAll(" ", "").trim();
 
-			boolean flag = analyze(
+			boolean flag = extract(
 					word, ".*?是[一]*[种|类|门|个|款|套].+?[，|。|；]", explaination);
 //			if (!flag) {
-//				flag = analyze(
+//				flag = extract(
 //					word, ".*?是.*?[一]*[种|类|门|个|款].+?[，|。|；]", explaination);
 //			}
 //			if (!flag) {
-//				flag = analyze(
+//				flag = extract(
 //					word, ".*?[是|指].*?的.+?[，|。|；]", explaination);
 //			}
 		}
@@ -300,21 +300,21 @@ public class Hyponymy {
 			explaination = explaination.replaceAll("[+]", "p");
 			explaination = explaination.replaceAll(" ", "").trim();
 
-			boolean flag = analyze(
+			boolean flag = extract(
 					word, ".*?是[一]*[种|类|门|个|款|套].+?[，|。|；]", explaination);
 //			if (!flag) {
-//				flag = analyze(
+//				flag = extract(
 //					word, ".*?是.*?[一]*[种|类|门|个|款].+?[，|。|；]", explaination);
 //			}
 //			if (!flag) {
-//				flag = analyze(
+//				flag = extract(
 //					word, ".*?[是|指].*?的.+?[，|。|；]", explaination);
 //			}
 		}
 		System.out.println(hypDict.size());
 	}
 	
-	public void analyzeHyponymyPairFromHCModel(String HCModelPath) {
+	public void extractHyponymyPairFromHCModel(String HCModelPath) {
 		Model model = new Model();
 		model.load(HCModelPath);
 		
@@ -431,23 +431,6 @@ public class Hyponymy {
 			fo.t3.write(om
 				.writerWithDefaultPrettyPrinter()
 				.writeValueAsString(this));
-		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		fo.closeOutput();
-	}
-	
-	public void save(String outputPath, String jsonContent) {
-		FileOutput fo = new FileOutput(outputPath);
-		try {
-			fo.t3.write(jsonContent);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
