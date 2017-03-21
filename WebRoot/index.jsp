@@ -162,15 +162,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   
   <body>
-	<jsp:include page="navigation.jsp"/>
-  	
-  	<div id="fade" class="black-overlay container-fluid"></div> 
+  	<jsp:include page="navigation.jsp"/>
+
+    <div id="fade" class="black-overlay container-fluid"></div> 
   	<div id="file-list" class="modal div-above">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" onclick="closeList()">x</button>
-	        <h4 class="text-center text-primary">请选择文件</h3>
+	        <h4 class="text-center text-primary">请选择文件</h4>
 	      </div>
 	      <div class="modal-body file-list-content">
 	        <form id="file-list-content" class="form col-md-12 center-block">
@@ -203,6 +203,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    </div>
 	  </div>
 	</div>
+	 
 	
 	<div class="container-fluid">
 		<div class="row-fluid">
@@ -230,6 +231,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</div>
 		</div>
 	</div>
+
 	
   </body>
   	
@@ -313,21 +315,22 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		function saveKnowware(windowId){
 			var fileName = "";
-			var zNodes = [];
+			var thisZNodes = [];
 			if (windowId == 1) {
 				fileName = fileName1;
 				var treeObj = $.fn.zTree.getZTreeObj("window1");
-				zNodes = treeObj.transformToArray(treeObj.getNodes());
+				thisZNodes = treeObj.transformToArray(treeObj.getNodes());
 			} else if (windowId == 2) {
 				fileName = fileName2;
 				var treeObj = $.fn.zTree.getZTreeObj("window2");
-				zNodes = treeObj.transformToArray(treeObj.getNodes());
+				thisZNodes = treeObj.transformToArray(treeObj.getNodes());
 			}
+			console.log(thisZNodes);
 			$.ajax({
 				url: "knowledge/save",
 				data: {
 					fileName : fileName,
-					zNodes : JSON.stringify(zNodes),
+					zNodes : JSON.stringify(thisZNodes),
 				},
 				type : "POST",
 				async : false,
