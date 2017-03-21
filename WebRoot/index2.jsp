@@ -162,13 +162,47 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   
   <body>
-  	<div class="container">
-  		<jsp:include page="navigation.jsp"/>
-  	</div>
-  	<div class="container" style="height:60px; width:100%;"></div>
+	<jsp:include page="navigation.jsp"/>
   	
-	<div id="light" class="white_content"></div>
-	<div id="fade" class="black_overlay"></div>  
+  	<div id="fade" class="black-overlay container-fluid"></div> 
+  	<div id="file-list" class="modal div-above">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" onclick="closeList()">x</button>
+	        <h4 class="text-center text-primary">请选择文件</h3>
+	      </div>
+	      <div class="modal-body file-list-content">
+	        <form id="file-list-content" class="form col-md-12 center-block">
+	        </form>
+	      </div>
+	      <div class="modal-footer">
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div id="save-as-input" class="modal div-above">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" onclick="closeSaveas()">x</button>
+	        <h4 class="text-center text-primary">请输入文件名</h3>
+	      </div>
+	      <div class="modal-body file-name-content">
+	        <form class="form col-md-12 center-block">
+	       		<div class="form-group">
+	        		<input id="save-as-file-name" type="text" class="form-control input-lg" value="untitled.txt">
+	        	</div>
+	        	<div class="form-group">
+	        		<button class="btn btn-default btn-block" onclick="saveasKnowware()">保存</button>
+	        	</div>
+	        </form>
+	      </div>
+	      <div class="modal-footer">
+	      </div>
+	    </div>
+	  </div>
+	</div>
 	
 	<div class="container-fluid">
 		<div class="row-fluid">
@@ -176,8 +210,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<div id="buttons1" class="col-md-12 btn-group">
 			  		<button class="btn btn-default" id="openKnowware1" onclick="openKnowware(1)">打开</button>
 			  		<button class="btn btn-default" id="saveKnowware1" onclick="saveKnowware(1)">保存</button>
-			  		<button class="btn btn-default" id="saveasKnowware1" onclick="saveasKnowware(1)">另存为</button>
-			  		<button class="btn btn-default" id="renameKnowware1" onclick="renameKnowware(1)">重命名</button>
+			  		<button class="btn btn-default" id="openSaveas1" onclick="openSaveas(1)">另存为</button>
 			  		<button class="btn btn-default" id="newWindow" onclick="newWindow()">新窗口</button>
 			  	</div>
 			  	<div class="col-md-12">
@@ -188,8 +221,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    <div id="buttons2" class="col-md-12 btn-group">
 				 	<button class="btn btn-default" id="openKnowware1" onclick="openKnowware(2)">打开</button>
 				  	<button class="btn btn-default" id="saveKnowware1" onclick="saveKnowware(2)">保存</button>
-				  	<button class="btn btn-default" id="saveasKnowware1" onclick="saveasKnowware(2)">另存为</button>
-				  	<button class="btn btn-default" id="renameKnowware1" onclick="renameKnowware(2)">重命名</button>
+				  	<button class="btn btn-default" id="openSaveas1" onclick="openSaveas(2)">另存为</button>
 				  	<button class="btn btn-default" id="newWindow" onclick="closeWindow()">关闭</button>
 				</div>
 				<div class="col-md-12">
@@ -204,6 +236,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<script type="text/javascript">
 		var fileName1 = "";
 		var fileName2 = "";
+		var zNodes = [];
+		
 		function openKnowware(windowId) {
 			openList();
 			$.ajax({
@@ -229,26 +263,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		function makeList(json, windowId) {
 			for (var i = 0; i < json.length; i ++) {
 				var a = document.createElement("a");
+				a.setAttribute("class", "file-name-link");
 				a.setAttribute("id", json[i]);
 				a.setAttribute("name", json[i]);
 				a.setAttribute("style", "cursor:pointer;text-decoration:none;");
 				a.setAttribute("onclick", "loadKnowware(\"" + json[i] + "\", " + windowId + ")");
 				a.innerHTML = json[i];
-				var nobr = document.createElement("nobr");
-				nobr.appendChild(a);
+				var span = document.createElement("span");
+				span.appendChild(a);
 				var div = document.createElement("div");
-				div.appendChild(nobr);
-				$("#light").append(div);
+				div.setAttribute("class", "form-group");
+				div.appendChild(span);
+				$("#file-list-content").append(div);
 			}
-			var a = document.createElement("a");
-			a.setAttribute("style", "cursor:pointer;text-decoration:none;floag:bottom;");
-			a.setAttribute("onclick", "colseList()");
-			a.innerHTML = "取消";
-			var nobr = document.createElement("nobr");
-			nobr.appendChild(a);
-			var div = document.createElement("div");
-			div.appendChild(nobr);
-			$("#light").append(div);
 		}
 		
 		function loadKnowware(fileName, windowId){  
@@ -272,7 +299,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						fileName2 = fileName;
 						$.fn.zTree.init($("#window2"), setting2, zNodes2);
 					}
-					colseList();
 					document.close();
 				},
 				error : function(xhr, status) {
@@ -280,6 +306,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				},
 				complete : function(xhr, status){
 					console.log("load complete");
+					closeList();
 				}
 			});
 		}
@@ -296,7 +323,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				var treeObj = $.fn.zTree.getZTreeObj("window2");
 				zNodes = treeObj.transformToArray(treeObj.getNodes());
 			}
-			console.log(zNodes);
 			$.ajax({
 				url: "knowledge/save",
 				data: {
@@ -319,77 +345,58 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			});
 		}
 		
-		function saveasKnowware(fileName, windowId){  
-			console.log(fileName);
+		function saveasKnowware(windowId){
+			var newFileName = $("#save-as-file-name").val();
+			console.log(newFileName);
 			$.ajax({
-				url: "knowledge/saveas",
+				url: "knowledge/save",
 				data: {
-					fileName : fileName,
-					
+					fileName : newFileName,
+					zNodes : JSON.stringify(zNodes),
 				},
 				type : "POST",
 				async : false,
-				dataType : "json",
+				dataType : "application/json",
 				contentType : "application/x-www-form-urlencoded; charset=utf-8",
 				success : function(json){
-					if (windowId == 1) {
-						zNodes1 = json;
-						$.fn.zTree.init($("#window1"), setting1, zNodes1);
-					} else if (windowId == 2) {
-						zNodes2 = json;
-						$.fn.zTree.init($("#window2"), setting2, zNodes2);
-					}
-					colsediv();
 					document.close();
 				},
 				error : function(xhr, status) {
 					return false;
 				},
 				complete : function(xhr, status){
-					console.log("saveas complete");
+					console.log("save as complete");
+					closeSaveas();
 				}
 			});
 		}
 		
-		function renameKnowware(fileName, windowId){  
-			console.log(fileName);
-			$.ajax({
-				url: "knowledge/rename",
-				data: {
-					fileName : fileName,
-				},
-				type : "POST",
-				async : false,
-				dataType : "json",
-				contentType : "application/x-www-form-urlencoded; charset=utf-8",
-				success : function(json){
-					if (windowId == 1) {
-						zNodes1 = json;
-					} else if (windowId == 2) {
-						zNodes2 = json;
-					}
-					$.fn.zTree.init($("#window1"), setting1, zNodes1);
-					$.fn.zTree.init($("#window2"), setting2, zNodes2);
-					colsediv();
-					document.close();
-				},
-				error : function(xhr, status) {
-					return false;
-				},
-				complete : function(xhr, status){
-					console.log("rename complete");
-				}
-			});
+		function openSaveas(windowId) {
+			if (windowId == 1) {
+				var treeObj = $.fn.zTree.getZTreeObj("window1");
+				zNodes = treeObj.transformToArray(treeObj.getNodes());
+			} else if (windowId == 2) {
+				var treeObj = $.fn.zTree.getZTreeObj("window2");
+				zNodes = treeObj.transformToArray(treeObj.getNodes());
+			}
+			document.getElementById('save-as-input').style.display='block';  
+			document.getElementById('fade').style.display='block';
+			$("#save-as-file-name").select();
+		}
+		
+		function closeSaveas() {
+			document.getElementById('save-as-input').style.display='none';  
+			document.getElementById('fade').style.display='none';
 		}
 		
 		function openList() {
-			document.getElementById('light').style.display='block';  
+			document.getElementById('file-list').style.display='block';  
 			document.getElementById('fade').style.display='block';
 		}
 			
-		function colseList() {
-			$("#light").empty();
-			document.getElementById('light').style.display='none';  
+		function closeList() {
+			$("#file-list-content").empty();
+			document.getElementById('file-list').style.display='none';  
 			document.getElementById('fade').style.display='none';  
 		}
 		

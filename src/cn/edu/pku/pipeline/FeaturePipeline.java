@@ -105,17 +105,17 @@ public class FeaturePipeline {
 //			System.out.println("提取数据完成");
 //			
 			HanLPSegmenter.loadStopword(null);
-			RegularExp.extractRegularExpFromText(
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt",
-					tabSeperator,
-				 	FilterConf.FeaturePath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "reg.text.txt",
-				 	FilterConf.FeaturePath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "stata.hyp.txt",
-				 	tabSeperator,
-					indices);
-			System.out.println("正则匹配完成");
+//			RegularExp.extractRegularExpFromText(
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt",
+//					tabSeperator,
+//				 	FilterConf.FeaturePath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "reg.text.txt",
+//				 	FilterConf.FeaturePath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "stata.hyp.txt",
+//				 	tabSeperator,
+//					indices);
+//			System.out.println("正则匹配完成");
 //			
 //			HanLPSegmenter.segmentationForFeature(
 //					FilterConf.FeaturePath
@@ -237,28 +237,28 @@ public class FeaturePipeline {
 //					FilterConf.FeaturePath
 //					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.hc.json");
 			
-			//提取上下位关系
-			RegularExp.extractHyponymyPairFromRegText(
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt",
-					FilterConf.FeaturePath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "stata.pos.txt",
-				 	tabSeperator,
-				 	FilterConf.FeaturePath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "reg.hyp.txt",
-				 	tabSeperator,
-					indices);
 //			//提取上下位关系
-//			Hyponymy hyponymy = new Hyponymy();
-//			hyponymy.init(FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "stata.hyp.txt",
-//					tabSeperator);
-//			hyponymy.extractHyponymyPairFromHCModel(FilterConf.FeaturePath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.hc.json");
-//			hyponymy.save(FilterConf.FeaturePath
-//					+ "/hyp.model/" + FilterConf.fieldDirs[i] + ".hyp.hc.hyp.txt");
-//			hyponymy.load(FilterConf.FeaturePath
-//					+ "/hyp.model/" + FilterConf.fieldDirs[i] + ".hyp.hc.hyp.txt");
+//			RegularExp.extractHyponymyPairFromRegText(
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "text.txt",
+//					FilterConf.FeaturePath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "stata.pos.txt",
+//				 	tabSeperator,
+//				 	FilterConf.FeaturePath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "reg.hyp.txt",
+//				 	tabSeperator,
+//					indices);
+			//提取上下位关系
+			Hyponymy hyponymy = new Hyponymy();
+			hyponymy.init(FilterConf.FeaturePath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "stata.hyp.txt",
+					tabSeperator);
+			hyponymy.extractHyponymyPairFromHCModel(FilterConf.FeaturePath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "model.hc.json");
+			hyponymy.save(FilterConf.FeaturePath
+					+ "/hyp.model/" + FilterConf.fieldDirs[i] + ".hyp.hc.hyp.txt");
+			hyponymy.load(FilterConf.FeaturePath
+					+ "/hyp.model/" + FilterConf.fieldDirs[i] + ".hyp.hc.hyp.txt");
 //			//提取上下位关系
 //			hyponymy = new Hyponymy();
 //			hyponymy.init(FilterConf.FeaturePath

@@ -252,11 +252,12 @@ public class RegularExp {
 		}
 		
 		for (HyponymyObj obj : hypDict.keySet()) {
-			if (hypDict.get(obj) > 10) {
+			if (hypDict.get(obj) > 20) {
 				hyp.hypDict.add(obj);
 			}
 		}
 		
+		hyp.format();
 		hyp.save(outputHypPath);
 		fi.closeInput();
 	}

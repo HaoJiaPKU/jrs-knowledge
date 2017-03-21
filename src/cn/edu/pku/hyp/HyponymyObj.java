@@ -45,8 +45,8 @@ public class HyponymyObj {
 		this.hyponym = hyp.hyponym;
 		this.explaination = hyp.explaination;
 	}
-	
 
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -56,6 +56,7 @@ public class HyponymyObj {
 		result = prime * result + ((hyponym == null) ? 0 : hyponym.hashCode());
 		return result;
 	}
+	
 
 	@Override
 	public boolean equals(Object obj) {
@@ -82,7 +83,6 @@ public class HyponymyObj {
 		} else if (!hyponym.equals(other.hyponym))
 			return false;
 		return true;
-	}
-
+	}	
 	
 }

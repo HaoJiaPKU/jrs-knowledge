@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.edu.pku.conf.FilePathConf;
 import cn.edu.pku.hyp.Hyponymy;
 import cn.edu.pku.hyp.HyponymyObj;
 import cn.edu.pku.hyp.TreeNode;
@@ -30,7 +31,7 @@ public class KnowledgeController {
 		String fileName = request.getParameter("fileName");
 		ArrayList<TreeNode> list = new ArrayList<TreeNode>();
 		Hyponymy hyponymy = new Hyponymy();
-		hyponymy.load("knowledge/" + fileName);
+		hyponymy.load(FilePathConf.knowledgeDir + "/" + fileName);
 		for (HyponymyObj hyp : hyponymy.hypDict) {
 			TreeNode node = new TreeNode(hyp.hyponym, hyp.hypernym, hyp.hyponym, true);
 			list.add(node);
@@ -42,7 +43,7 @@ public class KnowledgeController {
 	public @ResponseBody ArrayList<String> open(
 			HttpServletRequest request, HttpServletResponse response) {
 		ArrayList<String> list = new ArrayList<String>();
-		File file = new File("knowledge");
+		File file = new File(FilePathConf.knowledgeDir);
 		for (File f : file.listFiles()) {
 			list.add(f.getName());
 		}
@@ -61,7 +62,7 @@ public class KnowledgeController {
 			HyponymyObj hyp = new HyponymyObj(obj.getString("pId"), obj.getString("name"), "");
 			hyponymy.hypDict.add(hyp);
 		}
-		hyponymy.save("knowledge/" + fileName);
+		hyponymy.save(FilePathConf.knowledgeDir + "/" + fileName);
 		return null;
 	}
 }

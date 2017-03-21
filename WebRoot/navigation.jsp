@@ -1,16 +1,20 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-default navbar-static-top">
 	<div class="container">
-		<div class="navbar-header">
-			<a class="navbar-brand" href="index.jsp">Jobpopo</a>
-			<a class="navbar-brand" href="employee.jsp"><span style="color:orange">找工作</span></a> 
-			<a class="navbar-brand" href="employer.jsp">找简历</a>
-		</div>
+		<div class="navbar-header"></div>
 		<div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+				<li class="active">
+					<a class="nav-a-size" href="#">jrs-knowledge</a>
+				</li>
+				<li>
+					<a class="nav-a-size" href="http://jobpopo.com">jobpopo</a>
+				</li>
+			</ul>
 			<c:if test="${empty employee }">
-				<form action="/employee/login" method="post"
+				<form action="/user/login" method="post"
 					class="navbar-form navbar-right">
 					<div class="form-group">
 						<input name="username" type="text" placeholder="Email"
@@ -20,9 +24,7 @@
 						<input name="password" type="password" placeholder="Password"
 							class="form-control">
 					</div>
-					<button type="submit" class="btn btn-primary">登录</button>
-					<button type="button" class="btn btn-primary"
-						onclick="javascript:window.location.href='/employee/regist'">求职者注册</button>
+					<button type="submit" class="btn btn-default ">登录</button>
 				</form>
 			</c:if>
 			<c:if test="${not empty employee }">

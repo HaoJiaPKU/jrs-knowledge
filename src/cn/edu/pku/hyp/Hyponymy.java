@@ -363,6 +363,8 @@ public class Hyponymy {
 				hypDict.add(hyp);
 			}
 		}
+		
+//		this.format();
 	}
 	
 	public void dfs(HashMap<String, HashSet<String>> dict,
@@ -460,6 +462,25 @@ public class Hyponymy {
 			e.printStackTrace();
 		}
 		fi.closeInput();
+	}
+	
+	public void format() {
+		HashMap<String, String> m = new HashMap<String, String>();
+		for (HyponymyObj hypobj : hypDict) {
+			m.put(hypobj.hyponym, hypobj.hypernym);
+		}
+		HashMap<String, String> t = new HashMap<String, String>();
+		for (String hyponym : m.keySet()) {
+			String hypernym = m.get(hyponym);
+			if (!m.containsKey(hypernym)) {
+				t.put(hypernym, "技能");
+				System.out.println(hypernym);
+			}
+		}
+		for (String hyponym : t.keySet()) {
+			HyponymyObj hypobj = new HyponymyObj(t.get(hyponym), hyponym, "");
+			hypDict.add(hypobj);
+		}
 	}
 	
 	public static void main(String [] args) {
