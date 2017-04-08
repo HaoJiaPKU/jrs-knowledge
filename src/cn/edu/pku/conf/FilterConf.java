@@ -6,7 +6,7 @@ import cn.edu.pku.util.FileInput;
 
 public class FilterConf {
 
-	public static final String FeaturePath = "../proFeature";
+	public static final String ConceptPath = "../proConcept";
 	public static final String GBDTPath = "../proGBDT";
 	public static String [] fields;
 	public static String [] fieldDirs;
@@ -39,6 +39,6 @@ public class FilterConf {
 	}
 	
 	public static void main(String[] args) {
-		readFieldFromConf(FeaturePath + "category.conf", 100);
+		readFieldFromConf(ConceptPath + "category.conf", 100);
 	}
 }

@@ -356,15 +356,19 @@ public class Hyponymy {
 			dict.put(set[i].getKey().toString(), hashset);
 		}
 		
+		hypDict.clear();
 		for (String word : dict.keySet()) {
 			HashSet<String> s = dict.get(word);
 			for (String name : s) {
+				if (name.equals("技能")) {
+					continue;
+				}
 				HyponymyObj hyp = new HyponymyObj(word, name, "");
 				hypDict.add(hyp);
 			}
 		}
 		
-//		this.format();
+		this.format();
 	}
 	
 	public void dfs(HashMap<String, HashSet<String>> dict,
@@ -469,12 +473,12 @@ public class Hyponymy {
 		for (HyponymyObj hypobj : hypDict) {
 			m.put(hypobj.hyponym, hypobj.hypernym);
 		}
+		int counter = 0;
 		HashMap<String, String> t = new HashMap<String, String>();
 		for (String hyponym : m.keySet()) {
 			String hypernym = m.get(hyponym);
-			if (!m.containsKey(hypernym)) {
+			if (!m.containsKey(hypernym) && !hypernym.equals("技能")) {
 				t.put(hypernym, "技能");
-				System.out.println(hypernym);
 			}
 		}
 		for (String hyponym : t.keySet()) {

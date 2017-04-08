@@ -2,11 +2,12 @@ package cn.edu.pku.w2v;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Set;
 
 import javax.lang.model.element.VariableElement;
 
-import cn.edu.pku.pipeline.FeatureProcessor;
+import cn.edu.pku.pipeline.ConceptProcessor;
 
 public class W2V {
 	
@@ -30,19 +31,23 @@ public class W2V {
 //		W2V.run("../java-apps/quansongci.txt",
 //				"../java-apps/quansongci.model");
 		
-		FeatureProcessor.init();
-		FeatureProcessor.saveAllToFile(
-				"../java-apps/quansongci.model",
-				"../java-apps/quansongci.tsv",
-				"	");
-		FeatureProcessor.clear();
+//		ConceptProcessor.init();
+//		ConceptProcessor.saveAllToFile(
+//				"../java-apps/quansongci.model",
+//				"../java-apps/quansongci.tsv",
+//				"	");
+//		ConceptProcessor.clear();
 		
-//		Word2Vec w2v = new Word2Vec();
-//		w2v.loadJavaModel("../proIndustry/merge.tokens.pos.model");
-//
-//		Set<WordEntry> result2 = w2v.distance("语言");
-//		for(int i = 0; i < 20; i ++) {
-//			System.out.println(result2.toArray()[i]);
-//		}
+		Word2Vec w2v = new Word2Vec();
+		w2v.loadJavaModel("../proConcept/互联网or电子商务/6.w2v.model");
+		
+		ArrayList<String> a = new ArrayList<String>();
+		a.add("java");
+		a.add("数据库");
+		a.add("框架");
+		Set<WordEntry> result2 = w2v.distance(a);
+		for(int i = 0; i < 20; i ++) {
+			System.out.println(result2.toArray()[i]);
+		}
 	}
 }

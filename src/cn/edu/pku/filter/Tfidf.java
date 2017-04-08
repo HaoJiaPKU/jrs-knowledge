@@ -249,11 +249,11 @@ public class Tfidf {
 	
 	public static void main(String [] args) {
 		init();
-		calculate(FilterConf.FeaturePath + "tokens", " ", 3);
-		saveToFile(FilterConf.FeaturePath + "tokens.tfidf", " ");
-		calculate(FilterConf.FeaturePath + "tokens.pos", " ", 1);
-		saveToFile(FilterConf.FeaturePath + "tokens.pos.tfidf", " ");
-		saveToHtml(FilterConf.FeaturePath + "tokens.pos.tfidf."
+		calculate(FilterConf.ConceptPath + "tokens", " ", 3);
+		saveToFile(FilterConf.ConceptPath + "tokens.tfidf", " ");
+		calculate(FilterConf.ConceptPath + "tokens.pos", " ", 1);
+		saveToFile(FilterConf.ConceptPath + "tokens.pos.tfidf", " ");
+		saveToHtml(FilterConf.ConceptPath + "tokens.pos.tfidf."
 				+ Threshold + ".html", " ");
 	}
 	

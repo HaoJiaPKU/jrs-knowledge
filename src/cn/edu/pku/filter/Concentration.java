@@ -114,8 +114,8 @@ public class Concentration {
 	
 	public static void main(String [] args) {
 		init();
-		calculate(FilterConf.FeaturePath + "tokens.pos.loc", " ");
-		saveToFile(FilterConf.FeaturePath + "tokens.pos.con", " ");
+		calculate(FilterConf.ConceptPath + "tokens.pos.loc", " ");
+		saveToFile(FilterConf.ConceptPath + "tokens.pos.con", " ");
 	}
 	
 }

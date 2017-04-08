@@ -93,10 +93,10 @@ public class Span {
 	
 	public static void main(String [] args) {
 		init();
-		calculate(FilterConf.FeaturePath + "tokens", " ", 3);
-		saveToFile(FilterConf.FeaturePath + "tokens.span", " ");
-		calculate(FilterConf.FeaturePath + "tokens.pos", " ", 1);
-		saveToFile(FilterConf.FeaturePath + "tokens.pos.span", " ");
+		calculate(FilterConf.ConceptPath + "tokens", " ", 3);
+		saveToFile(FilterConf.ConceptPath + "tokens.span", " ");
+		calculate(FilterConf.ConceptPath + "tokens.pos", " ", 1);
+		saveToFile(FilterConf.ConceptPath + "tokens.pos.span", " ");
 	}
 	
 }

@@ -153,7 +153,9 @@ public class Model {
     private List<Double> mergevec(Cluster cluster1, Cluster cluster2) {  
         List<Double> midvec = new ArrayList<Double>();  
         for (int i = 0; i < cluster1.getVector().size(); i++) {  
-            midvec.add((cluster1.getVector().get(i) + cluster2.getVector().get(i)) / 2.0);  
+            midvec.add((cluster1.getVector().get(i) * (double)cluster1.getNum()
+            		+ cluster2.getVector().get(i) * (double)cluster2.getNum()) /
+            		((double)cluster1.getNum() + (double)cluster2.getNum()));  
         }  
         return midvec;    
     }  

@@ -127,46 +127,46 @@ public class HanLPSegmenter
 	 * */
 	public static String replaceToken(String token) {
 		if(token.equals("net")) {
-			token = ".net";
+			return ".net";
 		}
 		if(token.equals("cpp")) {
-			token = "c++";
+			return "c++";
 		}
 		if(token.equals("ccpp")) {
-			token = "c c++";
+			return "c c++";
 		}
 		if(token.equals("vcpp") || token.equals("visualcpp")) {
-			token = "visualc++";
+			return "visualc++";
 		}
 		if(token.equals("pythoncpp")) {
-			token = "python c++";
+			return "python c++";
 		}
 		if(token.equals("qtcpp")) {
-			token = "qt c++";
+			return "qt c++";
 		}
 		if(token.equals("javaccpp")) {
-			token = "java c c++";
+			return "java c c++";
 		}
 		if (token.equals("j2") || token.equals("ee") || token.equals("javaee")) {
-			token = "j2ee";
+			return "j2ee";
 		}
 		if (token.equals("se") || token.equals("javase")) {
-			token = "j2se";
+			return "j2se";
 		}
 		if (token.equals("me") || token.equals("javame")) {
-			token = "j2me";
+			return "j2me";
 		}
 		if (token.equals("es")) {
-			token = "elasticsearch";
+			return "elasticsearch";
 		}
 		if (token.equals("js") || token.equals("javascrip")) {
-			token = "javascript";
+			return "javascript";
 		}
 		if (token.equals("go")) {
-			token = "golang";
+			return "golang";
 		}
 		if(token.equals("reduce")) {
-			token = "mapreduce";
+			return "mapreduce";
 		}
 		if(token.equals("map")) {
 			return "";
@@ -178,14 +178,17 @@ public class HanLPSegmenter
 			return "plsql";
 		}
 		if (token.equals("power") || token.equals("designer")) {
-			token = "powerdesigner";
+			return "powerdesigner";
 		}
 		if(token.equals("native")) {
 			return "reactnative";
 		}
 		if (token.indexOf("js") == token.length() - 2
 				&& token.length() > 2 ) {
-			token = token.substring(0, token.length() - 2);
+			return token.substring(0, token.length() - 2);
+		}
+		if (token.equals("memcache")) {
+			return "memcached";
 		}
 		return token;
 	}

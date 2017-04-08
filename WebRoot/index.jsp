@@ -186,12 +186,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" onclick="closeSaveas()">x</button>
-	        <h4 class="text-center text-primary">请输入文件名</h3>
+	        <h4 class="text-center text-primary">请输入文件名</h4>
 	      </div>
 	      <div class="modal-body file-name-content">
 	        <form class="form col-md-12 center-block">
 	       		<div class="form-group">
-	        		<input id="save-as-file-name" type="text" class="form-control input-lg" value="untitled.txt">
+	        		<input id="save-as-file-name" type="text" class="form-control input-lg" value="untitled.json">
 	        	</div>
 	        	<div class="form-group">
 	        		<button class="btn btn-default btn-block" onclick="saveasKnowware()">保存</button>
@@ -296,6 +296,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						zNodes1 = json;
 						fileName1 = fileName;
 						$.fn.zTree.init($("#window1"), setting1, zNodes1);
+						/* var treeObj = $.fn.zTree.getZTreeObj("window1");
+						treeObj.expandAll(false); */
 					} else if (windowId == 2) {
 						zNodes2 = json;
 						fileName2 = fileName;
@@ -413,6 +415,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		function closeWindow() {
 			$("#container1").attr("class", "col-md-12");
 			$("#container2").attr("style", "display:none;");
+			$("#window2").empty();
 			var f = document.getElementById("buttons1");
 			var newWindow = document.createElement("button");
 			newWindow.innerHTML = "新窗口";

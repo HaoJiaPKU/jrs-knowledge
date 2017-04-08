@@ -178,7 +178,8 @@ public class GBDTProcessor {
 				}
 				for (int i = 0; i < tokens.length; i ++) {
 					if (array.containsKey(tokens[i])) {
-						tf[array.get(tokens[i])] += 1.0;
+//						tf[array.get(tokens[i])] += 1.0;
+						tf[array.get(tokens[i])] = 1.0;
 					}
 				}
 				

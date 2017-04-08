@@ -9,7 +9,7 @@ import cn.edu.pku.util.FileInput;
 import cn.edu.pku.util.FileOutput;
 import cn.edu.pku.w2v.Word2Vec;
 
-public class FeatureProcessor {
+public class ConceptProcessor {
 	
 	public static HashMap<String, Integer> posDict
 		= new HashMap<String, Integer> ();

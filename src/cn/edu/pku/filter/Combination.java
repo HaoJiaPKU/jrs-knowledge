@@ -285,41 +285,41 @@ public class Combination {
 	public static void main(String [] args) {
 		init();
 
-//		load(FilterConf.FeaturePath + "tokens.pos.con", " ");
-//		add(FilterConf.FeaturePath + "tokens.pos.span", " ");
-//		saveToFile(FilterConf.FeaturePath + "tokens.pos.con.span", " ");
-//		saveToHtml(FilterConf.FeaturePath + "tokens.pos.con.span."
+//		load(FilterConf.ConceptPath + "tokens.pos.con", " ");
+//		add(FilterConf.ConceptPath + "tokens.pos.span", " ");
+//		saveToFile(FilterConf.ConceptPath + "tokens.pos.con.span", " ");
+//		saveToHtml(FilterConf.ConceptPath + "tokens.pos.con.span."
 //				+ Threshold + ".html", " ");	
 //		statistic();
-//		saveStatistic(FilterConf.FeaturePath + "tokens.pos.con.span.statistic."
+//		saveStatistic(FilterConf.ConceptPath + "tokens.pos.con.span.statistic."
 //				+ Threshold + ".html");
 		
-//		load(FilterConf.FeaturePath + "tokens.pos.con", " ");
-//		add(FilterConf.FeaturePath + "tokens.pos.tfidf", " ");
-//		saveToFile(FilterConf.FeaturePath + "tokens.pos.con.tfidf", " ");
-//		saveToHtml(FilterConf.FeaturePath + "tokens.pos.con.tfidf."
+//		load(FilterConf.ConceptPath + "tokens.pos.con", " ");
+//		add(FilterConf.ConceptPath + "tokens.pos.tfidf", " ");
+//		saveToFile(FilterConf.ConceptPath + "tokens.pos.con.tfidf", " ");
+//		saveToHtml(FilterConf.ConceptPath + "tokens.pos.con.tfidf."
 //				+ Threshold + ".html", " ");	
 //		statistic();
-//		saveStatistic(FilterConf.FeaturePath + "tokens.pos.con.tfidf.statistic."
+//		saveStatistic(FilterConf.ConceptPath + "tokens.pos.con.tfidf.statistic."
 //				+ Threshold + ".html");
 		
-//		load(FilterConf.FeaturePath + "tokens.pos.span", " ");
-//		add(FilterConf.FeaturePath + "tokens.pos.tfidf", " ");
-//		saveToFile(FilterConf.FeaturePath + "tokens.pos.span.tfidf", " ");
-//		saveToHtml(FilterConf.FeaturePath + "tokens.pos.span.tfidf."
+//		load(FilterConf.ConceptPath + "tokens.pos.span", " ");
+//		add(FilterConf.ConceptPath + "tokens.pos.tfidf", " ");
+//		saveToFile(FilterConf.ConceptPath + "tokens.pos.span.tfidf", " ");
+//		saveToHtml(FilterConf.ConceptPath + "tokens.pos.span.tfidf."
 //				+ Threshold + ".html", " ");	
 //		statistic();
-//		saveStatistic(FilterConf.FeaturePath + "tokens.pos.span.tfidf.statistic."
+//		saveStatistic(FilterConf.ConceptPath + "tokens.pos.span.tfidf.statistic."
 //				+ Threshold + ".html");
 		
-		load(FilterConf.FeaturePath + "tokens.pos.span", " ");
-		add(FilterConf.FeaturePath + "tokens.pos.con", " ");
-		add(FilterConf.FeaturePath + "tokens.pos.tfidf", " ");
-		saveToFile(FilterConf.FeaturePath + "tokens.pos.span.con.tfidf", " ");
-		saveToHtml(FilterConf.FeaturePath + "tokens.pos.span.con.tfidf."
+		load(FilterConf.ConceptPath + "tokens.pos.span", " ");
+		add(FilterConf.ConceptPath + "tokens.pos.con", " ");
+		add(FilterConf.ConceptPath + "tokens.pos.tfidf", " ");
+		saveToFile(FilterConf.ConceptPath + "tokens.pos.span.con.tfidf", " ");
+		saveToHtml(FilterConf.ConceptPath + "tokens.pos.span.con.tfidf."
 				+ Threshold + ".html", " ");	
 		statistic();
-		saveStatistic(FilterConf.FeaturePath + "tokens.pos.span.con.tfidf.statistic."
+		saveStatistic(FilterConf.ConceptPath + "tokens.pos.span.con.tfidf.statistic."
 				+ Threshold + ".html");
 	}
 	

@@ -182,7 +182,7 @@ public class PatternOcc {
 							8.5,
 							8.5
 							};
-		calculate(FilterConf.FeaturePath, tokens, thresTf, thresScore, 500);
+		calculate(FilterConf.ConceptPath, tokens, thresTf, thresScore, 500);
 	}
 	
 }
