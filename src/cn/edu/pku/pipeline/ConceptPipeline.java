@@ -1,8 +1,12 @@
 package cn.edu.pku.pipeline;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import cn.edu.pku.conf.DatabaseConf;
 import cn.edu.pku.conf.FilterConf;
@@ -22,8 +26,11 @@ import cn.edu.pku.w2v.W2V;
 import cn.edu.pku.w2v.Word2Vec;
 import cn.edu.pku.w2v.WordEntry;
 
+@Component
+
 public class ConceptPipeline {
 	
+	@Scheduled(cron = "0 10 0 * * ?")
 	public static void main(String [] args) {
 		String[] sources = {ZhilianConf.getSource()};
 		String[] date = {TimeUtil.getDate(-150)};
@@ -232,9 +239,14 @@ public class ConceptPipeline {
 			
 			//计算概念之间相似度
 			Hyponymy hyp = new Hyponymy();
-			hyp.load(FilterConf.ConceptPath
+			if (new File(FilterConf.ConceptPath
+					+ "/knowledge/" + FilterConf.fieldDirs[i] + ".know.json").exists()) {
+				hyp.load(FilterConf.ConceptPath
 					+ "/knowledge/" + FilterConf.fieldDirs[i] + ".know.json");
-			SimilarityProcessor sp = new SimilarityProcessor();
+			} else {
+				hyp.load(FilterConf.ConceptPath
+					+ "/knowledge/" + FilterConf.fieldDirs[i] + ".pos.know.json");
+			}
 			Word2Vec w2v = new Word2Vec();
 			try {
 				w2v.loadJavaModel(FilterConf.ConceptPath
@@ -243,6 +255,7 @@ public class ConceptPipeline {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			SimilarityProcessor sp = new SimilarityProcessor();
 			sp.calculate(hyp, w2v);
 			sp.save(FilterConf.ConceptPath
 						+ "/" + FilterConf.fieldDirs[i] + "/" + "9.sim.json");

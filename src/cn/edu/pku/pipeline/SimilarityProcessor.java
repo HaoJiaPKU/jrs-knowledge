@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -29,8 +30,8 @@ public class SimilarityProcessor {
 		= new HashMap<String, ArrayList<String>>();
 	public HashMap<String, HashMap<String, Double>> simMap
 		= new HashMap<String, HashMap<String, Double>>();
-	public HashMap<String, Map.Entry[]> sim
-		= new HashMap<String, Map.Entry[]>();
+	public HashMap<String, ArrayList<HashMap<String, Double>>> sim
+		= new HashMap<String, ArrayList<HashMap<String, Double>>>();
 	public final double w1 = 0.5, w2 = 0.5, w3 = 0.5;
 	
 	public void calculate (Hyponymy hyponymy, Word2Vec w2v) {
@@ -103,8 +104,16 @@ public class SimilarityProcessor {
 				double sim3 = Double.parseDouble(result.toArray()[i].toString().split("	")[1]);
 				m.put(c2, Math.pow(m.get(c2), (1.0 - w3)) * Math.pow(sim3, w3));
 			}
-			Map.Entry[] set = getSortedHashMapByValueDes(m);
-			sim.put(c1, set);
+			Entry<String, Double>[] set = getSortedHashMapByValueDes(m);
+			ArrayList<HashMap<String, Double>> ret = new ArrayList<HashMap<String, Double>>();
+			for (int i = 0; i < set.length; i ++) {
+				HashMap<String, Double> t = new HashMap<String, Double>();
+				String str = set[i].getKey().toString();
+				double sim = Double.parseDouble(set[i].getValue().toString());
+				t.put(str, sim);
+				ret.add(t);
+			}
+			sim.put(c1, ret);
 		}
 		
 		tree.clear();
@@ -116,7 +125,6 @@ public class SimilarityProcessor {
 		ObjectMapper om = new ObjectMapper();
 		try {
 			fo.t3.write(om
-				.writerWithDefaultPrettyPrinter()
 				.writeValueAsString(this));
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
@@ -141,7 +149,8 @@ public class SimilarityProcessor {
 				content += line;
 			}
 			SimilarityProcessor sp = om.readValue(content, SimilarityProcessor.class);
-			this.sim = (HashMap<String, Map.Entry[]>) sp.sim.clone();
+			this.sim = (HashMap<String, ArrayList<HashMap<String, Double>>>) sp.sim.clone();
+			this.dict = (HashMap<String, ArrayList<String>>) sp.dict.clone();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,10 +162,11 @@ public class SimilarityProcessor {
 	 * HashMap排序器
 	 * */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Map.Entry[] getSortedHashMapByValueDes(Map h)
+	public static Entry<String, Double>[] getSortedHashMapByValueDes(Map h)
 	{
 		Set set = h.entrySet();
-		Map.Entry[] entries = (Map.Entry[]) set.toArray(new Map.Entry[set.size()]);
+		Entry<String, Double>[] entries = (Map.Entry[]) set.toArray(new Map.Entry[set.size()]);
+		
 		Arrays.sort(entries, new Comparator() 
 		{
 			public int compare(Object arg0, Object arg1) 
@@ -174,8 +184,9 @@ public class SimilarityProcessor {
 		});
 		return entries;
 	}
-	
-	public static void main(String [] args) {
-		
-	}
+}
+
+class SimPair {
+	String str;
+	double sim;
 }

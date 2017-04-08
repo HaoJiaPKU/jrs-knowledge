@@ -54,7 +54,7 @@ public class GBDTProcessor {
 	}
 	
 	public static void loadFeatureAsDict(String inputPath, String inputSeperator,
-			int num) {
+			int num, SimilarityProcessor sp) {
 		FileInput fi = new FileInput(inputPath);
 		String line = new String ();
 		int counter = 0;
@@ -69,6 +69,9 @@ public class GBDTProcessor {
 				if (tokens.length <= 1) {
 					continue;
 				}
+				if (!sp.dict.containsKey(tokens[0])) {
+					continue;
+				}
 				dict.put(tokens[0], Integer.parseInt(tokens[1]));
 			}
 		} catch (IOException e) {
@@ -79,7 +82,7 @@ public class GBDTProcessor {
 	}
 	
 	public static void loadFeatureAsArray(String inputPath, String inputSeperator,
-			int num) {
+			int num, SimilarityProcessor sp) {
 		FileInput fi = new FileInput(inputPath);
 		String line = new String ();
 		int counter = 0;
@@ -87,6 +90,9 @@ public class GBDTProcessor {
 			while ((line = fi.reader.readLine()) != null) {
 				String [] tokens = line.trim().split(inputSeperator);
 				if (tokens.length <= 1) {
+					continue;
+				}
+				if (!sp.dict.containsKey(tokens[0])) {
 					continue;
 				}
 				array.put(tokens[0], counter);
