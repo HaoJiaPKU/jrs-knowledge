@@ -28,13 +28,13 @@ public class WordKmeans {
     	Word2Vec vec = new Word2Vec();
     	//加载谷歌模型，这里可以自己设置自己的模型
         vec.loadGoogleModel("vectors.bin");
-        System.out.println("load model ok!");
+        System.out.println("模型加载完成");
         //使用聚类算法进行聚类
         WordKmeans wordKmeans = new WordKmeans(vec.getWordMap(), 50, 50);
         Classes[] explain = wordKmeans.explain();
         for (int i = 0; i < explain.length; i++) {
-            System.out.println("--------" + i + "---------");
-            System.out.println(explain[i].getTop(10));
+//            System.out.println("--------" + i + "---------");
+//            System.out.println(explain[i].getTop(10));
         }
 
     }
@@ -89,7 +89,7 @@ public class WordKmeans {
             for (Classes classes : cArray) {
                 classes.updateCenter(wordMap);
             }
-            System.out.println("iter " + i + " ok!");
+//            System.out.println("iter " + i + " ok!");
         }
 
         return cArray;

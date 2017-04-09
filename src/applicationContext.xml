@@ -23,6 +23,7 @@
 	<context:annotation-config /> 
 	<context:component-scan base-package="cn.edu.pku.service" />
 	<context:component-scan base-package="cn.edu.pku.cronjob" />
+	<context:component-scan base-package="cn.edu.pku.pipeline" />
 	
 	<!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven />

@@ -1,5 +1,7 @@
 package cn.edu.pku.hc;
 
+import java.util.ArrayList;
+
 public class HC {
 
 	public static void run(
@@ -11,10 +13,11 @@ public class HC {
 			) {
 		Model model = new Model(
     				inputPath,
-    				inputSeperator);  
+    				inputSeperator);
+		ArrayList<Cluster> clusters = model.train(textDistPath);
 		model.printClusterAsText(
 				textModelPath,
-	    		model.train(textDistPath),
+				clusters,
 	    		0);
 		model.save(modelPath);
 	}

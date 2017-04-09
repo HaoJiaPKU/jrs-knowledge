@@ -48,7 +48,7 @@ public class GBDTProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(counter + " pieces of data");
+		System.out.println("数据总量：" + counter + "条");
 		fo.closeOutput();
 		fi.closeInput();
 	}
@@ -151,7 +151,7 @@ public class GBDTProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(counter + " pieces of data");
+		System.out.println("数据总量：" + counter + "条");
 		fo.closeOutput();
 		fi.closeInput();
 	}
@@ -159,7 +159,8 @@ public class GBDTProcessor {
 	public static void textToVector(String inputPath, String inputSeperator,
 			String outputPath,
 			String outputPathForPosition,
-			int K) {
+			int K,
+			boolean oneHot) {
 		FileInput fi = new FileInput(inputPath);
 		FileOutput fo = new FileOutput(outputPath);
 		FileOutput foPosition = new FileOutput(outputPathForPosition);
@@ -184,8 +185,11 @@ public class GBDTProcessor {
 				}
 				for (int i = 0; i < tokens.length; i ++) {
 					if (array.containsKey(tokens[i])) {
-//						tf[array.get(tokens[i])] += 1.0;
-						tf[array.get(tokens[i])] = 1.0;
+						if (oneHot) {
+							tf[array.get(tokens[i])] = 1.0;
+						} else {
+							tf[array.get(tokens[i])] += 1.0;
+						}
 					}
 				}
 				
@@ -246,7 +250,7 @@ public class GBDTProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(counter + " pieces of data");
+		System.out.println("数据总量：" + counter + "条");
 		fi.closeInput();
 		fo.closeOutput();
 		foPosition.closeOutput();

@@ -82,7 +82,7 @@ public class Model {
         		break;
         	}
         	if (clusters.size() % 100 == 0) {
-        		System.out.println(clusters.size());
+        		System.out.println("当前类簇数目：" + clusters.size());
         	}
             // 最短距离的两聚类id  
             int lowestpair1 = 0;  

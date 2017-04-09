@@ -78,7 +78,7 @@ public class Learn {
      * @throws IOException 
      */
     private void trainModel(File file) throws IOException {
-    	System.out.println("开始训练！！！！！！！！读取文件中");
+    	System.out.println("开始训练w2v 读取文件中");
         try (BufferedReader br = new BufferedReader(
             new InputStreamReader(new FileInputStream(file)))) {
             String temp = null;
@@ -86,7 +86,7 @@ public class Learn {
             int wordCount = 0;
             int lastWordCount = 0;
             int wordCountActual = 0;
-            System.out.println("初始化完成！！！！！！！！！！！！！！！！");
+            System.out.println("初始化完成");
             while ((temp = br.readLine()) != null) {
                 if (wordCount - lastWordCount > 10000) {
                     System.out.println("alpha:" + alpha + "\tProgress: " + (int) (wordCountActual / (double) (trainWordsCount + 1) * 100)+ "%");
@@ -268,7 +268,7 @@ public class Learn {
     private void readVocab(File file) throws IOException {
         MapCount<String> mc = new MapCount<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
-            System.out.println("读取文件完毕！！！！！");
+            System.out.println("读取文件完毕");
         	String temp = null;
         	String[] split;
         	//br.mark(0);
@@ -281,7 +281,7 @@ public class Learn {
             while ((temp = br.readLine()) != null) {
                 split = temp.split(" ");
                 trainWordsCount += split.length;
-                System.out.println((lines--) +","+trainWordsCount);
+//                System.out.println((lines--) +","+trainWordsCount);
                 for (String string : split) {
                 	//System.out.println();
                     mc.add(string);
@@ -291,7 +291,7 @@ public class Learn {
         int count=0;
         int aggragate=mc.size();
         for (Entry<String, Integer> element : mc.get().entrySet()) {
-        	System.out.println(aggragate+","+count++);
+//        	System.out.println(aggragate+","+count++);
             wordMap.put(element.getKey(), new WordNeuron(element.getKey(), element.getValue(),layerSize));
         }
     }
@@ -314,15 +314,15 @@ public class Learn {
      */
     public void learnFile(File file) throws IOException {
         readVocab(file);
-        System.out.println("读取集合完毕！！！！！！！！");
+        System.out.println("读取集合完毕");
         new Haffman(layerSize).make(wordMap.values());
-        System.out.println("构建哈夫曼树完毕！！！！！！！！");
+        System.out.println("构建哈夫曼树完毕");
         int count=wordMap.values().size();
         for (Neuron neuron : wordMap.values()) {
-        	System.out.println(count--);
+//        	System.out.println(count--);
             ((WordNeuron)neuron).makeNeurons() ;
         }
-        System.out.println("准备工作完毕即将进入训练！！！！！！！！");
+        System.out.println("准备工作完毕即将进入训练");
         trainModel(file);
     }
 

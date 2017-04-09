@@ -27,11 +27,15 @@ import cn.edu.pku.util.HanLPSegmenter;
 import cn.edu.pku.util.TimeUtil;
 
 @Component
-
 public class GBDTPipeline {
 	
-	@Scheduled(cron = "0 10 0 * * ?")
 	public static void main(String [] args) {
+		GBDTPipeline gp = new GBDTPipeline();
+		gp.execute();
+	}
+	
+	@Scheduled(cron = "0 24 23 * * ?")
+	public void execute() {
 		String[] sources = {ZhilianConf.getSource()};
 		String[] date = {TimeUtil.getDate(-150)};
 		String[] fields = {
@@ -45,13 +49,13 @@ public class GBDTPipeline {
 		
 		FileDirs.makeDirs(FilterConf.GBDTPath);
 		//统计行业
-//		AbstractObj.feildsToConf(FilterConf.GBDTPath
-//				+ "/" + "industry.conf",
-//				sources,
-//				date,
-//				"com_industry",
-//				null,
-//				null);
+		AbstractObj.feildsToConf(FilterConf.GBDTPath
+				+ "/" + "industry.conf",
+				sources,
+				date,
+				"com_industry",
+				null,
+				null);
 		
 		//选出数量前10位的行业
 		FilterConf.readFieldFromConf(
@@ -74,53 +78,58 @@ public class GBDTPipeline {
 //		for (int i = 0; i < FilterConf.fieldDirs.length; i ++) {
 			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
 			
-//			AbstractObj.feildsToText(
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "1.text.txt",
-//					"@@@@@@",
-//					sources,
-//					date,
-//					"com_industry",
-//					FilterConf.fields[i],
-//					fields,
-//					dataSize
-//					);
-//			System.out.println("提取数据完成");
-//			
-//			HanLPSegmenter.loadStopword(null);
-//			RegularExp.extractRegularExpFromText(
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "1.text.txt",
-//					seperator,
-//				 	FilterConf.GBDTPath
-//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "2.reg.text.txt",
-//				 	FilterConf.GBDTPath
-//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "2.stata.hyp.txt",
-//				 	seperator,
-//					indices);
-//			System.out.println("正则匹配完成");
-//			
-//			HanLPSegmenter.segmentationForGBDT(
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "2.reg.text.txt",
-//					seperator,
-//					true,
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.tokens.txt",
-//					seperator
-//					);
-//			System.out.println("分词完成");
-//			
-//			GBDTProcessor.removeDuplicateData(FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.tokens.txt",
-//					FilterConf.GBDTPath
-//					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.tokens.txt");
-//			System.out.println("去重完成");
+			System.out.println("1.提取数据开始");
+			AbstractObj.feildsToText(
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "1.text.txt",
+					"@@@@@@",
+					sources,
+					date,
+					"com_industry",
+					FilterConf.fields[i],
+					fields,
+					dataSize
+					);
+			System.out.println("1.提取数据完成");
+			
+			System.out.println("2.正则匹配开始");
+			HanLPSegmenter.loadStopword(null);
+			RegularExp.extractRegularExpFromText(
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "1.text.txt",
+					seperator,
+				 	FilterConf.GBDTPath
+				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "2.reg.text.txt",
+				 	FilterConf.GBDTPath
+				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "2.stata.hyp.txt",
+				 	seperator,
+					indices);
+			System.out.println("2.正则匹配完成");
+			
+			System.out.println("3.文本分词开始");
+			HanLPSegmenter.segmentationForGBDT(
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "2.reg.text.txt",
+					seperator,
+					true,
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.tokens.txt",
+					seperator
+					);
+			System.out.println("3.文本分词完成");
+			
+			System.out.println("4.数据去重开始");
+			GBDTProcessor.removeDuplicateData(FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.tokens.txt",
+					FilterConf.GBDTPath
+					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.tokens.txt");
+			System.out.println("4.数据去重完成");
 			
 			SimilarityProcessor sp = new SimilarityProcessor();
 			sp.load(FilterConf.ConceptPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "9.sim.json");
 			
+			System.out.println("5.提取特征开始");
 			GBDTProcessor.init();
 			GBDTProcessor.loadFeatureAsDict(FilterConf.ConceptPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.pos.txt",
@@ -133,8 +142,9 @@ public class GBDTPipeline {
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.pos.txt",
 					seperator);
-			System.out.println("提取特征完成");
+			System.out.println("5.提取特征完成");
 			
+			System.out.println("6.向量表示开始");
 			GBDTProcessor.loadFeatureAsArray(FilterConf.ConceptPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.pos.txt",
 					tabSeperator,
@@ -147,9 +157,11 @@ public class GBDTPipeline {
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "6.vec.csv",
 					FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "6.stata.position.num.txt",
-					15);//15个类
-			System.out.println("向量表示完成");
+					15,//15个类
+					false);
+			System.out.println("6.向量表示完成");
 			
+			System.out.println("7.GBDT模型训练开始");
 			//GBDT训练
 			GBDT.run(FilterConf.GBDTPath
 					+ "/" + FilterConf.fieldDirs[i] + "/" + "6.vec.csv",
@@ -164,7 +176,7 @@ public class GBDTPipeline {
 					0.1,//学习速率
 					3,//决策树深度
 					-1);
-			System.out.println("GBDT训练完成");
+			System.out.println("7.GBDT模型训练完成");
 			
 //			//测试模型反序列化
 //			GBDT.testDeserialization(FilterConf.GBDTPath

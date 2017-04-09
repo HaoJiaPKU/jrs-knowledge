@@ -150,7 +150,7 @@ public class ConceptProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(counter + " pieces of data");
+		System.out.println("数据总量：" + counter + "条");
 		fo.closeOutput();
 		fi.closeInput();
 	}

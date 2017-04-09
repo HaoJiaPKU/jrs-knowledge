@@ -481,10 +481,10 @@ public class HanLPSegmenter
 				foLoc.t3.newLine();
 				
 				if (++ counter % 1000 == 0) {
-					System.out.println(counter + " results");
+					System.out.println("第" + counter + "条数据处理中");
 				}
 			}
-			System.out.println(counter + " results");
+			System.out.println("数据总量：" + counter + "条");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -561,10 +561,10 @@ public class HanLPSegmenter
 				fo.t3.newLine();
 				
 				if (++ counter % 1000 == 0) {
-					System.out.println(counter + " results");
+					System.out.println("第" + counter + "条数据处理中");
 				}
 			}
-			System.out.println(counter + " results");
+			System.out.println("数据总量：" + counter + "条");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -16,15 +16,13 @@ public class Haffman {
         this.layerSize = layerSize;
     }
 
-
-
 	private TreeSet<Neuron> set = new TreeSet<>();
 
     public void make(Collection<Neuron> neurons) {
-        System.out.println("装载到树中");
+//        System.out.println("装载到树中");
     	set.addAll(neurons);
         while (set.size() > 1) {
-        	System.out.println("目前树中节点数"+set.size());
+//        	System.out.println("目前树中节点数"+set.size());
             //执行一次合并
         	merger();
         }
@@ -36,9 +34,9 @@ public class Haffman {
     private void merger() {
         // TODO Auto-generated method stub
         HiddenNeuron hn = new HiddenNeuron(layerSize);
-        System.out.println("移除最低的一个节点");
+//        System.out.println("移除最低的一个节点");
         Neuron min1 = set.pollFirst();
-        System.out.println("再移除最低的一个节点");
+//        System.out.println("再移除最低的一个节点");
         Neuron min2 = set.pollFirst();
         //把两个频率加一起
         hn.freq = min1.freq + min2.freq;
@@ -48,7 +46,7 @@ public class Haffman {
         //置min1和2的code
         min1.code = 0;
         min2.code = 1;
-        System.out.println("把新创建的节点合并到树中");
+//        System.out.println("把新创建的节点合并到树中");
         set.add(hn);
     }
     

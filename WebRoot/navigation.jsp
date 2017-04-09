@@ -14,8 +14,8 @@
 				</li>
 			</ul>
 			<c:if test="${empty employee }">
-				<form action="/user/login" method="post"
-					class="navbar-form navbar-right">
+				<form action="/employee/login" method="post"
+					class="navbar-form navbar-right" style="display:none;">
 					<div class="form-group">
 						<input name="username" type="text" placeholder="Email"
 							class="form-control">
