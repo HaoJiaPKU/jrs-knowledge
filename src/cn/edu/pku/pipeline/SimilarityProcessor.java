@@ -32,9 +32,9 @@ public class SimilarityProcessor {
 		= new HashMap<String, HashMap<String, Double>>();
 	public HashMap<String, ArrayList<HashMap<String, Double>>> sim
 		= new HashMap<String, ArrayList<HashMap<String, Double>>>();
-	public final double w1 = 0.5, w2 = 0.5, w3 = 0.5;
+	public final double w1 = 0.5, w2 = 0.5, w3 = 0.9;
 	
-	public void calculate (Hyponymy hyponymy, Word2Vec w2v) {
+	public void calculate (Hyponymy hyponymy, Word2Vec w2v, double thres) {
 		for (HyponymyObj o : hyponymy.hypDict) {
 			tree.put(o.hyponym, o.hypernym);
 		}
@@ -110,6 +110,9 @@ public class SimilarityProcessor {
 				HashMap<String, Double> t = new HashMap<String, Double>();
 				String str = set[i].getKey().toString();
 				double sim = Double.parseDouble(set[i].getValue().toString());
+				if (sim < thres) {
+					continue;
+				}
 				t.put(str, sim);
 				ret.add(t);
 			}
@@ -124,7 +127,7 @@ public class SimilarityProcessor {
 		FileOutput fo = new FileOutput(outputPath);
 		ObjectMapper om = new ObjectMapper();
 		try {
-			fo.t3.write(om
+			fo.t3.write(om.writerWithDefaultPrettyPrinter()
 				.writeValueAsString(this));
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block

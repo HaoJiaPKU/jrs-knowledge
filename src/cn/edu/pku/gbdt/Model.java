@@ -252,11 +252,11 @@ public class Model {
 			double testLoss = computeLoss(dataset, testData, f);
 			String cri = new String();
 			for (int i = 0; i < 5; i ++) {
-				cri += "accuracy" + String.valueOf(i) + "=" + String.valueOf(accuracy[i]) + "  ";
+				cri += "accuracy" + String.valueOf(i) + "	" + String.valueOf(accuracy[i]) + "	";
 			}
-			cri += "average train loss=" + trainLoss
-					+ "  average test loss=" + testLoss
-					+ "  average risk=" + String.valueOf(accuracy[5]);
+			cri += "average train loss	" + trainLoss
+					+ "	average test loss	" + testLoss
+					+ "	average risk	" + String.valueOf(accuracy[5]);
 			System.out.println(cri);
 			System.out.println((iter + 1) + "th iteration completed");
 			System.out.println();

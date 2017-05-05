@@ -9,9 +9,6 @@
 				<li class="active">
 					<a class="nav-a-size" href="#">jrs-knowledge</a>
 				</li>
-				<li>
-					<a class="nav-a-size" href="http://jobpopo.com">jobpopo</a>
-				</li>
 			</ul>
 			<c:if test="${empty employee }">
 				<form action="/employee/login" method="post"

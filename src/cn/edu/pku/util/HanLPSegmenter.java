@@ -575,8 +575,24 @@ public class HanLPSegmenter
 	}
 
 	public static void main(String [] args) {
-		System.out.println(
-				CRFDependencyParser
-				.compute("了解Jquery等Javascript开发架构和框架"));
+		String content = "熟练的编写复杂的SQL，熟练应用Linux操作系统，熟悉memcache、redis等缓存技术；熟悉redis、mysql等数据库，熟悉Linux服务器常用命令及配置，熟悉分布式计算、分布式文件系统、NoSQL、缓存等技术；熟悉SVN、maven等版本管理软件；精通MySQL等关系型数据库使用，精通Struts2，精通Java编程，精通JSP/Servlet和JavaScript等WEB开发技术，精通HTTP/HTTPS协议，参与系统架构设计、概要设计、系统分析、数据库设计、核心代码编写等工作 2  并指导开发人员进行详细设计和代码编写等工作；能够熟练的编写复杂的SQL，具有出色的抽象设计能力，有调优能力；有出色的抽象设计能力，";
+		content = content.toLowerCase();
+		loadStopword(null);
+		
+		Segment segmenter = HanLP.newSegment();
+		segmenter.enablePartOfSpeechTagging(true);	
+		content = preStopWord(content);
+		List<Term> termList = segmenter.seg(content);
+		
+		Iterator it = termList.iterator();
+		String str = "";
+		while (it.hasNext()) {
+			if (str.length() >= 50) {
+				System.out.println(str);
+				str = "";
+			}
+			str += it.next() + " ";
+		}
+		System.out.println(str);
 	}
 }

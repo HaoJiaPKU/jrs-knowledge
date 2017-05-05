@@ -14,7 +14,9 @@ import cn.edu.pku.conf.ZhilianConf;
 import cn.edu.pku.filter.Combination;
 import cn.edu.pku.filter.PatternOcc;
 import cn.edu.pku.filter.RegularExp;
+import cn.edu.pku.filter.Segregator;
 import cn.edu.pku.filter.Statistic;
+import cn.edu.pku.filter.Tfidf;
 import cn.edu.pku.hc.HC;
 import cn.edu.pku.hyp.Hyponymy;
 import cn.edu.pku.object.AbstractObj;
@@ -101,152 +103,152 @@ public class ConceptPipeline {
 			
 		//对行业逐一计算
 //		for (int i = 0; i < FilterConf.fieldDirs.length; i ++) {
-			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
-			
-			System.out.println("1.提取数据开始");
-			AbstractObj.feildsToText(
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "1.text.txt",//提取结果的存放路径
-					tabSeperator,//提取结果数据列之间的分隔符
-					sources,//数据来源
-					date,//数据时间段
-					"com_industry",//指定的key
-					FilterConf.fields[i],//指定key的value
-					fields,//要提取的数据域
-					dataSize//提取的数据量
-					);
-			System.out.println("1.提取数据完成");
-			
-			System.out.println("2.正则匹配开始");
-			HanLPSegmenter.loadStopword(null);
-			RegularExp.extractRegularExpFromText(
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "1.text.txt",
-					tabSeperator,
-				 	FilterConf.ConceptPath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "2.reg.text.txt",
-				 	FilterConf.ConceptPath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "2.stata.hyp.txt",
-				 	tabSeperator,
-					indices);
-			System.out.println("2.正则匹配完成");
-
-			System.out.println("3.文本分词开始");
-			HanLPSegmenter.segmentationForFeature(
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "2.reg.text.txt",
-					tabSeperator,
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.tokens.txt",
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.pos.txt",
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.loc.txt",
-					spaceSeperator,
-					indices
-					);
-			System.out.println("3.文本分词完成");
-			
-			System.out.println("4.数据去重开始");
-			ConceptProcessor.removeDuplicateData(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.tokens.txt",
-				 	FilterConf.ConceptPath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.tokens.txt");
-			ConceptProcessor.removeDuplicateData(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.pos.txt",
-				 	FilterConf.ConceptPath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.pos.txt");
-			ConceptProcessor.removeDuplicateData(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.loc.txt",
-				 	FilterConf.ConceptPath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.loc.txt");
-			System.out.println("4.数据去重完成");
-			
-			System.out.println("5.统计词频开始");
-			Statistic.init();
-			Statistic.load(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.tokens.txt",
-					spaceSeperator,
-					30);//选出频次超过30的词汇
-			Statistic.saveToFile(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.tokens.txt",
-					tabSeperator);
-			ConceptProcessor.removeLongTailWord(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.tokens.txt",
-				 	FilterConf.ConceptPath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "5.tokens.txt",
-				 	false);
-			Statistic.clear();
-			
-			Statistic.init();
-			Statistic.load(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.pos.txt",
-					spaceSeperator,
-					20);//选出频次超过20的词汇
-			Statistic.saveToFile(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.pos.txt", "	");
-			ConceptProcessor.removeLongTailWord(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.pos.txt",
-				 	FilterConf.ConceptPath
-				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "5.pos.txt",
-				 	false);
-			Statistic.clear();
-			System.out.println("5.统计词频完成");
-			
-			System.out.println("6.w2v训练开始");
-			//训练w2v模型
-			W2V.run(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.tokens.txt",
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "6.w2v.model");
-			ConceptProcessor.init();
-			ConceptProcessor.loadPosDict(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.pos.txt",
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "2.stata.hyp.txt",
-					tabSeperator);
-			ConceptProcessor.saveToFile(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "6.w2v.model",
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "7.vec.w2v.txt",
-					tabSeperator);
-			ConceptProcessor.clear();
-			System.out.println("6.w2v训练完成");
-		
-			System.out.println("7.层次聚类开始");
-			//层次聚类
-			HC.run(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "7.vec.w2v.txt",
-					tabSeperator,
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.hcluster.txt",
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.hcluster.dis.txt",
-					FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.model.hc.json");
-			System.out.println("7.层次聚类完成");
-			
-			System.out.println("8.提取层次关系开始");
-			//提取层次关系
-			Hyponymy hyponymy = new Hyponymy();
-			hyponymy.init(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.pos.txt",
-					tabSeperator);
-			hyponymy.extractHyponymyPairFromHCModel(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.model.hc.json");
-			hyponymy.save(FilterConf.ConceptPath
-					+ "/knowledge/" + FilterConf.fieldDirs[i] + ".pos.know.json");
-			
-			//提取上下位关系
-			hyponymy = new Hyponymy();
-			hyponymy.init(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "2.stata.hyp.txt",
-					tabSeperator);
-			hyponymy.extractHyponymyPairFromHCModel(FilterConf.ConceptPath
-					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.model.hc.json");
-			hyponymy.save(FilterConf.ConceptPath
-					+ "/knowledge/" + FilterConf.fieldDirs[i] + ".reg.know.json");
-			System.out.println("8.提取层次关系完成");
+//			System.out.println(FilterConf.fieldDirs[i] + " 数据处理中...");
+//			
+//			System.out.println("1.提取数据开始");
+//			AbstractObj.feildsToText(
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "1.text.txt",//提取结果的存放路径
+//					tabSeperator,//提取结果数据列之间的分隔符
+//					sources,//数据来源
+//					date,//数据时间段
+//					"com_industry",//指定的key
+//					FilterConf.fields[i],//指定key的value
+//					fields,//要提取的数据域
+//					dataSize//提取的数据量
+//					);
+//			System.out.println("1.提取数据完成");
+//			
+//			System.out.println("2.正则匹配开始");
+//			HanLPSegmenter.loadStopword(null);
+//			RegularExp.extractRegularExpFromText(
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "1.text.txt",
+//					tabSeperator,
+//				 	FilterConf.ConceptPath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "2.reg.text.txt",
+//				 	FilterConf.ConceptPath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "2.stata.hyp.txt",
+//				 	tabSeperator,
+//					indices);
+//			System.out.println("2.正则匹配完成");
+//
+//			System.out.println("3.文本分词开始");
+//			HanLPSegmenter.segmentationForFeature(
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "2.reg.text.txt",
+//					tabSeperator,
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.tokens.txt",
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.pos.txt",
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.loc.txt",
+//					spaceSeperator,
+//					indices
+//					);
+//			System.out.println("3.文本分词完成");
+//			
+//			System.out.println("4.数据去重开始");
+//			ConceptProcessor.removeDuplicateData(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.tokens.txt",
+//				 	FilterConf.ConceptPath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.tokens.txt");
+//			ConceptProcessor.removeDuplicateData(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.pos.txt",
+//				 	FilterConf.ConceptPath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.pos.txt");
+//			ConceptProcessor.removeDuplicateData(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "3.dup.loc.txt",
+//				 	FilterConf.ConceptPath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.loc.txt");
+//			System.out.println("4.数据去重完成");
+//			
+//			System.out.println("5.统计词频开始");
+//			Statistic.init();
+//			Statistic.load(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.tokens.txt",
+//					spaceSeperator,
+//					30);//选出频次超过30的词汇
+//			Statistic.saveToFile(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.tokens.txt",
+//					tabSeperator);
+//			ConceptProcessor.removeLongTailWord(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.tokens.txt",
+//				 	FilterConf.ConceptPath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "5.tokens.txt",
+//				 	false);
+//			Statistic.clear();
+//			
+//			Statistic.init();
+//			Statistic.load(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.pos.txt",
+//					spaceSeperator,
+//					20);//选出频次超过20的词汇
+//			Statistic.saveToFile(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.pos.txt", "	");
+//			ConceptProcessor.removeLongTailWord(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "4.tmp.pos.txt",
+//				 	FilterConf.ConceptPath
+//				 	+ "/" + FilterConf.fieldDirs[i] + "/" + "5.pos.txt",
+//				 	false);
+//			Statistic.clear();
+//			System.out.println("5.统计词频完成");
+//			
+//			System.out.println("6.w2v训练开始");
+//			//训练w2v模型
+//			W2V.run(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.tokens.txt",
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "6.w2v.model");
+//			ConceptProcessor.init();
+//			ConceptProcessor.loadPosDict(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.pos.txt",
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "2.stata.hyp.txt",
+//					tabSeperator);
+//			ConceptProcessor.saveToFile(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "6.w2v.model",
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "7.vec.w2v.txt",
+//					tabSeperator);
+//			ConceptProcessor.clear();
+//			System.out.println("6.w2v训练完成");
+//		
+//			System.out.println("7.层次聚类开始");
+//			//层次聚类
+//			HC.run(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "7.vec.w2v.txt",
+//					tabSeperator,
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.hcluster.txt",
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.hcluster.dis.txt",
+//					FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.model.hc.json");
+//			System.out.println("7.层次聚类完成");
+//			
+//			System.out.println("8.提取层次关系开始");
+//			//提取层次关系
+//			Hyponymy hyponymy = new Hyponymy();
+//			hyponymy.init(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "5.stata.pos.txt",
+//					tabSeperator);
+//			hyponymy.extractHyponymyPairFromHCModel(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.model.hc.json");
+//			hyponymy.save(FilterConf.ConceptPath
+//					+ "/knowledge/" + FilterConf.fieldDirs[i] + ".pos.know.json");
+//			
+//			//提取上下位关系
+//			hyponymy = new Hyponymy();
+//			hyponymy.init(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "2.stata.hyp.txt",
+//					tabSeperator);
+//			hyponymy.extractHyponymyPairFromHCModel(FilterConf.ConceptPath
+//					+ "/" + FilterConf.fieldDirs[i] + "/" + "8.model.hc.json");
+//			hyponymy.save(FilterConf.ConceptPath
+//					+ "/knowledge/" + FilterConf.fieldDirs[i] + ".reg.know.json");
+//			System.out.println("8.提取层次关系完成");
 			
 			System.out.println("9.计算概念相似度开始");
 			//计算概念之间相似度
@@ -268,7 +270,7 @@ public class ConceptPipeline {
 				e.printStackTrace();
 			}
 			SimilarityProcessor sp = new SimilarityProcessor();
-			sp.calculate(hyp, w2v);
+			sp.calculate(hyp, w2v, 0.8);
 			sp.save(FilterConf.ConceptPath
 						+ "/" + FilterConf.fieldDirs[i] + "/" + "9.sim.json");
 			System.out.println("9.计算概念相似度完成");
@@ -336,32 +338,22 @@ public class ConceptPipeline {
 //		Combination.mergeFile(
 //				FilterConf.ConceptPath,
 //				FilterConf.fieldDirs,
-//				"tokens.through.occ.txt",
-//				FilterConf.ConceptPath + "/" + "all.text.txt");
-//		Combination.mergeFile(
-//				FilterConf.ConceptPath,
-//				FilterConf.fieldDirs,
-//				"tokens.txt",
-//				FilterConf.ConceptPath + "/" + "all.tokens.txt");
-//		Combination.mergeFile(
-//				FilterConf.ConceptPath,
-//				FilterConf.fieldDirs,
-//				"tokens.pos.txt",
-//				FilterConf.ConceptPath + "/" + "all.pos.txt");
+//				"5.pos.txt",
+//				FilterConf.ConceptPath + "/" + "merge.txt");
+//		
+//		
+//		Segregator.init();
+//		Segregator.makeDict(FilterConf.ConceptPath + "/" + "merge.txt", " ");
+//		Segregator.saveToFile(FilterConf.ConceptPath + "/" + "segregate.txt", "	", 2);
+//		Segregator.clear();
+//		
+//		Tfidf.init();
+//		Tfidf.calculate(FilterConf.ConceptPath + "/" + "merge.txt", 1);
+//		Tfidf.saveToFile(FilterConf.ConceptPath + "/" + "result.txt", "	");
+//		Tfidf.saveToHtml(FilterConf.ConceptPath + "/" + "result.html", " ");
+//		Tfidf.clear();
+//		
+//		System.out.println("词汇归类完成");
 		
-		/**
-		Segregator.init();
-		Segregator.makeDict(FilterConf.ConceptPath + "/" + "merge.txt", " ");
-		Segregator.saveToFile(FilterConf.ConceptPath + "/" + "segregat.txt", "	", 2);
-		Segregator.clear();
-		
-		Tfidf.init();
-		Tfidf.calculate(FilterConf.ConceptPath + "/" + "merge.txt", 1);
-		Tfidf.saveToFile(FilterConf.ConceptPath + "/" + "result.txt", "	");
-		Tfidf.saveToHtml(FilterConf.ConceptPath + "/" + "result.html", " ");
-		Tfidf.clear();
-		
-		System.out.println("词汇归类完成");
-		*/
 	}
 }

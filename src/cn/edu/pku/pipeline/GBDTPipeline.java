@@ -49,13 +49,13 @@ public class GBDTPipeline {
 		
 		FileDirs.makeDirs(FilterConf.GBDTPath);
 		//统计行业
-		AbstractObj.feildsToConf(FilterConf.GBDTPath
-				+ "/" + "industry.conf",
-				sources,
-				date,
-				"com_industry",
-				null,
-				null);
+//		AbstractObj.feildsToConf(FilterConf.GBDTPath
+//				+ "/" + "industry.conf",
+//				sources,
+//				date,
+//				"com_industry",
+//				null,
+//				null);
 		
 		//选出数量前10位的行业
 		FilterConf.readFieldFromConf(
